@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Outfit:wght@300;400;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Quicksand", sans-serif;
+  
+  --color-mali-green: #6B8E23;
+  --color-mali-sage: #A3B18A;
+  --color-mali-sand: #D4A373;
+  --color-mali-cream: #F7F7F2;
+  --color-mali-earth: #2D3911;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-mali-cream);
+  color: #1c1917;
+}
+
+h1, h2, h3, .brand {
+  font-family: var(--font-display);
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
