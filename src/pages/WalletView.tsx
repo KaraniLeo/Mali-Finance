@@ -9,12 +9,16 @@ export function WalletView() {
     balance, setBalance, 
     jars, setJars, updateJarBalance, 
     transactions, addTransaction, 
-    debts, setDebts 
+    debts, setDebts,
+    budgetRules, setBudgetRules
   } = useAppStore();
 
   // Modals & Forms
   const [isAddingJar, setIsAddingJar] = useState(false);
-  const [newJar, setNewJar] = useState({ name: '', target: '', category: 'save' });
+  const [newJar, setNewJar] = useState({ name: '', category: 'save' });
+
+  const [isEditingBudget, setIsEditingBudget] = useState(false);
+  const [tempRules, setTempRules] = useState({ ...budgetRules });
 
   const [isAddingDebt, setIsAddingDebt] = useState(false);
   const [newDebt, setNewDebt] = useState({ name: '', total_amount: '' });
@@ -28,10 +32,10 @@ export function WalletView() {
   useEffect(() => {
     if (jars.length === 0) {
       setJars([
-        { id: 'j-spend', wallet_id: 'local', name: 'Spend', category: 'spend', target: 5000, balance: 0, created_at: new Date().toISOString() },
-        { id: 'j-save', wallet_id: 'local', name: 'Save', category: 'save', target: 2000, balance: 0, created_at: new Date().toISOString() },
-        { id: 'j-invest', wallet_id: 'local', name: 'Invest', category: 'invest', target: 2000, balance: 0, created_at: new Date().toISOString() },
-        { id: 'j-give', wallet_id: 'local', name: 'Give', category: 'give', target: 1000, balance: 0, created_at: new Date().toISOString() }
+        { id: 'j-spend', wallet_id: 'local', name: 'Spend', category: 'spend', target: 0, balance: 0, created_at: new Date().toISOString() },
+        { id: 'j-save', wallet_id: 'local', name: 'Save', category: 'save', target: 0, balance: 0, created_at: new Date().toISOString() },
+        { id: 'j-invest', wallet_id: 'local', name: 'Invest', category: 'invest', target: 0, balance: 0, created_at: new Date().toISOString() },
+        { id: 'j-give', wallet_id: 'local', name: 'Give', category: 'give', target: 0, balance: 0, created_at: new Date().toISOString() }
       ]);
     }
   }, [jars.length, setJars]);
@@ -40,17 +44,57 @@ export function WalletView() {
     const amount = parseFloat(depositAmount);
     if (isNaN(amount) || amount <= 0) return alert('Invalid deposit amount');
     
-    setBalance(balance + amount);
     setDepositAmount('');
     
-    addTransaction({
-      id: Date.now().toString(),
-      wallet_id: 'local',
-      amount: amount,
-      type: 'credit',
-      description: 'Manual Deposit',
-      created_at: new Date().toISOString()
+    // Auto-allocate based on budget rules
+    let remainingAmount = amount;
+    
+    // Process allocations
+    Object.entries(budgetRules).forEach(([category, percentage]) => {
+      if (percentage <= 0) return;
+      
+      const allocation = (amount * percentage) / 100;
+      const jar = jars.find(j => j.category === category);
+      
+      if (jar) {
+        updateJarBalance(jar.id, jar.balance + allocation);
+        remainingAmount -= allocation;
+        
+        addTransaction({
+          id: Date.now().toString() + Math.random(),
+          wallet_id: 'local',
+          jar_id: jar.id,
+          amount: allocation,
+          type: 'credit',
+          description: `Auto-Allocated to ${jar.name}`,
+          created_at: new Date().toISOString()
+        });
+      }
     });
+
+    // Remainder goes to main wallet balance (if any rules don't match or total < 100%)
+    if (remainingAmount > 0) {
+      setBalance(balance + remainingAmount);
+      addTransaction({
+        id: Date.now().toString(),
+        wallet_id: 'local',
+        amount: remainingAmount,
+        type: 'credit',
+        description: 'Remaining Deposit',
+        created_at: new Date().toISOString()
+      });
+    }
+
+    alert('Funds deposited and smartly allocated!');
+  };
+
+  const handleSaveBudgetRules = () => {
+    const total = Object.values(tempRules).reduce((a, b) => a + (Number(b) || 0), 0);
+    if (total !== 100) {
+      return alert(`Total allocation must equal 100%. Currently at ${total}%.`);
+    }
+    setBudgetRules(tempRules);
+    setIsEditingBudget(false);
   };
 
   const handleAllocate = (jar: WealthJar) => {
@@ -98,20 +142,20 @@ export function WalletView() {
   };
 
   const handleAddJar = () => {
-    if (!newJar.name || !newJar.target) return alert('Fill all jar fields');
+    if (!newJar.name) return alert('Fill jar name');
     setIsAddingJar(false);
     
     setJars([...jars, {
       id: Date.now().toString(),
       wallet_id: 'local',
       name: newJar.name,
-      target: parseFloat(newJar.target),
+      target: 0,
       balance: 0,
       category: newJar.category as any,
       created_at: new Date().toISOString()
     }]);
     
-    setNewJar({ name: '', target: '', category: 'save' });
+    setNewJar({ name: '', category: 'save' });
   };
 
   const handleDeleteJar = (id: string) => {
@@ -193,22 +237,62 @@ export function WalletView() {
             <p className="text-white/60 text-sm font-bold uppercase tracking-widest mb-1">Main Wallet Balance</p>
             <h3 className="text-4xl font-black tabular-nums">{balance.toLocaleString('en-US', { minimumFractionDigits: 2 })} <span className="text-xl">KES</span></h3>
           </div>
-          <div className="mt-6 flex flex-col gap-2">
-            <div className="flex bg-white/10 rounded-xl overflow-hidden p-1 backdrop-blur-sm border border-white/20">
-              <input 
-                type="number" 
-                value={depositAmount} 
-                onChange={(e) => setDepositAmount(e.target.value)} 
-                placeholder="Amount (KES)" 
-                className="w-full bg-transparent text-white px-3 py-2 outline-none placeholder:text-white/50 text-sm font-bold" 
-              />
-              <button 
-                onClick={handleDeposit}
-                className="bg-white text-[#2D3911] px-4 py-2 rounded-lg font-bold flex items-center justify-center gap-1 hover:bg-[#D4A373] hover:text-white transition-all shadow-md cursor-pointer flex-shrink-0 text-sm"
-              >
-                <Plus size={16} /> Cash In
+            <div className="mt-6 flex flex-col gap-2">
+              <div className="flex bg-white/10 rounded-xl overflow-hidden p-1 backdrop-blur-sm border border-white/20">
+                <input 
+                  type="number" 
+                  value={depositAmount} 
+                  onChange={(e) => setDepositAmount(e.target.value)} 
+                  placeholder="Amount (KES)" 
+                  className="w-full bg-transparent text-white px-3 py-2 outline-none placeholder:text-white/50 text-sm font-bold" 
+                />
+                <button 
+                  onClick={handleDeposit}
+                  className="bg-white text-[#2D3911] px-4 py-2 rounded-lg font-bold flex items-center justify-center gap-1 hover:bg-[#D4A373] hover:text-white transition-all shadow-md cursor-pointer flex-shrink-0 text-sm"
+                >
+                  <Plus size={16} /> Cash In
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white/10 rounded-2xl p-4 mt-4 border border-white/20">
+            <div className="flex justify-between items-center mb-4">
+              <h4 className="text-sm font-bold uppercase tracking-widest text-white/80">Smart Budget Rules</h4>
+              <button onClick={() => setIsEditingBudget(!isEditingBudget)} className="text-white hover:text-[#D4A373] cursor-pointer">
+                <Edit2 size={16} />
               </button>
             </div>
+            
+            {isEditingBudget ? (
+              <div className="flex flex-col gap-3">
+                {Object.keys(budgetRules).map((cat) => (
+                  <div key={cat} className="flex items-center justify-between text-sm">
+                    <span className="capitalize font-bold w-16">{cat}</span>
+                    <input 
+                      type="number" 
+                      value={tempRules[cat]} 
+                      onChange={(e) => setTempRules({...tempRules, [cat]: parseInt(e.target.value) || 0})}
+                      className="w-16 bg-white/20 px-2 py-1 rounded text-center outline-none"
+                    />
+                    <span>%</span>
+                  </div>
+                ))}
+                <button onClick={handleSaveBudgetRules} className="mt-2 bg-white text-[#2D3911] text-xs font-bold py-2 rounded uppercase tracking-widest hover:bg-stone-200 cursor-pointer">
+                  Save Rules
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2">
+                {Object.entries(budgetRules).map(([cat, pct]) => (
+                  <div key={cat} className="flex items-center justify-between text-sm">
+                    <span className="capitalize font-medium text-white/70">{cat}</span>
+                    <span className="font-bold">{pct}%</span>
+                  </div>
+                ))}
+              </div>
+            )}
+            <p className="text-[10px] text-white/50 mt-4 leading-tight">Cash ins are automatically routed to your jars based on these rules.</p>
           </div>
         </div>
 
@@ -234,10 +318,6 @@ export function WalletView() {
                   <div className="flex-1 min-w-[150px]">
                     <label className="block text-xs font-bold text-stone-500 mb-1 uppercase tracking-wider">Goal Name</label>
                     <input type="text" value={newJar.name} onChange={e => setNewJar({...newJar, name: e.target.value})} placeholder="e.g. PS5, Tithing" className="w-full bg-stone-50 border border-stone-200 rounded-lg p-2 outline-none focus:border-[#6B8E23]" />
-                  </div>
-                  <div className="flex-1 min-w-[120px]">
-                    <label className="block text-xs font-bold text-stone-500 mb-1 uppercase tracking-wider">Target (KES)</label>
-                    <input type="number" value={newJar.target} onChange={e => setNewJar({...newJar, target: e.target.value})} placeholder="0.00" className="w-full bg-stone-50 border border-stone-200 rounded-lg p-2 outline-none focus:border-[#6B8E23]" />
                   </div>
                   <div className="flex-1 min-w-[120px]">
                     <label className="block text-xs font-bold text-stone-500 mb-1 uppercase tracking-wider">Category</label>
@@ -276,12 +356,7 @@ export function WalletView() {
                     <p className="text-stone-800 font-bold text-lg leading-none">{jar.name}</p>
                     <span className="text-[10px] font-black uppercase text-stone-400">{jar.category}</span>
                   </div>
-                  <h4 className="text-2xl font-black text-[#2D3911] tabular-nums mb-2">{jar.balance.toLocaleString()} <span className="text-sm font-bold text-stone-400">/ {jar.target.toLocaleString()}</span></h4>
-                  
-                  {/* Progress Bar */}
-                  <div className="w-full bg-stone-100 h-2 rounded-full overflow-hidden mb-4">
-                    <div className="bg-[#6B8E23] h-full" style={{ width: `${Math.min((jar.balance / jar.target) * 100, 100)}%` }} />
-                  </div>
+                  <h4 className="text-2xl font-black text-[#2D3911] tabular-nums mb-6">{jar.balance.toLocaleString()} <span className="text-sm font-bold text-stone-400">KES</span></h4>
 
                   <div className="flex items-center bg-stone-50 border border-stone-200 rounded-lg p-1">
                     <input 

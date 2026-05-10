@@ -11,9 +11,9 @@ interface AppState {
   selectedSubtopic: any | null;
   tasks: Task[];
   completedLessons: string[]; // Tracks which lesson IDs are completed
-  
   // Wallet State
   wallet: Wallet | null;
+  budgetRules: Record<string, number>; // Maps jar category to percentage
   jars: WealthJar[];
   transactions: Transaction[];
   debts: Debt[];
@@ -30,6 +30,7 @@ interface AppState {
   
   // Wallet Actions
   setWallet: (wallet: Wallet | null) => void;
+  setBudgetRules: (rules: Record<string, number>) => void;
   setJars: (jars: WealthJar[]) => void;
   setTransactions: (transactions: Transaction[]) => void;
   setDebts: (debts: Debt[]) => void;
@@ -49,6 +50,7 @@ export const useAppStore = create<AppState>()(
       tasks: [],
       completedLessons: [],
       wallet: null,
+      budgetRules: { spend: 50, save: 20, invest: 20, give: 10 },
       jars: [],
       transactions: [],
       debts: [],
@@ -73,6 +75,7 @@ export const useAppStore = create<AppState>()(
         return state;
       }),
       setWallet: (wallet) => set({ wallet }),
+      setBudgetRules: (budgetRules) => set({ budgetRules }),
       setJars: (jars) => set({ jars }),
       setTransactions: (transactions) => set({ transactions }),
       setDebts: (debts) => set({ debts }),
@@ -89,6 +92,7 @@ export const useAppStore = create<AppState>()(
         tasks: state.tasks, 
         completedLessons: state.completedLessons,
         wallet: state.wallet,
+        budgetRules: state.budgetRules,
         jars: state.jars,
         transactions: state.transactions,
         debts: state.debts

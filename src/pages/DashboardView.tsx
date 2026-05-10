@@ -28,8 +28,10 @@ export function DashboardView({ user, modules, tasks, setTasks, chatHistory, onS
   const { jars } = useAppStore();
 
   const earnProgress = tasks.length > 0 ? (tasks.filter(t => t.completed).length / tasks.length) * 100 : 0;
-  const totalBalance = jars.reduce((acc, jar) => acc + jar.balance, 0);
-  const saveProgress = Math.min((totalBalance / 1000) * 100, 100);
+  
+  const saveJar = jars.find(j => j.category === 'save');
+  const totalWealth = balance + jars.reduce((acc, jar) => acc + jar.balance, 0);
+  const saveProgress = totalWealth > 0 && saveJar ? (saveJar.balance / totalWealth) * 100 : 0;
 
   const DEMO_USER_ID = '00000000-0000-0000-0000-000000000000';
   const DEMO_WALLET_ID = '00000000-0000-0000-0000-000000000000';
