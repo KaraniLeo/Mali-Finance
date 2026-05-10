@@ -4,13 +4,15 @@ import { Module } from '../types';
 
 interface ModuleCardProps {
   module: Module;
+  onClick?: () => void;
 }
 
-export function ModuleCard({ module }: ModuleCardProps) {
+export const ModuleCard: React.FC<ModuleCardProps> = ({ module, onClick }) => {
   return (
     <motion.div 
-      whileHover={{ y: -5 }}
-      className={`p-6 rounded-[32px] bg-white border border-stone-100 shadow-lg flex flex-col relative overflow-hidden ${module.locked ? 'opacity-60 grayscale' : ''}`}
+      whileHover={!module.locked ? { y: -5 } : undefined}
+      onClick={!module.locked ? onClick : undefined}
+      className={`p-6 rounded-[32px] bg-white border border-stone-100 shadow-lg flex flex-col relative overflow-hidden ${module.locked ? 'opacity-60 grayscale' : 'cursor-pointer'}`}
     >
       <div className="mb-6">{module.icon}</div>
       <h4 className="font-extrabold text-stone-800 text-base leading-tight mb-2">{module.title}</h4>
@@ -31,9 +33,9 @@ export function ModuleCard({ module }: ModuleCardProps) {
       </div>
 
       {module.locked && (
-        <div className="absolute inset-0 bg-stone-100/20 backdrop-blur-[1px] flex items-center justify-center pointer-events-none">
-           <div className="bg-white/90 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest text-stone-500 shadow-md">
-             Locked • Lvl 15 Required
+        <div className="absolute inset-0 bg-stone-100/40 dark:bg-stone-950/60 backdrop-blur-[2px] flex items-center justify-center pointer-events-none p-4 text-center">
+           <div className="bg-white/90 dark:bg-stone-800/90 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest text-stone-500 shadow-md">
+             Locked • {module.lockedReason || 'Complete previous module'}
            </div>
         </div>
       )}

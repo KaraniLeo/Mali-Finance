@@ -3,17 +3,22 @@ import { motion } from 'motion/react';
 import { Target } from 'lucide-react';
 
 interface SavingsGoalCardProps {
+  key?: React.Key;
   title: string;
   target: number;
   current: number;
   category: string;
   color: string;
+  onClick?: () => void;
 }
 
-export function SavingsGoalCard({ title, target, current, category, color }: SavingsGoalCardProps) {
+export function SavingsGoalCard({ title, target, current, category, color, onClick }: SavingsGoalCardProps) {
   const percent = Math.round((current / target) * 100);
   return (
-    <div className="p-8 rounded-[40px] bg-white border border-stone-100 shadow-xl flex flex-col">
+    <div 
+      onClick={onClick}
+      className={`p-8 rounded-[40px] bg-white border border-stone-100 shadow-xl flex flex-col ${onClick ? 'cursor-pointer hover:shadow-2xl hover:scale-[1.02] transition-all' : ''}`}
+    >
        <div className="flex justify-between items-start mb-6">
           <div className="bg-stone-100 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest text-stone-500">{category}</div>
           <Target size={20} className="text-stone-300" />

@@ -4,6 +4,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
+import { createClient } from "@supabase/supabase-js";
+import { generateCardImage } from "./src/lib/imagePipeline.js"; // Use .js extension for tsx/Node compatibility
 
 dotenv.config();
 
@@ -19,20 +21,30 @@ async function startServer() {
   // Gemini API Proxy
   app.post("/api/chat", async (req, res) => {
     try {
-      const { prompt, systemInstruction } = req.body;
+      const { prompt, userContext } = req.body;
       if (!process.env.GEMINI_API_KEY) {
         return res.status(500).json({ error: "GEMINI_API_KEY is not set" });
       }
 
       const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-      // We use gemini-3-flash-preview as per the skill guidelines for general tasks
       const model = "gemini-3-flash-preview";
+
+      const enhancedSystemInstruction = `You are MaliBot, an expert financial tutor for children and young adults.
+      The current user is '${userContext?.name || 'User'}', Age: ${userContext?.age || 'Unknown'}, Tier: '${userContext?.tier || 'Unknown'}'.
+      
+      CORE DIRECTIVES:
+      1. Provide age-appropriate advice.
+      2. If asked for a "daily plan", give a curated step-by-step financial learning activity for the day based on their age tier.
+      3. Keep responses encouraging, highly interactive, and focused on building wealth (Mali).
+      4. Use formatting (like markdown lists) to make steps clear.
+      5. Congratulate them on their streaks and encourage them to build their MALI points.
+      `;
 
       const response = await genAI.models.generateContent({
         model,
         contents: prompt,
         config: {
-          systemInstruction,
+          systemInstruction: enhancedSystemInstruction,
         },
       });
 
@@ -41,6 +53,64 @@ async function startServer() {
       console.error("Gemini Error:", error);
       res.status(500).json({ error: error.message });
     }
+  });
+
+  // Supabase Setup
+  const supabaseUrl = process.env.VITE_SUPABASE_URL || '';
+  const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY || '';
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
+  // Image Generation API
+  app.post("/api/generate-image", async (req, res) => {
+    try {
+      const { card } = req.body;
+      const imageUrl = await generateCardImage(card);
+      res.json({ imageUrl });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Wallet API
+  app.get("/api/wallet/:userId", async (req, res) => {
+    const { userId } = req.params;
+    const { data, error } = await supabase.from('wallets').select('*').eq('user_id', userId).single();
+    if (error) return res.status(400).json({ error: error.message });
+    res.json(data);
+  });
+
+  // Wealth Jars API
+  app.get("/api/jars/:walletId", async (req, res) => {
+    const { walletId } = req.params;
+    const { data, error } = await supabase.from('wealth_jars').select('*').eq('wallet_id', walletId);
+    if (error) return res.status(400).json({ error: error.message });
+    res.json(data);
+  });
+
+  // Transactions API
+  app.post("/api/transactions", async (req, res) => {
+    const { wallet_id, jar_id, amount, type, description } = req.body;
+    const { data, error } = await supabase.from('transactions').insert([{
+      wallet_id, jar_id, amount, type, description
+    }]);
+    if (error) return res.status(400).json({ error: error.message });
+    res.json(data);
+  });
+
+  // Debt API
+  app.get("/api/debt/:walletId", async (req, res) => {
+    const { walletId } = req.params;
+    const { data, error } = await supabase.from('debts').select('*').eq('wallet_id', walletId);
+    if (error) return res.status(400).json({ error: error.message });
+    res.json(data);
+  });
+
+  // Tasks API
+  app.post("/api/tasks/complete", async (req, res) => {
+    const { taskId, userId } = req.body;
+    const { data, error } = await supabase.from('user_tasks').update({ completed: true }).eq('id', taskId);
+    if (error) return res.status(400).json({ error: error.message });
+    res.json(data);
   });
 
   // Vite middleware for development
