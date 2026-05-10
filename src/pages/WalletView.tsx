@@ -254,7 +254,6 @@ export function WalletView() {
                 </button>
               </div>
             </div>
-          </div>
           
           <div className="bg-white/10 rounded-2xl p-4 mt-4 border border-white/20">
             <div className="flex justify-between items-center mb-4">
