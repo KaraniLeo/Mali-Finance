@@ -9,6 +9,7 @@ import {
   ShieldCheck, 
   Settings,
   Gamepad2
+} from 'lucide-react';
 import { User, View } from '../types';
 import { useSidebarStore } from '../state/sidebarStore';
 
