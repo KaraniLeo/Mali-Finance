@@ -9,6 +9,7 @@ import { MaliBot } from '../components/MaliBot';
 import { useFinanceAPI } from '../hooks/useFinanceAPI';
 import { useAppStore } from '../state/store';
 import { useWalletStore } from '../state/walletStore';
+import { useWealthJarStore } from '../state/wealthJarStore';
 
 interface DashboardViewProps {
   user: User;
@@ -26,7 +27,7 @@ export function DashboardView({ user, modules, tasks, setTasks, chatHistory, onS
   const activeModule = modules.find(m => m.progress < 100 && !m.locked) || modules[0];
   
   const { completeTask, createTransaction } = useFinanceAPI();
-  const { jars } = useAppStore();
+  const { jars } = useWealthJarStore();
   const { balance } = useWalletStore();
 
   const earnProgress = tasks.length > 0 ? (tasks.filter(t => t.completed).length / tasks.length) * 100 : 0;

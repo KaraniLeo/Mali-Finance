@@ -10,9 +10,8 @@ interface AppState {
   selectedSubtopic: any | null;
   tasks: Task[];
   completedLessons: string[]; // Tracks which lesson IDs are completed
-  // Wallet State (Partial - waiting for WealthJar Store)
+  // Wallet State (Partial - waiting for Debt Store)
   wallet: Wallet | null;
-  jars: WealthJar[];
   debts: Debt[];
   
   // Actions
@@ -26,9 +25,7 @@ interface AppState {
   
   // Wallet Actions
   setWallet: (wallet: Wallet | null) => void;
-  setJars: (jars: WealthJar[]) => void;
   setDebts: (debts: Debt[]) => void;
-  updateJarBalance: (jarId: string, balance: number) => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -42,7 +39,6 @@ export const useAppStore = create<AppState>()(
       tasks: [],
       completedLessons: [],
       wallet: null,
-      jars: [],
       debts: [],
 
       setUser: (user) => set({ user }),
@@ -62,11 +58,7 @@ export const useAppStore = create<AppState>()(
         return state;
       }),
       setWallet: (wallet) => set({ wallet }),
-      setJars: (jars) => set({ jars }),
       setDebts: (debts) => set({ debts }),
-      updateJarBalance: (jarId, balance) => set((state) => ({
-        jars: state.jars.map(j => j.id === jarId ? { ...j, balance } : j)
-      }))
     }),
     {
       name: 'finterns-storage',
@@ -74,7 +66,6 @@ export const useAppStore = create<AppState>()(
         tasks: state.tasks, 
         completedLessons: state.completedLessons,
         wallet: state.wallet,
-        jars: state.jars,
         debts: state.debts
       }), 
     }

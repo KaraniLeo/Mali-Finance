@@ -3,13 +3,17 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Wallet, ArrowUpRight, ArrowDownLeft, Plus, PiggyBank, Heart, TrendingUp, HandCoins, Trash2, Edit2, AlertCircle, Minus } from 'lucide-react';
 import { useAppStore } from '../state/store';
 import { useWalletStore } from '../state/walletStore';
+import { useWealthJarStore } from '../state/wealthJarStore';
 import { WealthJar, Transaction, Debt, BudgetRule } from '../types';
 
 export function WalletView() {
   const { 
-    jars, setJars, updateJarBalance, 
     debts, setDebts
   } = useAppStore();
+
+  const {
+    jars, setJars, addJar, updateJarBalance, renameJar, removeJar
+  } = useWealthJarStore();
 
   const {
     balance, setBalance,
@@ -427,16 +431,45 @@ export function WalletView() {
             {jars.map((jar) => (
               <motion.div whileHover={{ scale: 1.02 }} key={jar.id} className={`p-5 rounded-[24px] border border-stone-200 bg-white flex flex-col justify-between shadow-sm relative overflow-hidden group`}>
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-10 h-10 bg-stone-50 rounded-xl flex items-center justify-center border border-stone-100">
-                    {getCategoryIcon(jar.category)}
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-sm ${
+                    jar.category === 'spend' ? 'bg-amber-500' :
+                    jar.category === 'save' ? 'bg-emerald-500' :
+                    jar.category === 'invest' ? 'bg-purple-500' :
+                    'bg-rose-500'
+                  }`}>
+                    {jar.category === 'spend' && <Wallet size={20} />}
+                    {jar.category === 'save' && <PiggyBank size={20} />}
+                    {jar.category === 'invest' && <TrendingUp size={20} />}
+                    {jar.category === 'give' && <Heart size={20} />}
+                    {jar.category === 'custom' && <Gem size={20} />}
                   </div>
                   <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onClick={() => handleDeleteJar(jar.id)} className="w-8 h-8 rounded-lg text-red-400 hover:bg-red-50 flex items-center justify-center cursor-pointer"><Trash2 size={16} /></button>
+                    <button 
+                      onClick={() => {
+                        if (confirm(`Are you sure you want to delete ${jar.name}? Balance will return to main wallet.`)) {
+                          setBalance(balance + jar.balance);
+                          removeJar(jar.id);
+                          removeBudgetRule(jar.id);
+                        }
+                      }} 
+                      className="w-8 h-8 rounded-lg text-red-400 hover:bg-red-50 flex items-center justify-center cursor-pointer"
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </div>
                 </div>
                 <div>
                   <div className="flex justify-between items-end mb-1">
-                    <p className="text-stone-800 font-bold text-lg leading-none">{jar.name}</p>
+                    <input 
+                      type="text" 
+                      defaultValue={jar.name}
+                      onBlur={(e) => {
+                        if (e.target.value && e.target.value !== jar.name) {
+                          renameJar(jar.id, e.target.value);
+                        }
+                      }}
+                      className="text-stone-800 font-bold text-lg leading-none bg-transparent outline-none w-3/4 border-b border-transparent focus:border-stone-300"
+                    />
                     <span className="text-[10px] font-black uppercase text-stone-400">{jar.category}</span>
                   </div>
                   <h4 className="text-2xl font-black text-[#2D3911] tabular-nums mb-6">{jar.balance.toLocaleString()} <span className="text-sm font-bold text-stone-400">KES</span></h4>

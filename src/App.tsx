@@ -29,7 +29,6 @@ import { useWalletStore } from './state/walletStore';
 export default function App() {
   const { 
     user, setUser, 
-    balance, setBalance, 
     chatHistory, setChatHistory, 
     activeView, setActiveView, 
     selectedModule, setSelectedModule, 
