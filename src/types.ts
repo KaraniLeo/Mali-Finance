@@ -94,6 +94,12 @@ export interface WealthJar {
   created_at: string;
 }
 
+export interface BudgetRule {
+  jarId: string;
+  type: 'percentage' | 'fixed';
+  value: number;
+}
+
 export interface Transaction {
   id: string;
   wallet_id: string;

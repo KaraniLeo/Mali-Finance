@@ -4,23 +4,19 @@ import { User, Task, ChatMessage, View, Module, Tier, Wallet, WealthJar, Transac
 
 interface AppState {
   user: User | null;
-  balance: number;
   chatHistory: ChatMessage[];
   activeView: View;
   selectedModule: Module | null;
   selectedSubtopic: any | null;
   tasks: Task[];
   completedLessons: string[]; // Tracks which lesson IDs are completed
-  // Wallet State
+  // Wallet State (Partial - waiting for WealthJar Store)
   wallet: Wallet | null;
-  budgetRules: Record<string, number>; // Maps jar category to percentage
   jars: WealthJar[];
-  transactions: Transaction[];
   debts: Debt[];
   
   // Actions
   setUser: (user: User | null) => void;
-  setBalance: (balance: number | ((prev: number) => number)) => void;
   setChatHistory: (history: ChatMessage[] | ((prev: ChatMessage[]) => ChatMessage[])) => void;
   setActiveView: (view: View) => void;
   setSelectedModule: (module: Module | null) => void;
@@ -30,19 +26,15 @@ interface AppState {
   
   // Wallet Actions
   setWallet: (wallet: Wallet | null) => void;
-  setBudgetRules: (rules: Record<string, number>) => void;
   setJars: (jars: WealthJar[]) => void;
-  setTransactions: (transactions: Transaction[]) => void;
   setDebts: (debts: Debt[]) => void;
   updateJarBalance: (jarId: string, balance: number) => void;
-  addTransaction: (tx: Transaction) => void;
 }
 
 export const useAppStore = create<AppState>()(
   persist(
     (set, get) => ({
       user: null,
-      balance: 0.0,
       chatHistory: [],
       activeView: 'dashboard',
       selectedModule: null,
@@ -50,15 +42,10 @@ export const useAppStore = create<AppState>()(
       tasks: [],
       completedLessons: [],
       wallet: null,
-      budgetRules: { 'j-spend': 50, 'j-save': 20, 'j-invest': 20, 'j-give': 10 },
       jars: [],
-      transactions: [],
       debts: [],
 
       setUser: (user) => set({ user }),
-      setBalance: (balance) => set((state) => ({ 
-        balance: typeof balance === 'function' ? balance(state.balance) : balance 
-      })),
       setChatHistory: (history) => set((state) => ({ 
         chatHistory: typeof history === 'function' ? history(state.chatHistory) : history 
       })),
@@ -75,16 +62,11 @@ export const useAppStore = create<AppState>()(
         return state;
       }),
       setWallet: (wallet) => set({ wallet }),
-      setBudgetRules: (budgetRules) => set({ budgetRules }),
       setJars: (jars) => set({ jars }),
-      setTransactions: (transactions) => set({ transactions }),
       setDebts: (debts) => set({ debts }),
       updateJarBalance: (jarId, balance) => set((state) => ({
         jars: state.jars.map(j => j.id === jarId ? { ...j, balance } : j)
-      })),
-      addTransaction: (tx) => set((state) => ({
-        transactions: [tx, ...state.transactions]
-      })),
+      }))
     }),
     {
       name: 'finterns-storage',
@@ -92,9 +74,7 @@ export const useAppStore = create<AppState>()(
         tasks: state.tasks, 
         completedLessons: state.completedLessons,
         wallet: state.wallet,
-        budgetRules: state.budgetRules,
         jars: state.jars,
-        transactions: state.transactions,
         debts: state.debts
       }), 
     }

@@ -24,6 +24,7 @@ import { QuizView } from './pages/QuizView';
 import { ParentDashboard } from './pages/ParentDashboard';
 import { GamesView } from './pages/GamesView';
 import { useSidebarStore } from './state/sidebarStore';
+import { useWalletStore } from './state/walletStore';
 
 export default function App() {
   const { 
@@ -36,6 +37,7 @@ export default function App() {
     tasks, setTasks 
   } = useAppStore();
 
+  const { balance, setBalance } = useWalletStore();
   const { isOpenMobile, setMobileOpen } = useSidebarStore();
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);

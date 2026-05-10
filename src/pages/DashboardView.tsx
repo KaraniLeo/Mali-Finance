@@ -8,6 +8,7 @@ import { TaskBoard } from '../components/TaskBoard';
 import { MaliBot } from '../components/MaliBot';
 import { useFinanceAPI } from '../hooks/useFinanceAPI';
 import { useAppStore } from '../state/store';
+import { useWalletStore } from '../state/walletStore';
 
 interface DashboardViewProps {
   user: User;
@@ -25,7 +26,8 @@ export function DashboardView({ user, modules, tasks, setTasks, chatHistory, onS
   const activeModule = modules.find(m => m.progress < 100 && !m.locked) || modules[0];
   
   const { completeTask, createTransaction } = useFinanceAPI();
-  const { jars, balance } = useAppStore();
+  const { jars } = useAppStore();
+  const { balance } = useWalletStore();
 
   const earnProgress = tasks.length > 0 ? (tasks.filter(t => t.completed).length / tasks.length) * 100 : 0;
   

@@ -2,23 +2,27 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Wallet, ArrowUpRight, ArrowDownLeft, Plus, PiggyBank, Heart, TrendingUp, HandCoins, Trash2, Edit2, AlertCircle, Minus } from 'lucide-react';
 import { useAppStore } from '../state/store';
-import { WealthJar, Transaction, Debt } from '../types';
+import { useWalletStore } from '../state/walletStore';
+import { WealthJar, Transaction, Debt, BudgetRule } from '../types';
 
 export function WalletView() {
   const { 
-    balance, setBalance, 
     jars, setJars, updateJarBalance, 
-    transactions, addTransaction, 
-    debts, setDebts,
-    budgetRules, setBudgetRules
+    debts, setDebts
   } = useAppStore();
+
+  const {
+    balance, setBalance,
+    transactions, addTransaction,
+    budgetRules, setBudgetRules, setBudgetRule, removeBudgetRule
+  } = useWalletStore();
 
   // Modals & Forms
   const [isAddingJar, setIsAddingJar] = useState(false);
   const [newJar, setNewJar] = useState({ name: '', category: 'save' });
 
   const [isEditingBudget, setIsEditingBudget] = useState(false);
-  const [tempRules, setTempRules] = useState<Record<string, number>>({});
+  const [tempRules, setTempRules] = useState<Record<string, BudgetRule>>({});
 
   const [isAddingDebt, setIsAddingDebt] = useState(false);
   const [newDebt, setNewDebt] = useState({ name: '', total_amount: '' });
@@ -49,14 +53,12 @@ export function WalletView() {
     // Auto-allocate based on budget rules
     let remainingAmount = amount;
     
-    // Process allocations
-    Object.entries(budgetRules).forEach(([jarId, percentage]) => {
-      if (percentage <= 0) return;
-      
-      const allocation = (amount * percentage) / 100;
-      const jar = jars.find(j => j.id === jarId);
-      
-      if (jar) {
+    // First pass: fulfill fixed KES rules
+    jars.forEach(jar => {
+      const rule = budgetRules[jar.id];
+      if (rule && rule.type === 'fixed' && rule.value > 0 && remainingAmount > 0) {
+        const allocation = Math.min(rule.value, remainingAmount);
+        
         updateJarBalance(jar.id, jar.balance + allocation);
         remainingAmount -= allocation;
         
@@ -66,9 +68,36 @@ export function WalletView() {
           jar_id: jar.id,
           amount: allocation,
           type: 'credit',
-          description: `Auto-Allocated to ${jar.name}`,
+          description: `Fixed Auto-Allocated to ${jar.name}`,
           created_at: new Date().toISOString()
         });
+      }
+    });
+
+    // Second pass: distribute the REST using percentage rules
+    const startingPercentageAmount = remainingAmount;
+    jars.forEach(jar => {
+      const rule = budgetRules[jar.id];
+      if (rule && rule.type === 'percentage' && rule.value > 0 && remainingAmount > 0) {
+        const allocation = (startingPercentageAmount * rule.value) / 100;
+        
+        // Prevent floating point bugs over-allocating
+        const actualAllocation = Math.min(allocation, remainingAmount);
+        
+        if (actualAllocation > 0) {
+          updateJarBalance(jar.id, jar.balance + actualAllocation);
+          remainingAmount -= actualAllocation;
+          
+          addTransaction({
+            id: Date.now().toString() + Math.random(),
+            wallet_id: 'local',
+            jar_id: jar.id,
+            amount: actualAllocation,
+            type: 'credit',
+            description: `Auto-Allocated to ${jar.name}`,
+            created_at: new Date().toISOString()
+          });
+        }
       }
     });
 
@@ -89,14 +118,22 @@ export function WalletView() {
   };
 
   const handleSaveBudgetRules = () => {
-    const total = jars.reduce((acc, jar) => acc + (tempRules[jar.id] || 0), 0);
-    if (total !== 100) {
-      return alert(`Total allocation must equal 100%. Currently at ${total}%.`);
+    // Validate that percentages do not exceed 100%
+    const totalPct = jars.reduce((acc, jar) => {
+      const rule = tempRules[jar.id];
+      if (rule && rule.type === 'percentage') return acc + rule.value;
+      return acc;
+    }, 0);
+
+    if (totalPct > 100) {
+      return alert(`Total percentage allocation cannot exceed 100%. Currently at ${totalPct}%.`);
     }
     
-    const newRules: Record<string, number> = {};
+    const newRules: Record<string, BudgetRule> = {};
     jars.forEach(jar => {
-      newRules[jar.id] = tempRules[jar.id] || 0;
+      if (tempRules[jar.id]) {
+        newRules[jar.id] = tempRules[jar.id];
+      }
     });
     
     setBudgetRules(newRules);
@@ -278,38 +315,42 @@ export function WalletView() {
             {isEditingBudget ? (
               <div className="flex flex-col gap-3">
                 {jars.map((jar) => {
-                  const pct = tempRules[jar.id] || 0;
-                  const refBalance = balance > 0 ? balance : 1000;
-                  const cashVal = (refBalance * pct) / 100;
+                  const rule = tempRules[jar.id] || { jarId: jar.id, type: 'percentage', value: 0 };
+                  const isFixed = rule.type === 'fixed';
+                  
+                  const cashVal = isFixed ? rule.value : (balance * rule.value) / 100;
+                  const pctVal = isFixed ? (balance > 0 ? (rule.value / balance) * 100 : 0) : rule.value;
                   
                   return (
                     <div key={jar.id} className="flex items-center justify-between text-sm gap-2">
-                      <span className="capitalize font-bold truncate pr-2 w-20">{jar.name}</span>
+                      <span className="capitalize font-bold truncate pr-2 w-20 text-white/90">{jar.name}</span>
                       
-                      <div className="flex items-center bg-white/10 rounded px-2 w-24">
+                      <div className={`flex items-center rounded px-2 w-24 transition-colors ${isFixed ? 'bg-white/20 border border-white/40 ring-1 ring-white/20' : 'bg-white/5'}`}>
                         <input 
                           type="number" 
-                          value={cashVal === 0 ? '' : cashVal} 
+                          value={isFixed ? (rule.value === 0 ? '' : rule.value) : (cashVal === 0 ? '' : cashVal.toFixed(0))} 
                           onChange={(e) => {
                             const val = parseFloat(e.target.value) || 0;
-                            const newPct = Math.round((val / refBalance) * 100);
-                            setTempRules({...tempRules, [jar.id]: newPct});
+                            setTempRules({...tempRules, [jar.id]: { jarId: jar.id, type: 'fixed', value: val }});
                           }}
-                          className="w-full bg-transparent py-1 text-right outline-none text-white placeholder-white/30"
+                          className={`w-full bg-transparent py-1 text-right outline-none placeholder-white/30 ${isFixed ? 'text-white font-bold' : 'text-white/50'}`}
                           placeholder="0"
                         />
-                        <span className="text-[10px] text-white/50 ml-1">KES</span>
+                        <span className={`text-[10px] ml-1 ${isFixed ? 'text-white/80' : 'text-white/40'}`}>KES</span>
                       </div>
 
-                      <div className="flex items-center bg-white/20 rounded px-2 w-16">
+                      <div className={`flex items-center rounded px-2 w-16 transition-colors ${!isFixed ? 'bg-white/20 border border-white/40 ring-1 ring-white/20' : 'bg-white/5'}`}>
                         <input 
                           type="number" 
-                          value={pct === 0 ? '' : pct} 
-                          onChange={(e) => setTempRules({...tempRules, [jar.id]: parseInt(e.target.value) || 0})}
-                          className="w-full bg-transparent py-1 text-right outline-none text-white placeholder-white/30 font-bold"
+                          value={!isFixed ? (rule.value === 0 ? '' : rule.value) : (pctVal === 0 ? '' : pctVal.toFixed(1))} 
+                          onChange={(e) => {
+                            const val = parseFloat(e.target.value) || 0;
+                            setTempRules({...tempRules, [jar.id]: { jarId: jar.id, type: 'percentage', value: val }});
+                          }}
+                          className={`w-full bg-transparent py-1 text-right outline-none placeholder-white/30 ${!isFixed ? 'text-white font-bold' : 'text-white/50'}`}
                           placeholder="0"
                         />
-                        <span className="text-xs font-bold text-white ml-1">%</span>
+                        <span className={`text-xs ml-1 ${!isFixed ? 'text-white font-bold' : 'text-white/40'}`}>%</span>
                       </div>
                     </div>
                   );
@@ -321,12 +362,14 @@ export function WalletView() {
             ) : (
               <div className="flex flex-col gap-2">
                 {jars.map((jar) => {
-                  const pct = budgetRules[jar.id] || 0;
-                  if (pct <= 0) return null;
+                  const rule = budgetRules[jar.id];
+                  if (!rule || rule.value <= 0) return null;
                   return (
                     <div key={jar.id} className="flex items-center justify-between text-sm">
                       <span className="capitalize font-medium text-white/70">{jar.name}</span>
-                      <span className="font-bold">{pct}%</span>
+                      <span className="font-bold">
+                        {rule.type === 'fixed' ? `${rule.value} KES` : `${rule.value}%`}
+                      </span>
                     </div>
                   );
                 })}
