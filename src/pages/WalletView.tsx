@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Wallet, ArrowUpRight, ArrowDownLeft, Plus, PiggyBank, Heart, TrendingUp, HandCoins, Trash2, Edit2, AlertCircle, Minus } from 'lucide-react';
+import { Wallet, ArrowUpRight, ArrowDownLeft, Plus, PiggyBank, Heart, TrendingUp, HandCoins, Trash2, Edit2, AlertCircle, Minus, X, Gem } from 'lucide-react';
 import { useAppStore } from '../state/store';
 import { useWalletStore } from '../state/walletStore';
 import { useWealthJarStore } from '../state/wealthJarStore';
@@ -34,7 +34,9 @@ export function WalletView() {
   // Inline Inputs
   const [depositAmount, setDepositAmount] = useState('');
   const [jarInputs, setJarInputs] = useState<Record<string, string>>({});
-  const [debtInputs, setDebtInputs] = useState<Record<string, string>>({});
+  
+  // Withdrawal Options Prompt
+  const [activeWithdrawal, setActiveWithdrawal] = useState<{ jar: WealthJar, amount: number } | null>(null);
 
   // Initialize default jars if none exist
   useEffect(() => {
@@ -173,19 +175,39 @@ export function WalletView() {
     if (amount > jar.balance) return alert(`Insufficient funds in ${jar.name}!`);
 
     setJarInputs({ ...jarInputs, [jar.id]: '' });
+    setActiveWithdrawal({ jar, amount });
+  };
 
-    setBalance(balance + amount);
-    updateJarBalance(jar.id, jar.balance - amount);
-    
-    addTransaction({
-      id: Date.now().toString(),
-      wallet_id: 'local',
-      jar_id: jar.id,
-      amount: amount,
-      type: 'credit',
-      description: `Withdrawn from ${jar.name}`,
-      created_at: new Date().toISOString()
-    });
+  const confirmWithdrawal = (action: 'transfer' | 'spend') => {
+    if (!activeWithdrawal) return;
+    const { jar, amount } = activeWithdrawal;
+
+    if (action === 'transfer') {
+      setBalance(balance + amount);
+      updateJarBalance(jar.id, jar.balance - amount);
+      addTransaction({
+        id: Date.now().toString(),
+        wallet_id: 'local',
+        jar_id: jar.id,
+        amount: amount,
+        type: 'credit',
+        description: `Transferred from ${jar.name} to Wallet`,
+        created_at: new Date().toISOString()
+      });
+    } else if (action === 'spend') {
+      updateJarBalance(jar.id, jar.balance - amount);
+      addTransaction({
+        id: Date.now().toString(),
+        wallet_id: 'local',
+        jar_id: jar.id,
+        amount: amount,
+        type: 'debit',
+        description: `Spent from ${jar.name}`,
+        created_at: new Date().toISOString()
+      });
+    }
+
+    setActiveWithdrawal(null);
   };
 
   const handleAddJar = () => {
@@ -322,8 +344,12 @@ export function WalletView() {
                   const rule = tempRules[jar.id] || { jarId: jar.id, type: 'percentage', value: 0 };
                   const isFixed = rule.type === 'fixed';
                   
-                  const cashVal = isFixed ? rule.value : (balance * rule.value) / 100;
-                  const pctVal = isFixed ? (balance > 0 ? (rule.value / balance) * 100 : 0) : rule.value;
+                  // Calculate dynamic values based on balance + deposit preview (or 1000 KES baseline if empty)
+                  const totalPreviewBalance = balance + (parseFloat(depositAmount) || 0);
+                  const refBalance = totalPreviewBalance > 0 ? totalPreviewBalance : 1000;
+                  
+                  const cashVal = isFixed ? rule.value : (refBalance * rule.value) / 100;
+                  const pctVal = isFixed ? (rule.value / refBalance) * 100 : rule.value;
                   
                   return (
                     <div key={jar.id} className="flex items-center justify-between text-sm gap-2">
@@ -359,7 +385,13 @@ export function WalletView() {
                     </div>
                   );
                 })}
-                <button onClick={handleSaveBudgetRules} className="mt-2 bg-white text-[#2D3911] text-xs font-bold py-2 rounded uppercase tracking-widest hover:bg-stone-200 cursor-pointer">
+                <button 
+                  onClick={() => setIsAddingJar(true)}
+                  className="w-full mt-2 py-2 border border-dashed border-white/30 rounded-xl text-white/70 hover:text-white hover:border-white/60 hover:bg-white/5 transition-all text-sm font-bold flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <Plus size={16} /> Add Custom Rule
+                </button>
+                <button onClick={handleSaveBudgetRules} className="w-full mt-2 bg-[#D4A373] text-white py-2 rounded-xl text-sm font-bold hover:bg-[#b58b62] cursor-pointer">
                   Save Rules
                 </button>
               </div>
@@ -495,8 +527,60 @@ export function WalletView() {
         </div>
       </div>
 
+      {/* WITHDRAWAL OPTIONS MODAL */}
+      <AnimatePresence>
+        {activeWithdrawal && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white dark:bg-stone-900 rounded-[32px] p-8 max-w-md w-full shadow-2xl border border-stone-200 dark:border-stone-800"
+            >
+              <div className="flex justify-between items-start mb-6">
+                <div>
+                  <h3 className="text-2xl font-black text-[#2D3911] dark:text-[#D4A373] brand">Withdraw Funds</h3>
+                  <p className="text-stone-500 font-medium mt-1">
+                    How do you want to process this {activeWithdrawal.amount.toLocaleString()} KES from {activeWithdrawal.jar.name}?
+                  </p>
+                </div>
+                <button onClick={() => setActiveWithdrawal(null)} className="text-stone-400 hover:text-stone-600 bg-stone-100 p-2 rounded-full cursor-pointer"><X size={20} /></button>
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <button 
+                  onClick={() => confirmWithdrawal('transfer')}
+                  className="flex items-center gap-4 p-4 rounded-2xl border-2 border-[#6B8E23]/20 hover:border-[#6B8E23] hover:bg-[#6B8E23]/5 transition-all text-left cursor-pointer group"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-[#6B8E23]/10 flex items-center justify-center text-[#6B8E23] group-hover:scale-110 transition-transform">
+                    <Wallet size={24} />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-stone-800 dark:text-stone-200">Transfer to Wallet</h4>
+                    <p className="text-xs text-stone-500 mt-1">Move the funds back to your Main Wallet balance to be re-allocated.</p>
+                  </div>
+                </button>
+
+                <button 
+                  onClick={() => confirmWithdrawal('spend')}
+                  className="flex items-center gap-4 p-4 rounded-2xl border-2 border-amber-500/20 hover:border-amber-500 hover:bg-amber-500/5 transition-all text-left cursor-pointer group"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform">
+                    <Minus size={24} />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-stone-800 dark:text-stone-200">Record as Spent</h4>
+                    <p className="text-xs text-stone-500 mt-1">Deduct the money entirely. It will leave your digital wallet system.</p>
+                  </div>
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* DEBT MANAGEMENT & TRANSACTIONS GRID */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
         
         {/* DEBT MANAGEMENT */}
         <div className="flex flex-col bg-white rounded-3xl p-6 shadow-sm border border-stone-100">
