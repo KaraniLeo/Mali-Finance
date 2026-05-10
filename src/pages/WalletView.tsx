@@ -18,7 +18,7 @@ export function WalletView() {
   const [newJar, setNewJar] = useState({ name: '', category: 'save' });
 
   const [isEditingBudget, setIsEditingBudget] = useState(false);
-  const [tempRules, setTempRules] = useState({ ...budgetRules });
+  const [tempRules, setTempRules] = useState<Record<string, number>>({});
 
   const [isAddingDebt, setIsAddingDebt] = useState(false);
   const [newDebt, setNewDebt] = useState({ name: '', total_amount: '' });
@@ -50,11 +50,11 @@ export function WalletView() {
     let remainingAmount = amount;
     
     // Process allocations
-    Object.entries(budgetRules).forEach(([category, percentage]) => {
+    Object.entries(budgetRules).forEach(([jarId, percentage]) => {
       if (percentage <= 0) return;
       
       const allocation = (amount * percentage) / 100;
-      const jar = jars.find(j => j.category === category);
+      const jar = jars.find(j => j.id === jarId);
       
       if (jar) {
         updateJarBalance(jar.id, jar.balance + allocation);
@@ -89,11 +89,17 @@ export function WalletView() {
   };
 
   const handleSaveBudgetRules = () => {
-    const total = Object.values(tempRules).reduce((a, b) => a + (Number(b) || 0), 0);
+    const total = jars.reduce((acc, jar) => acc + (tempRules[jar.id] || 0), 0);
     if (total !== 100) {
       return alert(`Total allocation must equal 100%. Currently at ${total}%.`);
     }
-    setBudgetRules(tempRules);
+    
+    const newRules: Record<string, number> = {};
+    jars.forEach(jar => {
+      newRules[jar.id] = tempRules[jar.id] || 0;
+    });
+    
+    setBudgetRules(newRules);
     setIsEditingBudget(false);
   };
 
@@ -258,40 +264,75 @@ export function WalletView() {
           <div className="bg-white/10 rounded-2xl p-4 mt-4 border border-white/20">
             <div className="flex justify-between items-center mb-4">
               <h4 className="text-sm font-bold uppercase tracking-widest text-white/80">Smart Budget Rules</h4>
-              <button onClick={() => setIsEditingBudget(!isEditingBudget)} className="text-white hover:text-[#D4A373] cursor-pointer">
+              <button 
+                onClick={() => {
+                  setTempRules({ ...budgetRules });
+                  setIsEditingBudget(!isEditingBudget);
+                }} 
+                className="text-white hover:text-[#D4A373] cursor-pointer"
+              >
                 <Edit2 size={16} />
               </button>
             </div>
             
             {isEditingBudget ? (
               <div className="flex flex-col gap-3">
-                {Object.keys(budgetRules).map((cat) => (
-                  <div key={cat} className="flex items-center justify-between text-sm">
-                    <span className="capitalize font-bold w-16">{cat}</span>
-                    <input 
-                      type="number" 
-                      value={tempRules[cat]} 
-                      onChange={(e) => setTempRules({...tempRules, [cat]: parseInt(e.target.value) || 0})}
-                      className="w-16 bg-white/20 px-2 py-1 rounded text-center outline-none"
-                    />
-                    <span>%</span>
-                  </div>
-                ))}
+                {jars.map((jar) => {
+                  const pct = tempRules[jar.id] || 0;
+                  const refBalance = balance > 0 ? balance : 1000;
+                  const cashVal = (refBalance * pct) / 100;
+                  
+                  return (
+                    <div key={jar.id} className="flex items-center justify-between text-sm gap-2">
+                      <span className="capitalize font-bold truncate pr-2 w-20">{jar.name}</span>
+                      
+                      <div className="flex items-center bg-white/10 rounded px-2 w-24">
+                        <input 
+                          type="number" 
+                          value={cashVal === 0 ? '' : cashVal} 
+                          onChange={(e) => {
+                            const val = parseFloat(e.target.value) || 0;
+                            const newPct = Math.round((val / refBalance) * 100);
+                            setTempRules({...tempRules, [jar.id]: newPct});
+                          }}
+                          className="w-full bg-transparent py-1 text-right outline-none text-white placeholder-white/30"
+                          placeholder="0"
+                        />
+                        <span className="text-[10px] text-white/50 ml-1">KES</span>
+                      </div>
+
+                      <div className="flex items-center bg-white/20 rounded px-2 w-16">
+                        <input 
+                          type="number" 
+                          value={pct === 0 ? '' : pct} 
+                          onChange={(e) => setTempRules({...tempRules, [jar.id]: parseInt(e.target.value) || 0})}
+                          className="w-full bg-transparent py-1 text-right outline-none text-white placeholder-white/30 font-bold"
+                          placeholder="0"
+                        />
+                        <span className="text-xs font-bold text-white ml-1">%</span>
+                      </div>
+                    </div>
+                  );
+                })}
                 <button onClick={handleSaveBudgetRules} className="mt-2 bg-white text-[#2D3911] text-xs font-bold py-2 rounded uppercase tracking-widest hover:bg-stone-200 cursor-pointer">
                   Save Rules
                 </button>
               </div>
             ) : (
               <div className="flex flex-col gap-2">
-                {Object.entries(budgetRules).map(([cat, pct]) => (
-                  <div key={cat} className="flex items-center justify-between text-sm">
-                    <span className="capitalize font-medium text-white/70">{cat}</span>
-                    <span className="font-bold">{pct}%</span>
-                  </div>
-                ))}
+                {jars.map((jar) => {
+                  const pct = budgetRules[jar.id] || 0;
+                  if (pct <= 0) return null;
+                  return (
+                    <div key={jar.id} className="flex items-center justify-between text-sm">
+                      <span className="capitalize font-medium text-white/70">{jar.name}</span>
+                      <span className="font-bold">{pct}%</span>
+                    </div>
+                  );
+                })}
               </div>
             )}
-            <p className="text-[10px] text-white/50 mt-4 leading-tight">Cash ins are automatically routed to your jars based on these rules.</p>
+            <p className="text-[10px] text-white/50 mt-4 leading-tight">Cash ins are automatically routed to your jars based on these rules. KES preview based on Wallet Balance.</p>
           </div>
         </div>
 

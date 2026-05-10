@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   Home, 
   BookOpen, 
@@ -21,10 +22,25 @@ interface SidebarProps {
 
 export function Sidebar({ user, activeView, onViewChange, mobileMenuOpen, onLogout }: SidebarProps) {
   return (
-    <nav className={`w-64 flex-shrink-0 bg-stone-100 dark:bg-stone-900 border-r border-stone-200 dark:border-stone-800 flex flex-col p-6 absolute lg:relative inset-y-0 left-0 z-50 transition-transform lg:translate-x-0 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-      <div className="hidden lg:flex items-center gap-2 mb-10">
-        <div className="w-10 h-10 bg-[#6B8E23] rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg ring-4 ring-[#6B8E23]/20">M</div>
-        <span className="text-2xl font-bold tracking-tight brand text-[#2D3911] dark:text-[#A7C957]">MALI</span>
+    <>
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => onViewChange(activeView)} // Clicking backdrop closes menu
+            className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-sm"
+          />
+        )}
+      </AnimatePresence>
+
+      <nav className={`w-64 flex-shrink-0 bg-stone-100 dark:bg-stone-900 border-r border-stone-200 dark:border-stone-800 flex flex-col p-6 fixed lg:relative inset-y-0 left-0 z-50 transition-transform lg:translate-x-0 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <div className="flex items-center justify-between mb-10">
+        <div className="flex items-center gap-2">
+          <div className="w-10 h-10 bg-[#6B8E23] rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg ring-4 ring-[#6B8E23]/20">M</div>
+          <span className="text-2xl font-bold tracking-tight brand text-[#2D3911] dark:text-[#A7C957]">MALI</span>
+        </div>
       </div>
 
       <div className="flex flex-col gap-6">
@@ -103,6 +119,7 @@ export function Sidebar({ user, activeView, onViewChange, mobileMenuOpen, onLogo
         </button>
       </div>
     </nav>
+    </>
   );
 }
 

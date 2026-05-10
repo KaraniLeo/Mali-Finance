@@ -50,7 +50,7 @@ export const useAppStore = create<AppState>()(
       tasks: [],
       completedLessons: [],
       wallet: null,
-      budgetRules: { spend: 50, save: 20, invest: 20, give: 10 },
+      budgetRules: { 'j-spend': 50, 'j-save': 20, 'j-invest': 20, 'j-give': 10 },
       jars: [],
       transactions: [],
       debts: [],
