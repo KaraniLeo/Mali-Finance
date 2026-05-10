@@ -23,6 +23,7 @@ import { ModuleSyllabusView } from './pages/ModuleSyllabusView';
 import { QuizView } from './pages/QuizView';
 import { ParentDashboard } from './pages/ParentDashboard';
 import { GamesView } from './pages/GamesView';
+import { useSidebarStore } from './state/sidebarStore';
 
 export default function App() {
   const { 
@@ -35,7 +36,7 @@ export default function App() {
     tasks, setTasks 
   } = useAppStore();
 
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { isOpenMobile, setMobileOpen } = useSidebarStore();
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -154,7 +155,7 @@ export default function App() {
   return (
     <div className="flex flex-col lg:flex-row h-screen bg-stone-50 dark:bg-stone-900 text-stone-800 dark:text-stone-100 antialiased overflow-hidden">
       <div className="lg:hidden flex items-center justify-between p-4 bg-white dark:bg-stone-950 border-b border-stone-100 dark:border-stone-800">
-        <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
+        <button onClick={() => setMobileOpen(!isOpenMobile)} className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
           <div className="w-8 h-8 bg-[#6B8E23] rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">M</div>
           <span className="text-xl font-bold tracking-tight brand text-[#2D3911] dark:text-[#A7C957]">MALI</span>
         </button>
@@ -168,9 +169,9 @@ export default function App() {
           setActiveView(v);
           setSelectedModule(null);
           setSelectedSubtopic(null);
-          setMobileMenuOpen(false);
+          setMobileOpen(false);
         }}
-        mobileMenuOpen={mobileMenuOpen}
+        mobileMenuOpen={isOpenMobile}
         onLogout={handleLogout}
       />
 
