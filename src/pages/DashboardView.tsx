@@ -25,7 +25,7 @@ export function DashboardView({ user, modules, tasks, setTasks, chatHistory, onS
   const activeModule = modules.find(m => m.progress < 100 && !m.locked) || modules[0];
   
   const { completeTask, createTransaction } = useFinanceAPI();
-  const { jars } = useAppStore();
+  const { jars, balance } = useAppStore();
 
   const earnProgress = tasks.length > 0 ? (tasks.filter(t => t.completed).length / tasks.length) * 100 : 0;
   
