@@ -17,10 +17,19 @@ serve(async (req: Request) => {
   try {
     const { prompt, context, history, stream } = await req.json();
 
-    const apiKey = Deno.env.get('OPENAI_API_KEY');
+    const geminiKey = Deno.env.get('GEMINI_API_KEY');
+    const openaiKey = Deno.env.get('OPENAI_API_KEY');
+    const apiKey = geminiKey || openaiKey;
     if (!apiKey) {
-      throw new Error('OPENAI_API_KEY is not set');
+      throw new Error('Neither GEMINI_API_KEY nor OPENAI_API_KEY is set');
     }
+
+    const isGemini = !!geminiKey;
+    const apiUrl = isGemini 
+      ? 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions'
+      : 'https://api.openai.com/v1/chat/completions';
+      
+    const modelName = isGemini ? 'gemini-1.5-flash' : 'gpt-4o-mini';
 
     // Set up Supabase Client to check payment status and count messages
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
@@ -134,14 +143,14 @@ ${JSON.stringify(context, null, 2)}
       content: prompt
     });
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: modelName,
         messages: messages,
         temperature: 0.7,
         max_tokens: 1500,
