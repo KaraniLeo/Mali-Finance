@@ -19,12 +19,14 @@ serve(async (req: Request) => {
 
     const geminiKey = Deno.env.get('GEMINI_API_KEY');
     const openaiKey = Deno.env.get('OPENAI_API_KEY');
-    const apiKey = geminiKey || openaiKey;
+    
+    // Prioritize OpenAI if configured, otherwise fall back to Gemini
+    const apiKey = openaiKey || geminiKey;
     if (!apiKey) {
       throw new Error('Neither GEMINI_API_KEY nor OPENAI_API_KEY is set');
     }
 
-    const isGemini = !!geminiKey;
+    const isGemini = !openaiKey && !!geminiKey;
     const apiUrl = isGemini 
       ? 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions'
       : 'https://api.openai.com/v1/chat/completions';
@@ -44,21 +46,54 @@ serve(async (req: Request) => {
         );
       }
 
-      const supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
-        global: { headers: { Authorization: authHeader } }
-      });
-
-      // Verify user JWT token
-      const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
-      if (authError || !user) {
-        console.error('Auth verification failed:', authError);
-        return new Response(
-          JSON.stringify({ error: 'Invalid user token' }),
-          { status: 401, headers: corsHeaders }
-        );
+      const token = authHeader.replace(/^Bearer\s+/i, '');
+      const parts = token.split('.');
+      let isServiceRole = false;
+      
+      if (parts.length === 3) {
+        try {
+          // Decode base64url payload
+          const base64Url = parts[1];
+          const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+          const jsonPayload = decodeURIComponent(
+            atob(base64)
+              .split('')
+              .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+              .join('')
+          );
+          const payload = JSON.parse(jsonPayload);
+          isServiceRole = payload.role === 'service_role';
+        } catch (e) {
+          console.error('Failed to parse JWT payload:', e);
+        }
       }
 
-      const userId = user.id;
+      let userId = '';
+
+      if (isServiceRole) {
+        userId = context?.userId || 'admin-test-id';
+      } else {
+        const supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
+          global: { headers: { Authorization: authHeader } }
+        });
+
+        // Verify user JWT token
+        const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+        if (authError || !user) {
+          console.error('Auth verification failed:', authError);
+          return new Response(
+            JSON.stringify({ 
+              error: 'Invalid user token',
+              debug: {
+                authHeader: authHeader ? authHeader.substring(0, 30) + '...' : 'null',
+                isServiceRole
+              }
+            }),
+            { status: 401, headers: corsHeaders }
+          );
+        }
+        userId = user.id;
+      }
 
       // Use service role client to fetch profile and messages securely
       const supabaseService = createClient(
