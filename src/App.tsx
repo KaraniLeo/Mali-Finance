@@ -144,6 +144,7 @@ export default function App() {
         spendingLimit: Number(data.spending_limit || 0),
         achievements: data.achievements || [],
         chatbotPaid: !!data.chatbot_paid,
+        chatCount: Number(data.chat_count || 0),
         isAdmin
       };
 
@@ -212,9 +213,8 @@ export default function App() {
   const handleSendMessage = async (text: string) => {
     if (!user) return;
 
-    // Client-side quick check: count user messages in local chat history
-    const sentMessagesCount = chatHistory.filter(m => m.role === 'user').length;
-    if (sentMessagesCount >= 5 && !user.chatbotPaid) {
+    // Client-side quick check: use persistent chat count from profile
+    if (user.chatCount !== undefined && user.chatCount >= 5 && !user.chatbotPaid) {
       setIsPaymentModalOpen(true);
       setChatHistory([...chatHistory, 
         { role: 'user' as const, text },
@@ -243,6 +243,8 @@ export default function App() {
         setChatHistory([...newHistory, { role: 'bot' as const, text: "🔒 You have exhausted your 5 free chatbot requests. Please pay KES 300 to continue chatting with MaliBot." }]);
       } else {
         setChatHistory([...newHistory, { role: 'bot' as const, text: botResponse.text }]);
+        // Update local chatCount state so the UI blocks further inputs immediately
+        setUser(prev => prev ? { ...prev, chatCount: (prev.chatCount || 0) + 1 } : null);
         track('WEALTH_GUIDE_CHAT');
       }
     } catch (e) {

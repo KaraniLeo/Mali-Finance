@@ -57,10 +57,10 @@ serve(async (req: Request) => {
         Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || supabaseAnonKey
       );
 
-      // Check payment status
+      // Check payment status and chat count
       const { data: profile, error: profileError } = await supabaseService
         .from('profiles')
-        .select('chatbot_paid')
+        .select('chatbot_paid, chat_count')
         .eq('id', userId)
         .single();
 
@@ -69,44 +69,28 @@ serve(async (req: Request) => {
       }
 
       const isPaid = profile?.chatbot_paid === true;
+      const chatCount = Number(profile?.chat_count || 0);
 
       if (!isPaid) {
-        // Count user's sent messages (role = 'user')
-        const { data: conversations, error: convError } = await supabaseService
-          .from('conversations')
-          .select('id')
-          .eq('user_id', userId);
-
-        if (convError) {
-          console.error('Failed to fetch user conversations:', convError);
-        }
-
-        const conversationIds = conversations?.map((c: any) => c.id) || [];
-
-        let userMessageCount = 0;
-        if (conversationIds.length > 0) {
-          const { count, error: countError } = await supabaseService
-            .from('messages')
-            .select('id', { count: 'exact', head: true })
-            .in('conversation_id', conversationIds)
-            .eq('role', 'user');
-
-          if (countError) {
-            console.error('Failed to count user messages:', countError);
-          } else {
-            userMessageCount = count || 0;
-          }
-        }
-
-        if (userMessageCount >= 5) {
+        if (chatCount >= 5) {
           return new Response(
             JSON.stringify({
               error: 'payment_required',
               message: 'You have exhausted your 5 free chatbot requests. Please pay KES 300 to unlock unlimited access.',
-              count: userMessageCount
+              count: chatCount
             }),
             { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           );
+        }
+
+        // Increment chat_count in profiles
+        const { error: updateError } = await supabaseService
+          .from('profiles')
+          .update({ chat_count: chatCount + 1 })
+          .eq('id', userId);
+
+        if (updateError) {
+          console.error('Failed to increment user chat_count:', updateError);
         }
       }
     }
@@ -160,7 +144,7 @@ ${JSON.stringify(context, null, 2)}
         model: 'gpt-4o-mini',
         messages: messages,
         temperature: 0.7,
-        max_tokens: 500,
+        max_tokens: 1500,
         ...(stream ? { stream: true } : {})
       })
     });

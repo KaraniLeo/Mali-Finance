@@ -43,6 +43,7 @@ export interface User {
   totalLessonsCompleted?: number;
   isAdmin?: boolean;
   chatbotPaid?: boolean;
+  chatCount?: number;
   created_at?: string;
 }
 

@@ -104,37 +104,6 @@ export function ChatView({ user, onPaymentSuccess }: ChatViewProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
-  const [userMessagesCount, setUserMessagesCount] = useState(0);
-
-  const fetchMessageCount = async () => {
-    if (!user || user.chatbotPaid) return;
-    try {
-      const { data: convs } = await supabase
-        .from('conversations')
-        .select('id')
-        .eq('user_id', user.id);
-      
-      if (!convs || convs.length === 0) {
-        setUserMessagesCount(0);
-        return;
-      }
-      
-      const convIds = convs.map(c => c.id);
-      const { count } = await supabase
-        .from('messages')
-        .select('id', { count: 'exact', head: true })
-        .in('conversation_id', convIds)
-        .eq('role', 'user');
-        
-      setUserMessagesCount(count || 0);
-    } catch (err) {
-      console.error("Error fetching message count:", err);
-    }
-  };
-
-  useEffect(() => {
-    fetchMessageCount();
-  }, [user?.id, activeMessages.length, user?.chatbotPaid]);
 
   useEffect(() => {
     loadConversations(user.id);
@@ -234,7 +203,7 @@ export function ChatView({ user, onPaymentSuccess }: ChatViewProps) {
       return;
     }
 
-    if (!user.chatbotPaid && userMessagesCount >= 5) {
+    if (!user.chatbotPaid && user.chatCount !== undefined && user.chatCount >= 5) {
       setIsPaymentModalOpen(true);
       setErrorMessage('You have exhausted your 5 free chatbot requests. Please pay KES 300 to continue chatting.');
       return;
@@ -266,6 +235,7 @@ export function ChatView({ user, onPaymentSuccess }: ChatViewProps) {
         setErrorMessage('Regenerated response received but could not be saved.');
       } else {
         showTemporaryStatus('Response regenerated successfully.');
+        if (onPaymentSuccess) onPaymentSuccess();
       }
     } catch (error: any) {
       setIsThinking(false);
@@ -301,7 +271,7 @@ export function ChatView({ user, onPaymentSuccess }: ChatViewProps) {
   const handleSendMessage = async () => {
     if (!draft.trim()) return;
 
-    if (!user.chatbotPaid && userMessagesCount >= 5) {
+    if (!user.chatbotPaid && user.chatCount !== undefined && user.chatCount >= 5) {
       setIsPaymentModalOpen(true);
       setErrorMessage('You have exhausted your 5 free chatbot requests. Please pay KES 300 to continue chatting.');
       return;
@@ -360,6 +330,7 @@ export function ChatView({ user, onPaymentSuccess }: ChatViewProps) {
       if (!saved) {
         setErrorMessage('Response received but could not be saved.');
       }
+      if (onPaymentSuccess) onPaymentSuccess();
 
       await supabase.from('chat_metrics').insert([
         {
@@ -594,7 +565,7 @@ export function ChatView({ user, onPaymentSuccess }: ChatViewProps) {
                 <span>{activeMessages.length} messages</span>
               </div>
               {(() => {
-                const isLocked = !user.chatbotPaid && userMessagesCount >= 5;
+                const isLocked = !user.chatbotPaid && user.chatCount !== undefined && user.chatCount >= 5;
                 return (
                   <div className="space-y-3 w-full">
                     {isLocked && (
@@ -715,7 +686,6 @@ export function ChatView({ user, onPaymentSuccess }: ChatViewProps) {
         onClose={() => setIsPaymentModalOpen(false)}
         userId={user.id}
         onPaymentSuccess={() => {
-          setUserMessagesCount(0);
           if (onPaymentSuccess) {
             onPaymentSuccess();
           }
