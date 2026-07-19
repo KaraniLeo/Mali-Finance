@@ -19,9 +19,11 @@ import { User, ChatMessage, ChatConversation } from '../types';
 import { useChatStore } from '../state/chatStore';
 import { streamMaliResponse, MaliResponse } from '../lib/openai';
 import { supabase } from '../lib/supabase';
+import { PaymentModal } from '../components/PaymentModal';
 
 interface ChatViewProps {
   user: User;
+  onPaymentSuccess?: () => void;
 }
 
 const groupConversationsByDate = (conversations: ChatConversation[]) => {
@@ -73,7 +75,7 @@ const formatTimestamp = (value: string) => {
   return date.toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
 };
 
-export function ChatView({ user }: ChatViewProps) {
+export function ChatView({ user, onPaymentSuccess }: ChatViewProps) {
   const {
     conversations,
     activeConversationId,
@@ -100,6 +102,39 @@ export function ChatView({ user }: ChatViewProps) {
   const [titleDraft, setTitleDraft] = useState('');
   const [clearModalOpen, setClearModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [userMessagesCount, setUserMessagesCount] = useState(0);
+
+  const fetchMessageCount = async () => {
+    if (!user || user.chatbotPaid) return;
+    try {
+      const { data: convs } = await supabase
+        .from('conversations')
+        .select('id')
+        .eq('user_id', user.id);
+      
+      if (!convs || convs.length === 0) {
+        setUserMessagesCount(0);
+        return;
+      }
+      
+      const convIds = convs.map(c => c.id);
+      const { count } = await supabase
+        .from('messages')
+        .select('id', { count: 'exact', head: true })
+        .in('conversation_id', convIds)
+        .eq('role', 'user');
+        
+      setUserMessagesCount(count || 0);
+    } catch (err) {
+      console.error("Error fetching message count:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchMessageCount();
+  }, [user?.id, activeMessages.length, user?.chatbotPaid]);
 
   useEffect(() => {
     loadConversations(user.id);
@@ -199,6 +234,12 @@ export function ChatView({ user }: ChatViewProps) {
       return;
     }
 
+    if (!user.chatbotPaid && userMessagesCount >= 5) {
+      setIsPaymentModalOpen(true);
+      setErrorMessage('You have exhausted your 5 free chatbot requests. Please pay KES 300 to continue chatting.');
+      return;
+    }
+
     setErrorMessage(null);
     setStatusMessage('Regenerating response...');
     setIsThinking(true);
@@ -228,7 +269,12 @@ export function ChatView({ user }: ChatViewProps) {
       }
     } catch (error: any) {
       setIsThinking(false);
-      setErrorMessage(error?.message || 'Failed to regenerate response.');
+      if (error?.message?.includes('402') || error?.message?.includes('payment_required')) {
+        setIsPaymentModalOpen(true);
+        setErrorMessage('You have exhausted your 5 free chatbot requests. Please pay KES 300 to continue chatting.');
+      } else {
+        setErrorMessage(error?.message || 'Failed to regenerate response.');
+      }
     }
   };
 
@@ -254,6 +300,13 @@ export function ChatView({ user }: ChatViewProps) {
 
   const handleSendMessage = async () => {
     if (!draft.trim()) return;
+
+    if (!user.chatbotPaid && userMessagesCount >= 5) {
+      setIsPaymentModalOpen(true);
+      setErrorMessage('You have exhausted your 5 free chatbot requests. Please pay KES 300 to continue chatting.');
+      return;
+    }
+
     setErrorMessage(null);
     const userPrompt = draft.trim();
     setDraft('');
@@ -323,7 +376,12 @@ export function ChatView({ user }: ChatViewProps) {
       ]);
     } catch (error: any) {
       setIsThinking(false);
-      setErrorMessage(error?.message || 'Failed to generate a response.');
+      if (error?.message?.includes('402') || error?.message?.includes('payment_required')) {
+        setIsPaymentModalOpen(true);
+        setErrorMessage('You have exhausted your 5 free chatbot requests. Please pay KES 300 to continue chatting.');
+      } else {
+        setErrorMessage(error?.message || 'Failed to generate a response.');
+      }
     }
   };
 
@@ -535,28 +593,57 @@ export function ChatView({ user }: ChatViewProps) {
                 <span>Ask Mali anything about money, savings, or life goals.</span>
                 <span>{activeMessages.length} messages</span>
               </div>
-              <div className="relative">
-                <textarea
-                  value={draft}
-                  onChange={(e) => setDraft(e.target.value)}
-                  rows={2}
-                  placeholder="Type your question here..."
-                  className="min-h-[72px] w-full resize-none rounded-3xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 px-4 py-4 text-sm text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-4 focus:ring-brand-accent/15"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSendMessage();
-                    }
-                  }}
-                />
-                <button
-                  onClick={handleSendMessage}
-                  disabled={isThinking || !draft.trim()}
-                  className="absolute right-4 bottom-4 inline-flex h-11 w-11 items-center justify-center rounded-full bg-brand-accent text-white shadow-lg hover:bg-brand-accent/90 transition-all"
-                >
-                  <Send size={18} />
-                </button>
-              </div>
+              {(() => {
+                const isLocked = !user.chatbotPaid && userMessagesCount >= 5;
+                return (
+                  <div className="space-y-3 w-full">
+                    {isLocked && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="p-4 rounded-3xl bg-gradient-to-r from-amber-500/10 via-brand-accent/10 to-amber-500/10 border border-amber-500/25 flex flex-col sm:flex-row items-center justify-between gap-4"
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-xl">🔒</span>
+                          <div className="text-left">
+                            <p className="text-sm font-bold text-stone-900 dark:text-stone-100">MaliBot Locked (5/5 Free Chats Used)</p>
+                            <p className="text-xs text-stone-500 dark:text-stone-400">Unlock unlimited lifetime financial mentoring for just KES 300.</p>
+                          </div>
+                        </div>
+                        <button 
+                          onClick={() => setIsPaymentModalOpen(true)}
+                          className="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-white rounded-xl text-xs font-black shadow-md hover:scale-105 transition-all cursor-pointer whitespace-nowrap"
+                        >
+                          Unlock Unlimited Access ✨
+                        </button>
+                      </motion.div>
+                    )}
+                    <div className="relative">
+                      <textarea
+                        value={draft}
+                        onChange={(e) => setDraft(e.target.value)}
+                        rows={2}
+                        disabled={isLocked}
+                        placeholder={isLocked ? "🔒 Chat limit reached. Please pay KES 300 to unlock unlimited access." : "Type your question here..."}
+                        className={`min-h-[72px] w-full resize-none rounded-3xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 px-4 py-4 text-sm text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-4 focus:ring-brand-accent/15 ${isLocked ? 'opacity-60 cursor-not-allowed bg-stone-50 dark:bg-stone-950/40' : ''}`}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            if (!isLocked) handleSendMessage();
+                          }
+                        }}
+                      />
+                      <button
+                        onClick={handleSendMessage}
+                        disabled={isThinking || !draft.trim() || isLocked}
+                        className="absolute right-4 bottom-4 inline-flex h-11 w-11 items-center justify-center rounded-full bg-brand-accent text-white shadow-lg hover:bg-brand-accent/90 transition-all disabled:opacity-50"
+                      >
+                        <Send size={18} />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })()}
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex flex-wrap items-center gap-2">
                   <button
@@ -622,6 +709,18 @@ export function ChatView({ user }: ChatViewProps) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <PaymentModal
+        isOpen={isPaymentModalOpen}
+        onClose={() => setIsPaymentModalOpen(false)}
+        userId={user.id}
+        onPaymentSuccess={() => {
+          setUserMessagesCount(0);
+          if (onPaymentSuccess) {
+            onPaymentSuccess();
+          }
+        }}
+      />
     </div>
   );
 }

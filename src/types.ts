@@ -42,6 +42,7 @@ export interface User {
   achievements?: string[];
   totalLessonsCompleted?: number;
   isAdmin?: boolean;
+  chatbotPaid?: boolean;
   created_at?: string;
 }
 

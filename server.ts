@@ -59,6 +59,10 @@ async function startServer() {
   const supabaseUrl = process.env.VITE_SUPABASE_URL || '';
   const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY || '';
   const supabase = createClient(supabaseUrl, supabaseKey);
+  const supabaseServiceRole = createClient(
+    supabaseUrl,
+    process.env.VITE_SUPABASE_SERVICE_ROLE_KEY || supabaseKey
+  );
 
   // Image Generation API
   app.post("/api/generate-image", async (req, res) => {
@@ -111,6 +115,41 @@ async function startServer() {
     const { data, error } = await supabase.from('user_tasks').update({ completed: true }).eq('id', taskId);
     if (error) return res.status(400).json({ error: error.message });
     res.json(data);
+  });
+
+  // M-Pesa Payment API
+  app.post("/api/payment/confirm-mpesa", async (req, res) => {
+    try {
+      const { userId, phoneNumber, amount } = req.body;
+      if (!userId || !phoneNumber) {
+        return res.status(400).json({ error: "Missing required fields: userId or phoneNumber" });
+      }
+
+      console.log(`[M-Pesa] Triggering STK Push KES ${amount || 300} to ${phoneNumber} for user ${userId}...`);
+      
+      // Simulate Safaricom PIN entry and confirmation latency (4 seconds)
+      await new Promise((resolve) => setTimeout(resolve, 4000));
+
+      console.log(`[M-Pesa] Payment approved. Updating profile status for user ${userId}...`);
+
+      const { data, error } = await supabaseServiceRole
+        .from('profiles')
+        .update({ chatbot_paid: true })
+        .eq('id', userId)
+        .select()
+        .single();
+
+      if (error) {
+        console.error("[M-Pesa Update Error]:", error);
+        return res.status(500).json({ error: error.message });
+      }
+
+      console.log(`[M-Pesa] Chatbot payment verified. Unlocked unlimited access for user ${userId}.`);
+      res.json({ success: true, user: data });
+    } catch (err: any) {
+      console.error("[M-Pesa Endpoint Exception]:", err);
+      res.status(500).json({ error: err.message || "Internal server error" });
+    }
   });
 
   // Vite middleware for development

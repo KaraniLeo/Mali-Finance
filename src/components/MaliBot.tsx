@@ -1,18 +1,54 @@
-import React, { useState } from 'react';
-import { Send } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Send, Lock } from 'lucide-react';
 import { ChatMessage, User } from '../types';
+import { supabase } from '../lib/supabase';
 
 interface MaliBotProps {
   user: User;
   chatHistory: ChatMessage[];
   onSendMessage: (text: string) => void;
+  onUpgradeClick?: () => void;
 }
 
-export function MaliBot({ user, chatHistory, onSendMessage }: MaliBotProps) {
+export function MaliBot({ user, chatHistory, onSendMessage, onUpgradeClick }: MaliBotProps) {
   const [chatInput, setChatInput] = useState('');
+  const [messagesCount, setMessagesCount] = useState(0);
+
+  useEffect(() => {
+    if (!user || user.chatbotPaid) return;
+
+    const getCount = async () => {
+      const { data: convs } = await supabase
+        .from('conversations')
+        .select('id')
+        .eq('user_id', user.id);
+        
+      if (!convs || convs.length === 0) {
+        setMessagesCount(0);
+        return;
+      }
+      
+      const convIds = convs.map(c => c.id);
+      const { count } = await supabase
+        .from('messages')
+        .select('id', { count: 'exact', head: true })
+        .in('conversation_id', convIds)
+        .eq('role', 'user');
+
+      setMessagesCount(count || 0);
+    };
+
+    getCount();
+  }, [user?.id, chatHistory.length, user?.chatbotPaid]);
+
+  const isLocked = !user.chatbotPaid && messagesCount >= 5;
 
   const handleSend = () => {
     if (!chatInput.trim()) return;
+    if (isLocked) {
+      if (onUpgradeClick) onUpgradeClick();
+      return;
+    }
     onSendMessage(chatInput);
     setChatInput('');
   };
@@ -47,20 +83,37 @@ export function MaliBot({ user, chatHistory, onSendMessage }: MaliBotProps) {
       </div>
 
       <div className="relative">
-        <input 
-          type="text" 
-          value={chatInput}
-          onChange={(e) => setChatInput(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-          placeholder="Ask anything..." 
-          className="w-full bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 border border-transparent dark:border-stone-700 rounded-2xl py-3 px-4 text-sm pr-12 focus:ring-4 focus:ring-brand-accent/10 focus:outline-none shadow-lg"
-        />
-        <button 
-          onClick={handleSend}
-          className="absolute right-1.5 top-1.5 w-10 h-10 bg-brand-accent text-brand-accent-text rounded-xl flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
-        >
-          <Send size={16} />
-        </button>
+        {isLocked ? (
+          <div className="w-full bg-white dark:bg-stone-800 border border-amber-500/25 rounded-2xl py-4 px-4 text-center space-y-2.5 shadow-lg">
+            <div className="flex items-center justify-center gap-2 text-amber-500 font-extrabold text-xs uppercase tracking-wider">
+              <Lock size={14} /> 5/5 Free Chats Exhausted
+            </div>
+            <p className="text-xs text-stone-500 dark:text-stone-400">Upgrade to MaliBot Premium to ask unlimited questions.</p>
+            <button 
+              onClick={onUpgradeClick}
+              className="w-full py-2.5 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-white rounded-xl text-xs font-black shadow-md hover:scale-[1.01] active:scale-95 transition-all cursor-pointer"
+            >
+              Unlock Unlimited for KES 300 🚀
+            </button>
+          </div>
+        ) : (
+          <>
+            <input 
+              type="text" 
+              value={chatInput}
+              onChange={(e) => setChatInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+              placeholder="Ask anything..." 
+              className="w-full bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 border border-transparent dark:border-stone-700 rounded-2xl py-3 px-4 text-sm pr-12 focus:ring-4 focus:ring-brand-accent/10 focus:outline-none shadow-lg"
+            />
+            <button 
+              onClick={handleSend}
+              className="absolute right-1.5 top-1.5 w-10 h-10 bg-brand-accent text-brand-accent-text rounded-xl flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
+            >
+              <Send size={16} />
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

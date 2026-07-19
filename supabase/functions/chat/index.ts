@@ -1,11 +1,14 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+declare const Deno: any;
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-serve(async (req) => {
+serve(async (req: Request) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
@@ -19,7 +22,96 @@ serve(async (req) => {
       throw new Error('OPENAI_API_KEY is not set');
     }
 
-    // Phase 2 & 7: Define Personality & System Prompt
+    // Set up Supabase Client to check payment status and count messages
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY');
+    
+    if (supabaseUrl && supabaseAnonKey) {
+      const authHeader = req.headers.get('Authorization');
+      if (!authHeader) {
+        return new Response(
+          JSON.stringify({ error: 'Missing Authorization header' }),
+          { status: 401, headers: corsHeaders }
+        );
+      }
+
+      const supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
+        global: { headers: { Authorization: authHeader } }
+      });
+
+      // Verify user JWT token
+      const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+      if (authError || !user) {
+        console.error('Auth verification failed:', authError);
+        return new Response(
+          JSON.stringify({ error: 'Invalid user token' }),
+          { status: 401, headers: corsHeaders }
+        );
+      }
+
+      const userId = user.id;
+
+      // Use service role client to fetch profile and messages securely
+      const supabaseService = createClient(
+        supabaseUrl,
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || supabaseAnonKey
+      );
+
+      // Check payment status
+      const { data: profile, error: profileError } = await supabaseService
+        .from('profiles')
+        .select('chatbot_paid')
+        .eq('id', userId)
+        .single();
+
+      if (profileError) {
+        console.error('Failed to fetch user profile:', profileError);
+      }
+
+      const isPaid = profile?.chatbot_paid === true;
+
+      if (!isPaid) {
+        // Count user's sent messages (role = 'user')
+        const { data: conversations, error: convError } = await supabaseService
+          .from('conversations')
+          .select('id')
+          .eq('user_id', userId);
+
+        if (convError) {
+          console.error('Failed to fetch user conversations:', convError);
+        }
+
+        const conversationIds = conversations?.map((c: any) => c.id) || [];
+
+        let userMessageCount = 0;
+        if (conversationIds.length > 0) {
+          const { count, error: countError } = await supabaseService
+            .from('messages')
+            .select('id', { count: 'exact', head: true })
+            .in('conversation_id', conversationIds)
+            .eq('role', 'user');
+
+          if (countError) {
+            console.error('Failed to count user messages:', countError);
+          } else {
+            userMessageCount = count || 0;
+          }
+        }
+
+        if (userMessageCount >= 5) {
+          return new Response(
+            JSON.stringify({
+              error: 'payment_required',
+              message: 'You have exhausted your 5 free chatbot requests. Please pay KES 300 to unlock unlimited access.',
+              count: userMessageCount
+            }),
+            { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+      }
+    }
+
+    // Personality & System Prompt
     const systemPrompt = `You are MaliBot (or just Mali), a highly educational financial tutor for young people in Kenya.
 Always:
 - Use simple language
@@ -36,7 +128,7 @@ User Context (Age, Progress, etc):
 ${JSON.stringify(context, null, 2)}
 `;
 
-    // Phase 1: Format history for OpenAI API
+    // Format history for OpenAI API
     const messages = [];
     
     // 1. System Prompt
@@ -100,7 +192,8 @@ ${JSON.stringify(context, null, 2)}
         status: 200,
       },
     );
-  } catch (error) {
+  } catch (err) {
+    const error = err as any;
     console.error('Error in chat edge function:', error);
     return new Response(
       JSON.stringify({ error: error.message }),

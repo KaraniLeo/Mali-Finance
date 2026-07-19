@@ -21,6 +21,7 @@ import { useAppStore } from './state/store';
 import { useSidebarStore } from './state/sidebarStore';
 import { TaskAllocationModal } from './components/TaskAllocationModal';
 import { ToastContainer } from './components/Toast';
+import { PaymentModal } from './components/PaymentModal';
 
 // Pages
 import { DashboardView } from './pages/DashboardView';
@@ -52,6 +53,7 @@ export default function App() {
   const { isOpenMobile, setMobileOpen } = useSidebarStore();
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
 
   const { track, setInitialAchievements } = useAchievement();
   const { getComputedModules } = useProgress();
@@ -141,6 +143,7 @@ export default function App() {
         autoAllowance: Number(data.auto_allowance || 0),
         spendingLimit: Number(data.spending_limit || 0),
         achievements: data.achievements || [],
+        chatbotPaid: !!data.chatbot_paid,
         isAdmin
       };
 
@@ -209,6 +212,17 @@ export default function App() {
   const handleSendMessage = async (text: string) => {
     if (!user) return;
 
+    // Client-side quick check: count user messages in local chat history
+    const sentMessagesCount = chatHistory.filter(m => m.role === 'user').length;
+    if (sentMessagesCount >= 5 && !user.chatbotPaid) {
+      setIsPaymentModalOpen(true);
+      setChatHistory([...chatHistory, 
+        { role: 'user' as const, text },
+        { role: 'bot' as const, text: "🔒 You have exhausted your 5 free chatbot requests. Please pay KES 300 to continue chatting with MaliBot." }
+      ]);
+      return;
+    }
+
     const newHistory = [...chatHistory, { role: 'user' as const, text }];
     setChatHistory(newHistory);
 
@@ -224,8 +238,13 @@ export default function App() {
 
       const botResponse = await generateMaliResponse(text, context, chatHistory);
       
-      setChatHistory([...newHistory, { role: 'bot' as const, text: botResponse.text }]);
-      track('WEALTH_GUIDE_CHAT');
+      if (botResponse.error === 'payment_required') {
+        setIsPaymentModalOpen(true);
+        setChatHistory([...newHistory, { role: 'bot' as const, text: "🔒 You have exhausted your 5 free chatbot requests. Please pay KES 300 to continue chatting with MaliBot." }]);
+      } else {
+        setChatHistory([...newHistory, { role: 'bot' as const, text: botResponse.text }]);
+        track('WEALTH_GUIDE_CHAT');
+      }
     } catch (e) {
       console.error(e);
       setChatHistory([...newHistory, { role: 'bot' as const, text: "I'm having a little trouble connecting right now. Try again!" }]);
@@ -396,6 +415,7 @@ export default function App() {
               chatHistory={chatHistory}
               onSendMessage={handleSendMessage}
               onNavigate={setActiveView}
+              onUpgradeClick={() => setIsPaymentModalOpen(true)}
               onSelectModule={(m) => {
                 setSelectedModule(m);
                 setActiveView('syllabus');
@@ -439,7 +459,7 @@ export default function App() {
           {activeView === 'tasks' && <TasksView />}
           {activeView === 'wallet' && <WalletView />}
           {activeView === 'achievements' && <AchievementsView />}
-          {activeView === 'chat' && <ChatView user={user} />}
+          {activeView === 'chat' && <ChatView user={user} onPaymentSuccess={() => fetchProfile(user.id, user.email)} />}
           {activeView === 'admin' && <AdminView />}
           {activeView === 'parental' && <AccountabilityPartnerView user={user} onUpdateUser={(u) => setUser({...user, ...u})} />}
           {activeView === 'settings' && <SettingsView user={user} onLogout={handleLogout} />}
@@ -453,6 +473,15 @@ export default function App() {
         rewardAmount={pendingTaskReward?.reward || 0}
         onClose={() => setPendingTaskReward(null)}
         onConfirm={handleTaskAllocationConfirm}
+      />
+
+      <PaymentModal
+        isOpen={isPaymentModalOpen}
+        onClose={() => setIsPaymentModalOpen(false)}
+        userId={user.id}
+        onPaymentSuccess={() => {
+          fetchProfile(user.id, user.email);
+        }}
       />
 
       <AnimatePresence>
