@@ -30,6 +30,9 @@ export function ModuleSyllabusView({ module, onBack, onStartQuiz }: ModuleSyllab
 
   const tier = (user?.tier || 'teen') as Tier;
   const computedModules = getComputedModules(tier);
+  const currentComputedModule = computedModules.find(m => m.id === module.id) || module;
+  const progress = currentComputedModule.progress;
+
   const currentIdx = computedModules.findIndex(m => m.id === module.id);
   const nextModule = currentIdx !== -1 && currentIdx < computedModules.length - 1 
     ? computedModules[currentIdx + 1] 
@@ -77,10 +80,10 @@ export function ModuleSyllabusView({ module, onBack, onStartQuiz }: ModuleSyllab
             <div className="flex-1 bg-stone-100 dark:bg-stone-700 h-3 rounded-full overflow-hidden">
               <div 
                 className="bg-brand-accent h-full transition-all duration-1000"
-                style={{ width: `${module.progress}%` }}
+                style={{ width: `${progress}%` }}
               />
             </div>
-            <span className="text-sm font-bold text-stone-500 dark:text-stone-400">{module.progress}%</span>
+            <span className="text-sm font-bold text-stone-500 dark:text-stone-400">{progress}%</span>
           </div>
         </div>
 
