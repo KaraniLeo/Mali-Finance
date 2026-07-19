@@ -11,7 +11,7 @@ export const beginnerLesson: Lesson = {
     },
     { id: 'b3', type: 'example', title: 'The FOMO Trap', content: 'You see a stock go up 100%. All your friends are making money. Your brain perceives this as "being left behind by the tribe" (a fatal threat in evolutionary terms). You panic-buy at the absolute top, just before it crashes.'
     },
-    { id: 'b4', type: 'exercise', title: 'Evolutionary Finance', content: 'Why do humans naturally make terrible investors?', options: ['Because math is too hard.', 'Because our evolutionary survival instincts (fear, greed, herd mentality) trigger the exact opposite behaviors needed for successful investing.', 'Because the stock market is rigged.'], correctAnswer: 'Because our evolutionary survival instincts (fear, greed, herd mentality) trigger the exact opposite behaviors needed for successful investing.'
+    { id: 'b4', type: 'exercise', title: 'Evolutionary Finance', content: 'Why do humans naturally make terrible investors?', options: ['Because math is too hard.', 'Because our evolutionary survival instincts (fear, greed, herd mentality) trigger the exact opposite behaviors needed for successful investing.', 'Because the {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}} is rigged.'], correctAnswer: 'Because our evolutionary survival instincts (fear, greed, herd mentality) trigger the exact opposite behaviors needed for successful investing.'
     },
     { id: 'b5', type: 'concept', title: 'Loss Aversion', content: 'Psychological studies show that the pain of losing $100 is twice as intense as the joy of making $100. Humans hate losing so much that they will make irrational, dangerous decisions just to avoid admitting a loss.'
     },
@@ -45,7 +45,7 @@ export const beginnerLesson: Lesson = {
     },
     { id: 'b20', type: 'concept', title: 'Hindsight Bias', content: '"I knew the market was going to crash!" No, you didn\'t. Hindsight bias makes you believe past events were predictable, leading to extreme overconfidence in your ability to predict the future.'
     },
-    { id: 'b21', type: 'warning', title: 'The Illusion of Control', content: 'When you make money, you think you are a genius. When you lose money, you blame the Federal Reserve, the algorithms, or bad luck. You are confusing a bull market with brains.'
+    { id: 'b21', type: 'warning', title: 'The Illusion of Control', content: 'When you make money, you think you are a genius. When you lose money, you blame the {{INTERNATIONAL:Federal Reserve|KENYA:Central Bank of Kenya (CBK)}}, the algorithms, or bad luck. You are confusing a bull market with brains.'
     },
     { id: 'b22', type: 'exercise', title: 'Overconfidence', content: 'What is the danger of Hindsight Bias?', options: ['It makes you depressed.', 'It convinces you that the market is predictable, leading you to take massive, reckless risks based on "gut feelings".', 'It makes you sell too early.'], correctAnswer: 'It convinces you that the market is predictable, leading you to take massive, reckless risks based on "gut feelings".'
     },

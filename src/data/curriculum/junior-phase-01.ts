@@ -29,7 +29,7 @@ export const juniorPhase01: Phase = {
           type: 'concept',
           level: 'beginner',
           title: 'Modern Money',
-          content: 'Today we use **Fiat Money**. These are the paper bills (like Kenyan Shillings) and digital numbers in a bank app.\n\nIt has value simply because the government says it does, and because everyone agrees to trust it at the local duka or supermarket.'
+          content: 'Today we use **Fiat Money**. These are the paper bills (like {{INTERNATIONAL:Dollars|KENYA:Kenyan Shillings}}) and digital numbers in a bank app.\n\nIt has value simply because the government says it does, and because everyone agrees to trust it at the {{INTERNATIONAL:local store|KENYA:local duka}} or supermarket.'
         },
         {
           id: 'j1-c4',
@@ -44,7 +44,7 @@ export const juniorPhase01: Phase = {
           level: 'beginner',
           title: 'The Money Evolution',
           content: 'What system did people use before money was invented?',
-          options: ['Credit Cards', 'Bartering', 'M-Pesa'],
+          options: ['Credit Cards', 'Bartering', '{{INTERNATIONAL:Digital Wallets|KENYA:M-Pesa}}'],
           correctAnswer: 'Bartering'
         }
       ]
@@ -66,14 +66,14 @@ export const juniorPhase01: Phase = {
           type: 'example',
           level: 'beginner',
           title: 'The Sweet Trap',
-          content: 'If you buy mandazi or sweets every single day after school, your money is gone immediately.\n\nBut if you save that money in your piggy bank for a month, you could buy a new video game or a cool toy.'
+          content: 'If you buy {{INTERNATIONAL:sweets or candy|KENYA:mandazi or sweets}} every single day after school, your money is gone immediately.\n\nBut if you save that money in your piggy bank for a month, you could buy a new video game or a cool toy.'
         },
         {
           id: 'j1-c8',
           type: 'insight',
           level: 'beginner',
           title: 'Setting a Goal',
-          content: 'You are much more likely to save money if you have a specific goal. \n\nWhether it\'s saving 500 KES for a new book or 5,000 KES for a bicycle, having a target makes it fun to watch your money grow!'
+          content: 'You are much more likely to save money if you have a specific goal. \n\nWhether it\'s saving 500 {{INTERNATIONAL:Cash|KENYA:KES}} for a new book or 5,000 {{INTERNATIONAL:Cash|KENYA:KES}} for a bicycle, having a target makes it fun to watch your money grow!'
         },
         {
           id: 'j1-c9',

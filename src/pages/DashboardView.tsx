@@ -6,65 +6,81 @@ import { ModuleCard } from '../components/ModuleCard';
 import { SavingsGoalCard } from '../components/SavingsGoalCard';
 import { TaskBoard } from '../components/TaskBoard';
 import { MaliBot } from '../components/MaliBot';
-import { useFinanceAPI } from '../hooks/useFinanceAPI';
-import { useAppStore } from '../state/store';
 import { useWalletStore } from '../state/walletStore';
 import { useWealthJarStore } from '../state/wealthJarStore';
+import { useTaskStore } from '../state/taskStore';
+import { useAppStore } from '../state/store';
+import { ActiveModuleProgress } from '../components/dashboard/ActiveModuleProgress';
+import { supabase } from '../lib/supabase';
+import { toast } from '../state/toastStore';
+import { formatCurrency } from '../lib/currency';
 
-interface DashboardViewProps {
+export interface DashboardViewProps {
   user: User;
   modules: Module[];
-  tasks: Task[];
-  setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
   chatHistory: any[];
   onSendMessage: (text: string) => void;
   onNavigate?: (view: View) => void;
   onSelectModule?: (module: Module) => void;
 }
 
-export function DashboardView({ user, modules, tasks, setTasks, chatHistory, onSendMessage, onNavigate, onSelectModule }: DashboardViewProps) {
+export function DashboardView({ user, modules, chatHistory, onSendMessage, onNavigate, onSelectModule }: DashboardViewProps) {
   const { tier } = user;
   const activeModule = modules.find(m => m.progress < 100 && !m.locked) || modules[0];
   
-  const { completeTask, createTransaction } = useFinanceAPI();
   const { jars } = useWealthJarStore();
   const { balance } = useWalletStore();
+  const { tasks, addTask, toggleTaskComplete } = useTaskStore();
 
-  const earnProgress = tasks.length > 0 ? (tasks.filter(t => t.completed).length / tasks.length) * 100 : 0;
+  const [childChallenges, setChildChallenges] = useState<any[]>([]);
+
+  // Fetch active/pending challenges from DB (with LocalStorage fallback)
+  const fetchChildChallenges = async () => {
+    if (!user?.id || user.tier === 'parent') return;
+    try {
+      const { data, error } = await supabase
+        .from('challenges')
+        .select('*')
+        .eq('child_id', user.id)
+        .in('status', ['active', 'pending_approval']);
+      if (error) throw error;
+      if (data) {
+        setChildChallenges(data);
+      }
+    } catch (err) {
+      console.warn('Failed to fetch challenges on student dashboard, using local storage fallback:', err);
+      const localChs = JSON.parse(localStorage.getItem('mali_local_challenges') || '[]');
+      const filtered = localChs.filter((c: any) => c.child_id === user.id && ['active', 'pending_approval'].includes(c.status));
+      setChildChallenges(filtered);
+    }
+  };
+
+  useEffect(() => {
+    fetchChildChallenges();
+  }, [user?.id]);
+
+  const totalAvailableReward = tasks.reduce((acc, t) => acc + t.reward, 0);
+  const earnedReward = tasks.filter(t => t.completed).reduce((acc, t) => acc + t.reward, 0);
+  const earnProgress = totalAvailableReward > 0 ? (earnedReward / totalAvailableReward) * 100 : 0;
   
   const saveJar = jars.find(j => j.category === 'save');
   const totalWealth = balance + jars.reduce((acc, jar) => acc + jar.balance, 0);
   const saveProgress = totalWealth > 0 && saveJar ? (saveJar.balance / totalWealth) * 100 : 0;
 
-  const DEMO_USER_ID = '00000000-0000-0000-0000-000000000000';
-  const DEMO_WALLET_ID = '00000000-0000-0000-0000-000000000000';
-
-  const handleCompleteTask = async (task: Task) => {
-    setTasks(prev => prev.map(t => t.id === task.id ? { ...t, completed: true } : t));
-    
-    const success = await completeTask(task.id, DEMO_USER_ID);
-    if (success || true) {
-      await createTransaction({
-        id: Date.now().toString(),
-        wallet_id: DEMO_WALLET_ID,
-        amount: task.reward,
-        type: 'credit',
-        description: `Task Reward: ${task.title}`,
-        created_at: new Date().toISOString()
+  const handleCompleteTask = (task: Task) => {
+    if (task.reward > 0) {
+      useAppStore.getState().setPendingTaskReward({
+        taskId: task.id,
+        reward: task.reward,
+        title: task.title
       });
-      alert(`Awesome! You earned ${task.reward} KES. Check your wallet!`);
+    } else {
+      toggleTaskComplete(task.id, user.id, () => {});
     }
   };
 
   const handleAddTask = (title: string, reward: number) => {
-    const newTask: Task = {
-      id: Date.now().toString(),
-      title,
-      reward,
-      category: 'chore',
-      completed: false
-    };
-    setTasks(prev => [newTask, ...prev]);
+    addTask(user.id, title, 'chore', reward);
   };
 
   const getJarColor = (cat: string) => {
@@ -73,7 +89,7 @@ export function DashboardView({ user, modules, tasks, setTasks, chatHistory, onS
       case 'save': return 'bg-emerald-500';
       case 'invest': return 'bg-purple-500';
       case 'give': return 'bg-rose-500';
-      default: return 'bg-[#6B8E23]';
+      default: return 'bg-brand-accent';
     }
   };
 
@@ -83,67 +99,21 @@ export function DashboardView({ user, modules, tasks, setTasks, chatHistory, onS
       <div className="lg:col-span-8 flex flex-col gap-8 overflow-y-auto lg:pr-2 custom-scrollbar lg:h-full">
         
         {activeModule && (
-          <motion.div 
-            layout
-            className="p-6 md:p-10 rounded-[32px] md:rounded-[40px] bg-[#6B8E23] text-white relative overflow-hidden flex flex-col min-h-[280px] shadow-2xl flex-shrink-0 cursor-pointer hover:scale-[1.01] transition-transform"
-            onClick={() => onSelectModule?.(activeModule)}
-          >
-            <div className="absolute -top-12 -right-12 w-48 md:w-64 h-48 md:h-64 bg-white/10 rounded-full blur-3xl"></div>
-
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeModule.id}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="relative z-10 flex flex-col h-full"
-              >
-                <div className="self-start bg-white/20 backdrop-blur-xl px-4 py-1.5 rounded-full text-[10px] font-black tracking-widest uppercase mb-auto">
-                  TODAY'S CHALLENGE
-                </div>
-                
-                <div className="flex items-center gap-4 mb-4 mt-8">
-                  {activeModule.icon}
-                  <h2 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight">
-                    {activeModule.title}
-                  </h2>
-                </div>
-                <p className="text-[#F7F7F2]/90 max-w-lg text-sm md:text-lg font-medium leading-relaxed mb-6">
-                  {activeModule.description}
-                </p>
-                <div className="flex gap-2 mt-4">
-                  <button 
-                    onClick={(e) => { e.stopPropagation(); onNavigate?.('learn'); }}
-                    className="flex-1 bg-black/20 hover:bg-black/30 transition-colors rounded-xl p-3 flex flex-col justify-between text-left cursor-pointer group"
-                  >
-                    <div className="text-[10px] font-black tracking-widest uppercase mb-2 group-hover:text-white transition-colors">Learn</div>
-                    <div className="w-full bg-black/20 rounded-full h-1.5"><div className="bg-[#D4A373] h-1.5 rounded-full transition-all" style={{ width: `${activeModule.progress}%` }} /></div>
-                  </button>
-                  <button 
-                    onClick={(e) => { e.stopPropagation(); onNavigate?.('tasks'); }}
-                    className="flex-1 bg-black/20 hover:bg-black/30 transition-colors rounded-xl p-3 flex flex-col justify-between text-left cursor-pointer group"
-                  >
-                    <div className="text-[10px] font-black tracking-widest uppercase mb-2 group-hover:text-white transition-colors">Earn</div>
-                    <div className="w-full bg-black/20 rounded-full h-1.5"><div className="bg-yellow-400 h-1.5 rounded-full transition-all" style={{ width: `${earnProgress}%` }} /></div>
-                  </button>
-                  <button 
-                    onClick={(e) => { e.stopPropagation(); onNavigate?.('wallet'); }}
-                    className="flex-1 bg-black/20 hover:bg-black/30 transition-colors rounded-xl p-3 flex flex-col justify-between text-left cursor-pointer group"
-                  >
-                    <div className="text-[10px] font-black tracking-widest uppercase mb-2 group-hover:text-white transition-colors">Save</div>
-                    <div className="w-full bg-black/20 rounded-full h-1.5"><div className="bg-[#A3B18A] h-1.5 rounded-full transition-all" style={{ width: `${saveProgress}%` }} /></div>
-                  </button>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </motion.div>
+          <ActiveModuleProgress 
+            activeModule={activeModule}
+            earnProgress={earnProgress}
+            saveProgress={saveProgress}
+            onNavigate={onNavigate}
+            onSelectModule={onSelectModule}
+          />
         )}
 
         <div>
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xl md:text-2xl font-bold text-[#2D3911]">Learn Modules</h3>
+            <h3 className="text-xl md:text-2xl font-bold text-brand-secondary">Learn Modules</h3>
             <button 
               onClick={() => onNavigate?.('learn')}
-              className="text-[10px] font-black text-[#6B8E23] uppercase tracking-widest cursor-pointer hover:opacity-80 transition-opacity"
+              className="text-[10px] font-black text-brand-accent uppercase tracking-widest cursor-pointer hover:opacity-80 transition-opacity"
             >
               View All
             </button>
@@ -157,10 +127,10 @@ export function DashboardView({ user, modules, tasks, setTasks, chatHistory, onS
 
         <div className="mb-8">
            <div className="flex justify-between items-center mb-6">
-             <h3 className="text-xl md:text-2xl font-bold text-[#2D3911]">Wealth Jars</h3>
+             <h3 className="text-xl md:text-2xl font-bold text-brand-secondary">Wealth Jars</h3>
              <button 
                onClick={() => onNavigate?.('wallet')}
-               className="text-[10px] font-black text-[#6B8E23] uppercase tracking-widest cursor-pointer hover:opacity-80 transition-opacity"
+               className="text-[10px] font-black text-brand-accent uppercase tracking-widest cursor-pointer hover:opacity-80 transition-opacity"
              >
                Manage
              </button>
@@ -187,7 +157,58 @@ export function DashboardView({ user, modules, tasks, setTasks, chatHistory, onS
 
       <div className="lg:col-span-4 flex flex-col gap-6 md:gap-8 pb-10 lg:pb-0 h-full">
         <MaliBot user={user} chatHistory={chatHistory} onSendMessage={onSendMessage} />
+        
+        {/* Active Challenges */}
+        {childChallenges.length > 0 && (
+          <div className="bg-white dark:bg-[#121212] rounded-[32px] p-6 shadow-sm border border-stone-100 dark:border-stone-800/50 relative overflow-hidden mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-stone-800 dark:text-stone-200">Active Challenges</h3>
+            </div>
+            <div className="space-y-3">
+              {childChallenges.map((challenge) => (
+                <div key={challenge.id} className="flex flex-col p-4 bg-brand-primary/10 dark:bg-brand-primary/5 rounded-2xl border border-brand-primary/20">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="font-bold text-slate-800 dark:text-slate-200">{challenge.title}</span>
+                    <span className="text-xs font-black text-brand-primary">+{formatCurrency(challenge.reward_amount)}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-slate-600 dark:text-slate-400">
+                      {challenge.status === 'pending_approval' ? 'Pending Approval' : `Duration: ${challenge.duration_days} Days`}
+                    </span>
+                    {challenge.status === 'active' ? (
+                      <button 
+                        onClick={async () => {
+                          try {
+                            const { error } = await supabase.from('challenges').update({ status: 'pending_approval' }).eq('id', challenge.id);
+                            if (error) throw error;
+                            setChildChallenges(prev => prev.map(c => c.id === challenge.id ? { ...c, status: 'pending_approval' } : c));
+                            toast.success('Challenge logged as completed! Pending parent approval.');
+                          } catch (err) {
+                            console.warn('Failed to update challenge status on DB, using local storage fallback:', err);
+                            const localChs = JSON.parse(localStorage.getItem('mali_local_challenges') || '[]');
+                            const updated = localChs.map((c: any) => c.id === challenge.id ? { ...c, status: 'pending_approval' } : c);
+                            localStorage.setItem('mali_local_challenges', JSON.stringify(updated));
+                            setChildChallenges(prev => prev.map(c => c.id === challenge.id ? { ...c, status: 'pending_approval' } : c));
+                            toast.success('Challenge logged as completed (local fallback)! Pending parent approval.');
+                          }
+                        }}
+                        className="px-3 py-1.5 bg-brand-primary text-white rounded-full text-xs font-bold hover:opacity-90 active:scale-95 transition-all cursor-pointer"
+                      >
+                        Log Completion
+                      </button>
+                    ) : (
+                      <span className="px-3 py-1.5 bg-stone-100 dark:bg-stone-800 text-stone-500 rounded-full text-xs font-bold">
+                        Logged
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         <TaskBoard tasks={tasks} onCompleteTask={handleCompleteTask} onAddTask={handleAddTask} />
+  
       </div>
     </div>
   );

@@ -51,15 +51,15 @@ export const proLesson: Lesson = {
     },
     { id: 'p23', type: 'concept', title: 'Routing', content: 'Pro traders do not use PFOF brokers. They use Direct Access brokers. They literally select exactly which Exchange (NYSE, ARCA, EDGX) their order goes to, paying a small commission to ensure perfect execution speed and zero front-running.'
     },
-    { id: 'p24', type: 'concept', title: 'Options Market Makers', content: 'The options market heavily manipulates the underlying stock market.\n\nWhen retail buys millions of Call Options (betting the stock will go up), the Market Maker selling them those calls is taking massive risk.'
+    { id: 'p24', type: 'concept', title: 'Options Market Makers', content: 'The options market heavily manipulates the underlying {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}}.\n\nWhen retail buys millions of Call Options (betting the stock will go up), the Market Maker selling them those calls is taking massive risk.'
     },
     { id: 'p25', type: 'insight', title: 'Delta Hedging', content: 'To neutralize their risk, the Market Maker is mathematically forced to buy the underlying stock. If the stock goes up, they buy more. This creates a "Gamma Squeeze", a forced buying loop that creates extreme volatility.'
     },
-    { id: 'p26', type: 'warning', title: 'The Tail Wagging the Dog', content: 'On days where trillions of dollars of options expire (OpEx days), the underlying stock market becomes wildly unpredictable. Algorithms are aggressively hedging and un-hedging options exposure, ignoring fundamental news entirely.'
+    { id: 'p26', type: 'warning', title: 'The Tail Wagging the Dog', content: 'On days where trillions of dollars of options expire (OpEx days), the underlying {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}} becomes wildly unpredictable. Algorithms are aggressively hedging and un-hedging options exposure, ignoring fundamental news entirely.'
     },
     { id: 'p27', type: 'exercise', title: 'Market Mechanics Summary', content: 'If a massive bank is selling you Call options, how do they hedge their risk?', options: ['They pray the stock goes down.', 'They dynamically buy the underlying stock to remain neutral.', 'They sell your data.'], correctAnswer: 'They dynamically buy the underlying stock to remain neutral.'
     },
-    { id: 'p28', type: 'concept', title: 'The True Market', content: 'The stock market is a hyper-complex, multi-layered machine designed to transfer wealth from the impatient and uneducated to the patient and calculated.'
+    { id: 'p28', type: 'concept', title: 'The True Market', content: 'The {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}} is a hyper-complex, multi-layered machine designed to transfer wealth from the impatient and uneducated to the patient and calculated.'
     },
     { id: 'p29', type: 'insight', title: 'Your Edge', content: 'You cannot beat HFT algorithms on speed. You cannot beat hedge funds on data. Your only edge is discipline, risk management, and the patience to wait for A+ setups where the order flow proves the institutions are on your side.'
     },

@@ -69,7 +69,7 @@ export const intermediateLesson: Lesson = {
         startingBalance: 200000,
         choices: [
           { text: "Apologize and hope they drop the lawsuit.", result: -200000, feedback: "Because you were a Sole Proprietor, you had no Corporate Veil! The customer won the lawsuit, took your business, and then legally seized your personal life savings and your house to satisfy the $1M judgment. You are ruined." },
-          { text: "Quickly transfer all your money to a friend's bank account.", result: -200000, feedback: "That is called 'Fraudulent Conveyance'. The judge reversed the transfers, seized your money, and you are now facing criminal charges." },
+          { text: "Quickly transfer all your money to a friend's {{INTERNATIONAL:bank account|KENYA:bank account or M-PESA wallet}}.", result: -200000, feedback: "That is called 'Fraudulent Conveyance'. The judge reversed the transfers, seized your money, and you are now facing criminal charges." },
           { text: "If you had set up an LLC beforehand, the lawsuit would be contained.", result: 0, feedback: "Pro insight. If you had spent $500 to form an LLC, the lawsuit could only target the assets inside the business. Your personal savings, your house, and your family's future would be 100% legally protected by the Corporate Veil." }
         ]
       }

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { formatCurrency } from '../lib/currency';
 import { Task } from '../types';
 import { CheckCircle, Plus } from 'lucide-react';
 
@@ -27,7 +28,7 @@ export function TaskBoard({ tasks, onCompleteTask, onAddTask }: TaskBoardProps) 
   return (
     <div className="p-6 md:p-8 rounded-[32px] md:rounded-[40px] bg-white border border-stone-100 shadow-xl max-h-[350px] flex flex-col">
        <div className="flex justify-between items-center mb-4">
-         <h3 className="text-lg font-bold text-[#2D3911]">Pending Tasks</h3>
+         <h3 className="text-lg font-bold text-brand-secondary">Pending Tasks</h3>
        </div>
 
        {onAddTask && (
@@ -48,7 +49,7 @@ export function TaskBoard({ tasks, onCompleteTask, onAddTask }: TaskBoardProps) 
            />
            <button 
              onClick={handleAdd}
-             className="bg-[#6B8E23] text-white p-1.5 rounded-lg hover:bg-[#5a781c] transition-colors cursor-pointer"
+             className="bg-brand-accent text-white p-1.5 rounded-lg hover:bg-[#5a781c] transition-colors cursor-pointer"
            >
              <Plus size={16} />
            </button>
@@ -62,11 +63,11 @@ export function TaskBoard({ tasks, onCompleteTask, onAddTask }: TaskBoardProps) 
            tasks.map((task) => (
              <div key={task.id} className="flex items-center justify-between p-3 bg-stone-50 rounded-xl border border-stone-100">
                <div className="flex items-center gap-3 flex-1 min-w-0">
-                 <div className={`w-2 h-2 rounded-full flex-shrink-0 ${task.completed ? 'bg-[#6B8E23]' : 'bg-[#D4A373]'}`}></div>
+                 <div className={`w-2 h-2 rounded-full flex-shrink-0 ${task.completed ? 'bg-brand-accent' : 'bg-[#D4A373]'}`}></div>
                  <span className={`text-xs font-bold truncate ${task.completed ? 'text-stone-300 line-through' : 'text-stone-700'}`}>{task.title}</span>
                </div>
                <div className="flex items-center gap-2 flex-shrink-0">
-                 <span className="text-[10px] font-black text-emerald-600">+{task.reward} KES</span>
+                 <span className="text-[10px] font-black text-emerald-600">+{formatCurrency(task.reward)}</span>
                  {!task.completed && onCompleteTask && (
                    <button 
                      onClick={() => onCompleteTask(task)}

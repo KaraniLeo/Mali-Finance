@@ -1,12 +1,26 @@
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Outfit:wght@300;400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
-@custom-variant dark (&:where(.dark, .dark *));
+@variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Quicksand", sans-serif;
+  --font-sans: "Nunito", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Nunito", "Plus Jakarta Sans", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-junior: "Nunito", ui-sans-serif, system-ui, sans-serif;
+  --font-teen: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-pro: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
   
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-secondary: var(--brand-secondary);
+  --color-brand-accent: var(--brand-accent);
+  --color-brand-dark: var(--brand-dark);
+  --color-brand-light: var(--brand-light);
+  --color-brand-bg: var(--brand-bg);
+  --color-brand-text: var(--brand-text);
+  --color-brand-accent-text: var(--brand-accent-text);
+
+  /* Legacy Colors */
   --color-mali-green: #6B8E23;
   --color-mali-sage: #A3B18A;
   --color-mali-sand: #D4A373;
@@ -14,14 +28,122 @@
   --color-mali-earth: #2D3911;
 }
 
+:root {
+  /* Default to PRO */
+  --brand-primary: #047857;
+  --brand-secondary: #0F172A;
+  --brand-accent: #D4A017;
+  --brand-accent-text: #0F172A;
+  --brand-dark: #0F172A;
+  --brand-light: #F8FAFC;
+  --brand-bg: #F8FAFC;
+  --brand-text: #0F172A;
+}
+
+.theme-junior {
+  --brand-primary: #4CC9F0;
+  --brand-secondary: #43AA8B;
+  --brand-accent: #F9C74F;
+  --brand-accent-text: #1c1917;
+  --brand-dark: #9B5DE5;
+  --brand-light: #ffffff;
+  --brand-bg: #F7F7F2;
+  --brand-text: #1c1917;
+}
+
+.theme-teen {
+  --brand-primary: #2563EB;
+  --brand-secondary: #14B8A6;
+  --brand-accent: #8B5CF6;
+  --brand-accent-text: #ffffff;
+  --brand-dark: #1E1B4B;
+  --brand-light: #ffffff;
+  --brand-bg: #F3F4F6;
+  --brand-text: #111827;
+}
+
+.theme-pro {
+  --brand-primary: #047857;
+  --brand-secondary: #0F172A;
+  --brand-accent: #D4A017;
+  --brand-accent-text: #0F172A;
+  --brand-dark: #0F172A;
+  --brand-light: #F8FAFC;
+  --brand-bg: #F8FAFC;
+  --brand-text: #0F172A;
+}
+
+/* Dark mode theme overrides */
+.dark {
+  --brand-light: #1E293B;
+  --brand-bg: #0F172A;
+  --brand-text: #F8FAFC;
+}
+
+.dark.theme-junior {
+  --brand-text: #F8FAFC;
+  --brand-bg: #1c1917;
+  --brand-light: #292524;
+}
+
+.dark.theme-teen {
+  --brand-text: #F8FAFC;
+  --brand-bg: #111827;
+  --brand-light: #1F2937;
+}
+
+.dark.theme-pro {
+  --brand-text: #F8FAFC;
+  --brand-bg: #0F172A;
+  --brand-light: #1E293B;
+}
+
+.dark h1, .dark h2, .dark h3, .dark .brand {
+  color: var(--brand-text) !important;
+}
+
 body {
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  background-color: var(--brand-bg);
+  color: var(--brand-text);
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+.chat-root {
   font-family: var(--font-sans);
-  background-color: var(--color-mali-cream);
-  color: #1c1917;
+}
+
+.chat-root h1, .chat-root h2, .chat-root h3, .chat-root .brand {
+  font-family: var(--font-display);
 }
 
 h1, h2, h3, .brand {
-  font-family: var(--font-display);
+  font-family: inherit;
+}
+
+/* Tier-specific bot typography */
+.bot-message-junior {
+  font-family: var(--font-junior);
+  font-weight: 500;
+  letter-spacing: 0.25px;
+}
+
+.bot-message-teen {
+  font-family: var(--font-teen);
+  font-weight: 500;
+  letter-spacing: 0px;
+}
+
+.bot-message-pro {
+  font-family: var(--font-pro);
+  font-weight: 400;
+  letter-spacing: 0px;
+}
+
+/* System UI font override (Duolingo-style) */
+.system-ui {
+  font-family: var(--font-sans);
+  font-weight: 500;
 }
 
 .glass {

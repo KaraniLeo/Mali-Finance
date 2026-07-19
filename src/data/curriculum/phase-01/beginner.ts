@@ -6,7 +6,7 @@ export const beginnerLesson: Lesson = {
   level: 'beginner',
   cards: [
     {
-      id: 'b1', type: 'concept', title: 'What is a Market?', content: 'A market is simply a place where buyers and sellers meet to exchange goods.\n\nThe stock market is no different than a farmer\'s market, except instead of trading cash for tomatoes, you are trading cash for fractional ownership of a company (stocks).', imageKey: 'market'
+      id: 'b1', type: 'concept', title: 'What is a Market?', content: 'A market is simply a place where buyers and sellers meet to exchange goods.\n\nThe {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}} is no different than a farmer\'s market, except instead of trading cash for tomatoes, you are trading cash for fractional ownership of a company (stocks).', imageKey: 'market'
     },
     {
       id: 'b2', type: 'insight', title: 'The Illusion of "The Price"', content: 'When you look at a stock app and it says "Apple is $150", that is an illusion.\n\n$150 is simply the exact price at which the very last trade happened. It does not mean you can buy or sell your shares for exactly $150 right now.', imageKey: 'price'

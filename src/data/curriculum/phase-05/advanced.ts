@@ -173,7 +173,7 @@ A **Liquidity Sweep** (or Stop Hunt) is when institutions intentionally push the
         id: 'exer-p5-14-1',
         question: 'In institutional trading, what does "Liquidity" usually refer to?',
         type: 'multiple-choice',
-        options: ['Cash in a bank account', 'The pools of retail stop-loss orders resting above/below obvious levels', 'The amount of volume on a 1-minute chart'],
+        options: ['Cash in a {{INTERNATIONAL:bank account|KENYA:bank account or M-PESA wallet}}', 'The pools of retail stop-loss orders resting above/below obvious levels', 'The amount of volume on a 1-minute chart'],
         correctAnswer: 'The pools of retail stop-loss orders resting above/below obvious levels'
       },
       {

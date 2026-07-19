@@ -29,7 +29,7 @@ export const proLesson: Lesson = {
     },
     { id: 'p12', type: 'exercise', title: 'Venture Capital Dynamics', content: 'What is the "Power Law" in Venture Capital?', options: ['The law that says VCs must pay taxes.', 'The mathematical reality that 90% of startup investments fail, and the entire fund\'s profit relies on 1 or 2 extreme outlier successes.', 'The law of gravity.'], correctAnswer: 'The mathematical reality that 90% of startup investments fail, and the entire fund\'s profit relies on 1 or 2 extreme outlier successes.'
     },
-    { id: 'p13', type: 'concept', title: 'The IPO (Initial Public Offering)', content: 'The ultimate exit. The private startup finally lists its shares on the public stock market. The VCs and the founders sell their shares to the retail public, cashing out billions.'
+    { id: 'p13', type: 'concept', title: 'The IPO (Initial Public Offering)', content: 'The ultimate exit. The private startup finally lists its shares on the public {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}}. The VCs and the founders sell their shares to the retail public, cashing out billions.'
     },
     { id: 'p14', type: 'warning', title: 'The Retail Bagholder', content: 'By the time a company IPOs, the massive exponential growth phase is usually over. The VCs made 10,000x in the private market. Retail investors buy the IPO hoping for a 2x, often right before the stock crashes.'
     },

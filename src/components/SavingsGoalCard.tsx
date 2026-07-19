@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Target } from 'lucide-react';
+import { formatCurrency } from '../lib/currency';
 
 interface SavingsGoalCardProps {
   key?: React.Key;
@@ -23,9 +24,9 @@ export function SavingsGoalCard({ title, target, current, category, color, onCli
           <div className="bg-stone-100 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest text-stone-500">{category}</div>
           <Target size={20} className="text-stone-300" />
        </div>
-       <h4 className="text-lg font-extrabold text-[#2D3911] mb-2">{title}</h4>
+       <h4 className="text-lg font-extrabold text-brand-secondary mb-2">{title}</h4>
        <div className="text-3xl font-black text-stone-800 mb-1">
-         KES {current.toLocaleString()} <span className="text-sm font-bold text-stone-400">/ {target.toLocaleString()}</span>
+         {formatCurrency(current)} <span className="text-sm font-bold text-stone-400">/ {formatCurrency(target)}</span>
        </div>
        <div className="mt-4 flex items-center gap-4">
           <div className="flex-1 h-3 bg-stone-100 rounded-full overflow-hidden shadow-inner">

@@ -45,7 +45,7 @@ export const beginnerLesson: Lesson = {
     },
     { id: 'b20', type: 'exercise', title: 'Mining Mechanics', content: 'What is the purpose of Bitcoin Miners?', options: ['To literally dig in the ground for metal.', 'To use computational power to secure the network, process transactions, and mint new Bitcoin.', 'To hack bank accounts.'], correctAnswer: 'To use computational power to secure the network, process transactions, and mint new Bitcoin.'
     },
-    { id: 'b21', type: 'concept', title: 'Public vs Private Keys', content: 'To use crypto, you have two keys. Your Public Key is like your bank account number (you give it to people so they can send you money). Your Private Key is like your ATM PIN (you NEVER show it to anyone).'
+    { id: 'b21', type: 'concept', title: 'Public vs Private Keys', content: 'To use crypto, you have two keys. Your Public Key is like your {{INTERNATIONAL:bank account|KENYA:bank account or M-PESA wallet}} number (you give it to people so they can send you money). Your Private Key is like your ATM PIN (you NEVER show it to anyone).'
     },
     { id: 'b22', type: 'warning', title: 'Not Your Keys, Not Your Coins', content: 'If you buy Bitcoin on Coinbase and leave it there, Coinbase holds your Private Keys. If Coinbase goes bankrupt, you lose your Bitcoin. You must move it to a Self-Custody Wallet.'
     },

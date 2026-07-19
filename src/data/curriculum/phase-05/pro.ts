@@ -24,9 +24,7 @@ export const proLesson: Lesson = {
     },
     { id: 'p9', type: 'insight', title: 'Why it Works', content: 'Once the retail stop-losses are triggered, the institutions have the liquidity they need. They reverse the price, leaving the breakout traders trapped at the absolute top or bottom.'
     },
-    { id: 'p10', type: 'example', title: 'Step-by-Step Execution: Part 1', content: '- Step 1: Identify a major Resistance level that is extremely obvious to everyone.\n- Step 2: Watch price break above it. Retail FOMO kicks in.'
-    },
-    { id: 'p11', type: 'example', title: 'Step-by-Step Execution: Part 2', content: '- Step 3: Wait for the price to close back BELOW the resistance level (Fake-out). This confirms it was a Sweep, not a true breakout.\n- Step 4: Enter a short position immediately.\n- Step 5: Stop-loss goes above the new fake-out high.'
+    { id: 'p10', type: 'example', title: 'Step-by-Step Execution: Liquidity Sweep', content: '- Step 1: Identify a major Resistance level that is extremely obvious to everyone.\n- Step 2: Watch price break above it. Retail FOMO kicks in.\n- Step 3: Wait for the price to close back BELOW the resistance level (Fake-out). This confirms it was a Sweep.\n- Step 4: Enter a short position immediately.\n- Step 5: Stop-loss goes above the new fake-out high.'
     },
     { id: 'p12', type: 'warning', title: 'The True Breakout Risk', content: 'Do NOT front-run the fake-out. Sometimes a breakout is real. You MUST wait for the candle to close back inside the range before assuming it was a trap.'
     },

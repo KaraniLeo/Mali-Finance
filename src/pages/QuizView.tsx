@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { formatCurrency } from '../lib/currency';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowLeft, CheckCircle2, XCircle, Trophy, Sparkles, Gamepad2 } from 'lucide-react';
 import { Subtopic } from '../types';
@@ -51,7 +52,7 @@ export function QuizView({ subtopic, onComplete, onBack }: QuizViewProps) {
             <ArrowLeft size={24} />
           </button>
           <div className="flex-1 font-bold text-stone-700 flex items-center gap-2">
-            <Gamepad2 size={20} className="text-[#6B8E23]" />
+            <Gamepad2 size={20} className="text-brand-accent" />
             Practical Challenge
           </div>
         </header>
@@ -68,7 +69,7 @@ export function QuizView({ subtopic, onComplete, onBack }: QuizViewProps) {
 
   if (isFinished) {
     return (
-      <div className="flex-1 bg-[#6B8E23] flex flex-col items-center justify-center p-6 text-white relative overflow-hidden">
+      <div className="flex-1 bg-brand-accent flex flex-col items-center justify-center p-6 text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#A3B18A_0%,_transparent_60%)] opacity-50"></div>
         <motion.div 
           initial={{ scale: 0.8, opacity: 0 }}
@@ -85,11 +86,11 @@ export function QuizView({ subtopic, onComplete, onBack }: QuizViewProps) {
           </div>
           <h1 className="text-4xl font-black mb-4">Quiz Complete!</h1>
           <p className="text-xl font-medium text-white/90 mb-8">
-            You earned <span className="text-yellow-300 font-bold">{score} KES</span> points!
+            You earned <span className="text-yellow-300 font-bold">{formatCurrency(score)}</span> points!
           </p>
           <button 
             onClick={() => onComplete(score)}
-            className="w-full bg-white text-[#6B8E23] py-4 rounded-2xl font-black text-lg shadow-xl hover:scale-105 active:scale-95 transition-all"
+            className="w-full bg-white text-brand-accent py-4 rounded-2xl font-black text-lg shadow-xl hover:scale-105 active:scale-95 transition-all"
           >
             Claim Rewards
           </button>
@@ -107,7 +108,7 @@ export function QuizView({ subtopic, onComplete, onBack }: QuizViewProps) {
         <div className="flex-1">
           <div className="h-2 bg-stone-100 rounded-full overflow-hidden">
             <div 
-              className="h-full bg-[#6B8E23] transition-all duration-300" 
+              className="h-full bg-brand-accent transition-all duration-300" 
               style={{ width: `${((currentQuestionIdx) / questions.length) * 100}%` }}
             />
           </div>
@@ -119,7 +120,7 @@ export function QuizView({ subtopic, onComplete, onBack }: QuizViewProps) {
 
       <div className="flex-1 p-6 overflow-y-auto flex flex-col max-w-2xl mx-auto w-full">
         <div className="flex-1">
-          <h2 className="text-2xl font-black text-[#2D3911] mb-8 mt-4 leading-snug">
+          <h2 className="text-2xl font-black text-brand-secondary mb-8 mt-4 leading-snug">
             {currentQuestion.question}
           </h2>
 
@@ -130,7 +131,7 @@ export function QuizView({ subtopic, onComplete, onBack }: QuizViewProps) {
               
               let btnClass = "w-full text-left p-5 rounded-2xl border-2 transition-all font-bold text-lg flex items-center justify-between ";
               if (!showExplanation) {
-                btnClass += "bg-white border-stone-100 hover:border-[#6B8E23]/40 text-stone-700 hover:bg-stone-50";
+                btnClass += "bg-white border-stone-100 hover:border-brand-accent/40 text-stone-700 hover:bg-stone-50";
               } else {
                 if (isCorrect) {
                   btnClass += "bg-green-50 border-green-500 text-green-800";
@@ -162,12 +163,12 @@ export function QuizView({ subtopic, onComplete, onBack }: QuizViewProps) {
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-8 mb-4 p-5 rounded-2xl bg-[#6B8E23]/10 border border-[#6B8E23]/20"
+              className="mt-8 mb-4 p-5 rounded-2xl bg-brand-accent/10 border border-brand-accent/20"
             >
               <div className="flex items-start gap-3">
-                <Sparkles className="text-[#6B8E23] flex-shrink-0 mt-1" size={20} />
+                <Sparkles className="text-brand-accent flex-shrink-0 mt-1" size={20} />
                 <div>
-                  <h4 className="font-black text-[#2D3911] mb-1">
+                  <h4 className="font-black text-brand-secondary mb-1">
                     {selectedAnswer === currentQuestion.correctAnswerIndex ? 'Great Job!' : 'Not Quite!'}
                   </h4>
                   <p className="text-stone-700 font-medium">{currentQuestion.explanation}</p>
@@ -182,7 +183,7 @@ export function QuizView({ subtopic, onComplete, onBack }: QuizViewProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             onClick={handleNext}
-            className="w-full bg-[#2D3911] text-white py-4 rounded-2xl font-black text-lg shadow-xl hover:bg-[#1f280b] transition-colors"
+            className="w-full bg-brand-secondary text-white py-4 rounded-2xl font-black text-lg shadow-xl hover:bg-[#1f280b] transition-colors"
           >
             {currentQuestionIdx < questions.length - 1 ? 'Next Question' : 'Finish Quiz'}
           </motion.button>

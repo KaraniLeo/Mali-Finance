@@ -23,11 +23,22 @@ export function AchievementProvider({ children }: { children: ReactNode }) {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (session?.user) {
-          await supabase.from('achievements').insert({
-            user_id: session.user.id,
-            achievement_id: trigger,
-            metadata: { unlocked_at: new Date().toISOString() }
-          });
+          const { data: profile, error: fetchErr } = await supabase
+            .from('profiles')
+            .select('achievements')
+            .eq('id', session.user.id)
+            .single();
+
+          if (!fetchErr && profile) {
+            const currentAchievements = profile.achievements || [];
+            if (!currentAchievements.includes(trigger)) {
+              const updated = [...currentAchievements, trigger];
+              await supabase
+                .from('profiles')
+                .update({ achievements: updated })
+                .eq('id', session.user.id);
+            }
+          }
         }
       } catch (err) {
         console.error('Failed to save achievement to DB', err);

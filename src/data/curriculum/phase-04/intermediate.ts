@@ -32,9 +32,7 @@ export const intermediateLesson: Lesson = {
     },
     { id: 'i13', type: 'insight', title: 'Why it Works', content: 'Human emotion drives the market in the short term. During a panic, retail investors dump all stocks indiscriminately. The Price crashes, but the true Value of a fundamentally sound business remains unchanged.'
     },
-    { id: 'i14', type: 'example', title: 'Step-by-Step Execution: Part 1', content: '- Step 1: Identify a company with a strong Economic Moat.\n- Step 2: Verify they have consistent, growing Free Cash Flow over 5+ years.\n- Step 3: Ensure their Debt is extremely low.'
-    },
-    { id: 'i15', type: 'example', title: 'Step-by-Step Execution: Part 2', content: '- Step 4: Calculate the Intrinsic Value.\n- Step 5: Wait for the market to crash or panic over temporary bad news.\n- Step 6: Buy when the Price drops 20-30% below Intrinsic Value.'
+    { id: 'i14', type: 'example', title: 'Step-by-Step Execution', content: '- Step 1: Identify a company with a strong Economic Moat.\n- Step 2: Verify they have consistent, growing Free Cash Flow over 5+ years.\n- Step 3: Ensure their Debt is extremely low.\n- Step 4: Calculate the Intrinsic Value.\n- Step 5: Wait for the market to crash or panic over temporary bad news.\n- Step 6: Buy when the Price drops 20-30% below Intrinsic Value.'
     },
     { id: 'i16', type: 'concept', title: 'Margin of Safety', content: 'The 20-30% discount you demand before buying is your Margin of Safety.\n\nIt protects you from your own math errors. If you think the stock is worth $100, you don\'t buy it at $100. You buy it at $70.'
     },
@@ -62,7 +60,7 @@ export const intermediateLesson: Lesson = {
     },
     { id: 'i28', type: 'exercise', title: 'The Ultimate Checklist', content: 'Which of these is NOT a sign of a fundamentally sound company?', options: ['High Insider Ownership.', 'Consistent Free Cash Flow.', 'Constantly issuing new shares to pay for operating expenses.'], correctAnswer: 'Constantly issuing new shares to pay for operating expenses.'
     },
-    { id: 'i29', type: 'concept', title: 'The Macro Environment', content: 'Even the best company in the world will see its stock drop during a recession or when interest rates rise. You must contextualize the business within the global economy.'
+    { id: 'i29', type: 'concept', title: 'The Macro Environment', content: 'Even the best company in the world will see its stock drop during a recession or when {{INTERNATIONAL:interest rates|KENYA:interest rates (CBR)}} rise. You must contextualize the business within the global economy.'
     },
     { id: 'p30', type: 'concept', title: 'Next Steps', content: 'You now know the qualitative factors of a great business. In the Pro lesson, we will get strictly mathematical and learn how to run a Discounted Cash Flow model.', tool: 'market'
     }

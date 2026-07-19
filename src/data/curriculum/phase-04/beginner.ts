@@ -12,13 +12,13 @@ export const beginnerLesson: Lesson = {
     },
     { id: 'b3', type: 'concept', title: 'Why do Companies Issue Stock?', content: 'Companies need money to grow. They can either borrow money from a bank (Debt) or sell a piece of the company to the public (Equity).\n\nWhen they sell to the public for the first time, it is called an IPO.'
     },
-    { id: 'b4', type: 'example', title: 'The Lemonade Stand', content: 'Imagine you have a lemonade stand worth $100. You want to expand, but you have no money. You sell 50% of the stand to a friend for $50.\n\nYou now have $50 to build a second stand, but your friend now gets 50% of all future profits.'
+    { id: 'b4', type: 'example', title: 'The {{INTERNATIONAL:lemonade stand|KENYA:selling smokies or mandazi}}', content: 'Imagine you have a {{INTERNATIONAL:lemonade stand|KENYA:selling smokies or mandazi}} worth $100. You want to expand, but you have no money. You sell 50% of the stand to a friend for $50.\n\nYou now have $50 to build a second stand, but your friend now gets 50% of all future profits.'
     },
     { id: 'b5', type: 'exercise', title: 'Ownership Check', content: 'When you buy a stock, what are you actually buying?', options: ['A lottery ticket.', 'A piece of paper guaranteed to go up.', 'A legal percentage of a real business.'], correctAnswer: 'A legal percentage of a real business.'
     },
-    { id: 'b6', type: 'concept', title: 'The Stock Market', content: 'The stock market is simply an auction house where buyers and sellers agree on a price to trade these fractional ownership pieces.'
+    { id: 'b6', type: 'concept', title: 'The {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}}', content: 'The {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}} is simply an auction house where buyers and sellers agree on a price to trade these fractional ownership pieces.'
     },
-    { id: 'b7', type: 'insight', title: 'The Market is Manic', content: 'In the short term, the stock market is a voting machine driven by emotion. In the long term, it is a weighing machine driven by actual business performance.'
+    { id: 'b7', type: 'insight', title: 'The Market is Manic', content: 'In the short term, the {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}} is a voting machine driven by emotion. In the long term, it is a weighing machine driven by actual business performance.'
     },
     { id: 'b8', type: 'concept', title: 'The Three Financial Statements', content: 'To evaluate a business, you cannot just look at the stock price. You must look at the company\'s report card.\n\nThere are three main statements: The Income Statement, The Balance Sheet, and The Cash Flow Statement.'
     },
@@ -40,9 +40,9 @@ export const beginnerLesson: Lesson = {
     },
     { id: 'b17', type: 'exercise', title: 'Equity Calculation', content: 'If a company has $1M in assets and $600k in debt, what is the Shareholders Equity?', options: ['$1.6M', '$600k', '$400k'], correctAnswer: '$400k'
     },
-    { id: 'b18', type: 'warning', title: 'The Debt Trap', content: 'A company with massive revenue but overwhelming debt is a ticking time bomb. When interest rates rise, their debt payments will crush their profits.'
+    { id: 'b18', type: 'warning', title: 'The Debt Trap', content: 'A company with massive revenue but overwhelming debt is a ticking time bomb. When {{INTERNATIONAL:interest rates|KENYA:interest rates (CBR)}} rise, their debt payments will crush their profits.'
     },
-    { id: 'b19', type: 'concept', title: 'The Cash Flow Statement', content: 'The Cash Flow statement tracks the actual cash entering and leaving the bank account. It is the hardest statement for accountants to manipulate.'
+    { id: 'b19', type: 'concept', title: 'The Cash Flow Statement', content: 'The Cash Flow statement tracks the actual cash entering and leaving the {{INTERNATIONAL:bank account|KENYA:bank account or M-PESA wallet}}. It is the hardest statement for accountants to manipulate.'
     },
     { id: 'b20', type: 'insight', title: 'Cash is King', content: 'A company can look profitable on the Income Statement due to accounting tricks, but the Cash Flow statement reveals the raw truth of survival.'
     },
@@ -52,7 +52,7 @@ export const beginnerLesson: Lesson = {
     },
     { id: 'b23', type: 'exercise', title: 'Dividend Reality', content: 'Do all companies pay dividends?', options: ['Yes, it is legally required.', 'No, growing companies usually reinvest the cash to expand instead.'], correctAnswer: 'No, growing companies usually reinvest the cash to expand instead.'
     },
-    { id: 'b24', type: 'concept', title: 'Market Capitalization', content: 'Market Cap is the total value of the entire company on the stock market.\n\nCalculation: Stock Price × Total Number of Shares.'
+    { id: 'b24', type: 'concept', title: 'Market Capitalization', content: 'Market Cap is the total value of the entire company on the {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}}.\n\nCalculation: Stock Price × Total Number of Shares.'
     },
     { id: 'b25', type: 'warning', title: 'The "Cheap" Stock Illusion', content: 'A stock priced at $1 is not necessarily "cheaper" than a stock priced at $1,000.\n\nIf the $1 stock has 10 billion shares, the company is worth $10 Billion. If the $1,000 stock has 1 million shares, the company is only worth $1 Billion.'
     },
@@ -62,7 +62,7 @@ export const beginnerLesson: Lesson = {
     },
     { id: 'b28', type: 'insight', title: 'Defensive vs Cyclical', content: 'Defensive stocks (utilities, healthcare) do well even in recessions. Cyclical stocks (travel, luxury goods) get crushed in recessions but soar in booms.'
     },
-    { id: 'b29', type: 'concept', title: 'Indexes (The S&P 500)', content: 'An index is a basket of top stocks. The S&P 500 holds the 500 largest companies in the US. Buying an index fund guarantees you match the market\'s performance without picking individual stocks.'
+    { id: 'b29', type: 'concept', title: 'Indexes (The {{INTERNATIONAL:S&P 500 index|KENYA:NSE 20 Share Index}})', content: 'An index is a basket of top stocks. The {{INTERNATIONAL:S&P 500 index|KENYA:NSE 20 Share Index}} holds the 500 largest companies in the US. Buying an index fund guarantees you match the market\'s performance without picking individual stocks.'
     },
     { id: 'b30', type: 'concept', title: 'Next Steps', content: 'Now that you understand the anatomy of a business, you need to learn how to value it. Move to the Intermediate lesson to learn Value Investing.', tool: 'budget'
     }

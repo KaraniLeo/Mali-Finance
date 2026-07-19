@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { formatCurrency } from '../../lib/currency';
 import { motion } from 'motion/react';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 
@@ -57,7 +58,7 @@ export function MarketSim({ onComplete }: { onComplete?: () => void }) {
         <div className="bg-white p-4 rounded-2xl border border-purple-100 shadow-sm">
           <div className="text-xs font-bold text-stone-500 uppercase">Total Value</div>
           <div className={`text-2xl font-black ${totalValue >= 1000 ? 'text-green-600' : 'text-red-600'}`}>
-            {totalValue} KES
+            {formatCurrency(totalValue)}
           </div>
         </div>
         <div className="bg-white p-4 rounded-2xl border border-purple-100 shadow-sm flex flex-col items-end">
@@ -70,7 +71,7 @@ export function MarketSim({ onComplete }: { onComplete?: () => void }) {
 
       <div className="bg-white h-40 rounded-2xl mb-6 border border-purple-100 p-4 flex items-end gap-1 overflow-hidden relative">
         <div className="absolute top-4 left-4 font-black text-xl flex items-center gap-2">
-          {price} KES
+          {formatCurrency(price)}
           {history.length > 1 && price >= history[history.length - 2] ? (
              <TrendingUp className="text-green-500" />
           ) : (

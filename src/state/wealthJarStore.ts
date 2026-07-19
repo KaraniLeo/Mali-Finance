@@ -1,46 +1,71 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { supabase } from '../lib/supabase';
 import { WealthJar } from '../types';
 
 interface WealthJarState {
   jars: WealthJar[];
   
   // Actions
+  fetchJars: (walletId: string) => Promise<void>;
   setJars: (jars: WealthJar[]) => void;
-  addJar: (jar: WealthJar) => void;
-  updateJarBalance: (jarId: string, balance: number) => void;
-  renameJar: (jarId: string, newName: string) => void;
-  removeJar: (jarId: string) => void;
+  addJar: (jar: Omit<WealthJar, 'id' | 'created_at'>) => Promise<void>;
+  updateJarBalance: (jarId: string, balance: number) => Promise<void>;
+  renameJar: (jarId: string, newName: string) => Promise<void>;
+  updateJarAppearance: (jarId: string, icon: string, color: string) => Promise<void>;
+  reorderJars: (jars: WealthJar[]) => void;
+  removeJar: (jarId: string) => Promise<void>;
 }
 
-export const useWealthJarStore = create<WealthJarState>()(
-  persist(
-    (set, get) => ({
-      jars: [
-        { id: 'j-spend', wallet_id: 'local', name: 'Spend', category: 'spend', target: 0, balance: 0, created_at: new Date().toISOString() },
-        { id: 'j-save', wallet_id: 'local', name: 'Save', category: 'save', target: 0, balance: 0, created_at: new Date().toISOString() },
-        { id: 'j-invest', wallet_id: 'local', name: 'Invest', category: 'invest', target: 0, balance: 0, created_at: new Date().toISOString() },
-        { id: 'j-give', wallet_id: 'local', name: 'Give', category: 'give', target: 0, balance: 0, created_at: new Date().toISOString() }
-      ],
+export const useWealthJarStore = create<WealthJarState>((set, get) => ({
+      jars: [],
       
+      fetchJars: async (walletId: string) => {
+        try {
+          const { data } = await supabase.from('wealth_jars').select('*').eq('wallet_id', walletId);
+          if (data) {
+            set({ jars: data });
+          }
+        } catch (err) {
+          console.error("Failed to fetch jars", err);
+        }
+      },
+
       setJars: (jars) => set({ jars }),
       
-      addJar: (jar) => set((state) => ({
-        jars: [...state.jars, jar]
-      })),
+      addJar: async (jar) => {
+        const { data } = await supabase.from('wealth_jars').insert(jar).select().single();
+        if (data) {
+          set((state) => ({ jars: [...state.jars, data] }));
+        }
+      },
       
-      updateJarBalance: (jarId, balance) => set((state) => ({
-        jars: state.jars.map(j => j.id === jarId ? { ...j, balance } : j)
-      })),
+      updateJarBalance: async (jarId, balance) => {
+        const { data, error } = await supabase.from('wealth_jars').update({ balance }).eq('id', jarId).select().single();
+        if (data) {
+          set((state) => ({ jars: state.jars.map(j => j.id === jarId ? data : j) }));
+        }
+      },
       
-      renameJar: (jarId, newName) => set((state) => ({
-        jars: state.jars.map(j => j.id === jarId ? { ...j, name: newName } : j)
-      })),
+      renameJar: async (jarId, newName) => {
+        const { data, error } = await supabase.from('wealth_jars').update({ name: newName }).eq('id', jarId).select().single();
+        if (data) {
+          set((state) => ({ jars: state.jars.map(j => j.id === jarId ? data : j) }));
+        }
+      },
       
-      removeJar: (jarId) => set((state) => ({
-        jars: state.jars.filter(j => j.id !== jarId)
-      }))
-    }),
-    { name: 'mali-wealthjar-store' }
-  )
-);
+      updateJarAppearance: async (jarId, icon, color) => {
+        const { data, error } = await supabase.from('wealth_jars').update({ icon, color }).eq('id', jarId).select().single();
+        if (data) {
+          set((state) => ({ jars: state.jars.map(j => j.id === jarId ? data : j) }));
+        }
+      },
+
+      reorderJars: (jars) => set({ jars }),
+      
+      removeJar: async (jarId) => {
+        const { error } = await supabase.from('wealth_jars').delete().eq('id', jarId);
+        if (!error) {
+          set((state) => ({ jars: state.jars.filter(j => j.id !== jarId) }));
+        }
+      }
+    }));

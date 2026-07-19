@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { formatCurrency } from '../../lib/currency';
 import { motion, AnimatePresence } from 'motion/react';
 
 export function PiggyBank({ onComplete }: { onComplete?: () => void }) {
@@ -27,7 +28,7 @@ export function PiggyBank({ onComplete }: { onComplete?: () => void }) {
   return (
     <div className="w-full bg-[#fce4ec] p-8 rounded-3xl border-4 border-pink-200 text-center relative overflow-hidden">
       <h3 className="text-xl font-black text-pink-800 mb-2">Piggy Bank Challenge</h3>
-      <p className="text-pink-600 font-bold mb-6">Click the button to save coins. Reach 100 KES!</p>
+      <p className="text-pink-600 font-bold mb-6">Click the button to save coins. Reach {formatCurrency(100)}!</p>
       
       <div className="relative h-48 flex items-center justify-center mb-6">
         <motion.div 
@@ -54,7 +55,7 @@ export function PiggyBank({ onComplete }: { onComplete?: () => void }) {
       </div>
 
       <div className="text-3xl font-black text-pink-700 mb-6 bg-white/50 inline-block px-6 py-2 rounded-2xl">
-        {balance} / 100 KES
+        {balance} / {formatCurrency(100)}
       </div>
 
       <div>

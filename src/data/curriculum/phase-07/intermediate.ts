@@ -37,7 +37,7 @@ export const intermediateLesson: Lesson = {
     },
     { id: 'i16', type: 'concept', title: 'Stablecoins', content: 'Cryptocurrency is too volatile for everyday commerce. Stablecoins are tokens pegged 1:1 to a fiat currency (like the US Dollar). USDC and USDT are the most popular.'
     },
-    { id: 'i17', type: 'example', title: 'The Stablecoin Mechanism', content: 'For every 1 USDC token minted on the blockchain, the company (Circle) holds exactly $1 US Dollar in a real bank account. This bridges the legacy financial system with the blockchain.'
+    { id: 'i17', type: 'example', title: 'The Stablecoin Mechanism', content: 'For every 1 USDC token minted on the blockchain, the company (Circle) holds exactly $1 US Dollar in a real {{INTERNATIONAL:bank account|KENYA:bank account or M-PESA wallet}}. This bridges the legacy financial system with the blockchain.'
     },
     { id: 'i18', type: 'warning', title: 'Algorithmic Stablecoins', content: 'Some stablecoins (like Terra LUNA) were NOT backed by real dollars, but by a complex algorithm. When the algorithm failed, the "stablecoin" crashed to $0, wiping out billions.'
     },

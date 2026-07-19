@@ -17,11 +17,11 @@ export const intermediateLesson: Lesson = {
     },
     { id: 'i6', type: 'insight', title: 'The Pain Trade', content: 'The "Pain Trade" is the direction the market moves that causes the maximum amount of financial pain to the majority of participants. If 90% of retail is heavily shorting the market, the Pain Trade is a massive rally that liquidates them all.'
     },
-    { id: 'i7', type: 'concept', title: 'The VIX (Fear Gauge)', content: 'The Volatility Index (VIX) measures the stock market\'s expectation of volatility based on S&P 500 index options. It is literally a mathematical measurement of Wall Street\'s fear.'
+    { id: 'i7', type: 'concept', title: 'The VIX (Fear Gauge)', content: 'The Volatility Index (VIX) measures the {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}}\'s expectation of volatility based on {{INTERNATIONAL:S&P 500 index|KENYA:NSE 20 Share Index}} index options. It is literally a mathematical measurement of Wall Street\'s fear.'
     },
     { id: 'i8', type: 'warning', title: 'VIX Spikes', content: 'When the VIX spikes above 30, institutions are panicking and buying crash insurance. When the VIX drops below 15, institutions are complacent and greedy.'
     },
-    { id: 'i9', type: 'exercise', title: 'Sentiment Indicators', content: 'What does a massive, sudden spike in the VIX indicate?', options: ['The market is calm and bullish.', 'Extreme fear and panic among institutional investors.', 'Interest rates are dropping.'], correctAnswer: 'Extreme fear and panic among institutional investors.'
+    { id: 'i9', type: 'exercise', title: 'Sentiment Indicators', content: 'What does a massive, sudden spike in the VIX indicate?', options: ['The market is calm and bullish.', 'Extreme fear and panic among institutional investors.', '{{INTERNATIONAL:interest rates|KENYA:interest rates (CBR)}} are dropping.'], correctAnswer: 'Extreme fear and panic among institutional investors.'
     },
     { id: 'i10', type: 'concept', title: 'Fear and Greed Index', content: 'A popular indicator that analyzes volatility, momentum, junk bond demand, and safe-haven demand to spit out a daily score from 0 (Extreme Fear) to 100 (Extreme Greed).'
     },

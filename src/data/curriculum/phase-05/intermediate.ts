@@ -38,9 +38,7 @@ export const intermediateLesson: Lesson = {
     },
     { id: 'i16', type: 'insight', title: 'Why The Hammer Bounce Works', content: 'Sellers try to push the price through Support, triggering fear. But massive institutional buyers step in, absorbing all the selling pressure and violently pushing the price back up, leaving a long lower wick.'
     },
-    { id: 'i17', type: 'example', title: 'Step-by-Step Execution: Part 1', content: '- Step 1: Identify a major horizontal Support zone on the Daily chart.\n- Step 2: Wait for the price to drop into that zone. Do NOT buy yet. Be patient.'
-    },
-    { id: 'i18', type: 'example', title: 'Step-by-Step Execution: Part 2', content: '- Step 3: Wait for the daily candle to close as a Hammer (long lower wick).\n- Step 4: Buy at the open of the next candle.\n- Step 5: Place a Stop Loss just below the lowest point of the Hammer\'s wick.'
+    { id: 'i17', type: 'example', title: 'Step-by-Step Execution: Support Bounce', content: '- Step 1: Identify a major horizontal Support zone on the Daily chart.\n- Step 2: Wait for the price to drop into that zone. Do NOT buy yet. Be patient.\n- Step 3: Wait for the daily candle to close as a Hammer (long lower wick).\n- Step 4: Buy at the open of the next candle.\n- Step 5: Place a Stop Loss just below the lowest point of the Hammer\'s wick.'
     },
     { id: 'i19', type: 'warning', title: 'When NOT to use this strategy', content: 'Do NOT use this strategy if the overall macroeconomic trend is a violent crash (e.g., a massive global recession). In a true panic, support zones will break regardless of candlestick patterns.'
     },
@@ -50,9 +48,7 @@ export const intermediateLesson: Lesson = {
     },
     { id: 'i22', type: 'insight', title: 'Why it Works', content: 'Traders who missed the initial breakout wait for a pullback to get in. Traders who shorted the breakout at resistance are now trapped, and they buy to cover their losses when the price returns to break-even. This creates massive demand.'
     },
-    { id: 'i23', type: 'example', title: 'Step-by-Step Execution: Part 1', content: '- Step 1: Identify a major Resistance zone.\n- Step 2: Wait for a massive green candle to break through and close ABOVE the zone on high volume.'
-    },
-    { id: 'i24', type: 'example', title: 'Step-by-Step Execution: Part 2', content: '- Step 3: Let the FOMO traders buy the top. Wait for the price to pull back (retest) the zone.\n- Step 4: Look for a bullish candlestick pattern (like a Hammer or Doji) at the retest.\n- Step 5: Buy, placing your stop loss below the new support zone.'
+    { id: 'i23', type: 'example', title: 'Step-by-Step Execution: Breakout & Retest', content: '- Step 1: Identify a major Resistance zone.\n- Step 2: Wait for a massive green candle to break through and close ABOVE the zone on high volume.\n- Step 3: Let the FOMO traders buy the top. Wait for the price to pull back (retest) the zone.\n- Step 4: Look for a bullish candlestick pattern (like a Hammer or Doji) at the retest.\n- Step 5: Buy, placing your stop loss below the new support zone.'
     },
     { id: 'i25', type: 'warning', title: 'The Fakeout Danger', content: 'If you buy the initial breakout instead of waiting for the retest, you are vulnerable to a "Fakeout" (where the price instantly crashes back down).'
     },

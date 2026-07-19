@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { supabase } from '../lib/supabase';
 import { User, Task, ChatMessage, View, Module, Tier, Wallet, WealthJar, Transaction, Debt } from '../types';
 
 interface AppState {
@@ -10,22 +11,24 @@ interface AppState {
   selectedSubtopic: any | null;
   tasks: Task[];
   completedLessons: string[]; // Tracks which lesson IDs are completed
-  // Wallet State (Partial - waiting for Debt Store)
-  wallet: Wallet | null;
   debts: Debt[];
+  
+  pendingTaskReward: { taskId: string; reward: number; title: string } | null;
+  
+  regionMode: 'international' | 'kenya';
   
   // Actions
   setUser: (user: User | null) => void;
+  setRegionMode: (mode: 'international' | 'kenya') => void;
   setChatHistory: (history: ChatMessage[] | ((prev: ChatMessage[]) => ChatMessage[])) => void;
   setActiveView: (view: View) => void;
   setSelectedModule: (module: Module | null) => void;
   setSelectedSubtopic: (subtopic: any | null) => void;
   setTasks: (tasks: Task[] | ((prev: Task[]) => Task[])) => void;
   markLessonComplete: (lessonId: string) => void;
-  
-  // Wallet Actions
-  setWallet: (wallet: Wallet | null) => void;
   setDebts: (debts: Debt[]) => void;
+  
+  setPendingTaskReward: (reward: { taskId: string; reward: number; title: string } | null) => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -38,10 +41,12 @@ export const useAppStore = create<AppState>()(
       selectedSubtopic: null,
       tasks: [],
       completedLessons: [],
-      wallet: null,
       debts: [],
+      pendingTaskReward: null,
+      regionMode: 'international',
 
       setUser: (user) => set({ user }),
+      setRegionMode: (regionMode) => set({ regionMode }),
       setChatHistory: (history) => set((state) => ({ 
         chatHistory: typeof history === 'function' ? history(state.chatHistory) : history 
       })),
@@ -51,22 +56,35 @@ export const useAppStore = create<AppState>()(
       setTasks: (tasks) => set((state) => ({ 
         tasks: typeof tasks === 'function' ? tasks(state.tasks) : tasks 
       })),
-      markLessonComplete: (lessonId) => set((state) => {
+      markLessonComplete: async (lessonId) => {
+        const state = get();
         if (!state.completedLessons.includes(lessonId)) {
-          return { completedLessons: [...state.completedLessons, lessonId] };
+          set({ completedLessons: [...state.completedLessons, lessonId] });
+          
+          if (state.user) {
+            try {
+              await supabase.from('lesson_progress').upsert({
+                user_id: state.user.id,
+                lesson_id: lessonId,
+                completed: true,
+                total_cards: 0 // Simplification since cards are tracked separately
+              }, { onConflict: 'user_id, lesson_id' });
+            } catch (err) {
+              console.error('Failed to sync lesson progress', err);
+            }
+          }
         }
-        return state;
-      }),
-      setWallet: (wallet) => set({ wallet }),
+      },
       setDebts: (debts) => set({ debts }),
+      
+      setPendingTaskReward: (pendingTaskReward) => set({ pendingTaskReward })
     }),
     {
       name: 'finterns-storage',
       partialize: (state) => ({ 
         tasks: state.tasks, 
         completedLessons: state.completedLessons,
-        wallet: state.wallet,
-        debts: state.debts
+        regionMode: state.regionMode
       }), 
     }
   )

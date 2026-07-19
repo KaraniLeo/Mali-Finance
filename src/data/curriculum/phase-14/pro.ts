@@ -23,7 +23,7 @@ export const proLesson: Lesson = {
     },
     { id: 'p9', type: 'concept', title: 'Value-Add Syndications', content: 'The GP buys a 1980s apartment complex. They spend $10k per unit upgrading the kitchens and floors. This allows them to raise rents by $300 a month. They drastically increase the NOI, force millions in appreciation, and sell the building 5 years later.'
     },
-    { id: 'p10', type: 'warning', title: 'Cap Rate Compression Risk', content: 'Many GPs look like geniuses simply because they bought a building when Cap Rates were 6% and sold it when Cap Rates dropped to 4%. When interest rates rise and Cap Rates expand, those same GPs will go bankrupt because the math reverses.'
+    { id: 'p10', type: 'warning', title: 'Cap Rate Compression Risk', content: 'Many GPs look like geniuses simply because they bought a building when Cap Rates were 6% and sold it when Cap Rates dropped to 4%. When {{INTERNATIONAL:interest rates|KENYA:interest rates (CBR)}} rise and Cap Rates expand, those same GPs will go bankrupt because the math reverses.'
     },
     { id: 'p11', type: 'concept', title: 'Cost Segregation Studies', content: 'A devastatingly powerful tax strategy. Normally, you depreciate a building over 27.5 years. A Cost Segregation study hires engineers to identify every light fixture, carpet, and appliance, allowing you to depreciate them instantly in Year 1.'
     },
@@ -33,13 +33,13 @@ export const proLesson: Lesson = {
     },
     { id: 'p14', type: 'concept', title: 'Debt Service Coverage Ratio (DSCR)', content: 'The metric banks use to approve commercial loans. DSCR = NOI / Annual Debt Payment. A DSCR of 1.0 means the building makes exactly enough money to pay the mortgage. Banks usually require a DSCR of 1.25 or higher to provide a safety cushion.'
     },
-    { id: 'p15', type: 'warning', title: 'The Refinance Cliff', content: 'Commercial loans are not 30-year fixed. They often "balloon" (come due) in 5 years. If the market crashes and interest rates spike right when your 5-year loan expires, you cannot refinance. You must hand the keys back to the bank.'
+    { id: 'p15', type: 'warning', title: 'The Refinance Cliff', content: 'Commercial loans are not 30-year fixed. They often "balloon" (come due) in 5 years. If the market crashes and {{INTERNATIONAL:interest rates|KENYA:interest rates (CBR)}} spike right when your 5-year loan expires, you cannot refinance. You must hand the keys back to the bank.'
     },
-    { id: 'p16', type: 'concept', title: 'Hard Money Loans', content: 'If you want to flip a house, a traditional bank moves too slow (30 days). A Hard Money Lender will give you the cash in 3 days, but they charge loan shark interest rates (12% + massive upfront fees). It is short-term, high-risk capital.'
+    { id: 'p16', type: 'concept', title: 'Hard Money Loans', content: 'If you want to flip a house, a traditional bank moves too slow (30 days). A Hard Money Lender will give you the cash in 3 days, but they charge loan shark {{INTERNATIONAL:interest rates|KENYA:interest rates (CBR)}} (12% + massive upfront fees). It is short-term, high-risk capital.'
     },
     { id: 'p17', type: 'insight', title: 'The Speed of Money', content: 'Pros use Hard Money because they need speed to beat other buyers to a deal. They pay the exorbitant 12% interest for 3 months, fix the house, and immediately refinance into a cheap 5% bank loan.'
     },
-    { id: 'p18', type: 'exercise', title: 'Financing', content: 'Why do real estate flippers use "Hard Money" lenders despite the incredibly high interest rates?', options: ['Because they have bad credit.', 'Because Hard Money lenders prioritize the value of the asset and provide capital incredibly fast, allowing investors to secure competitive deals.', 'Because it is tax-free.'], correctAnswer: 'Because Hard Money lenders prioritize the value of the asset and provide capital incredibly fast, allowing investors to secure competitive deals.'
+    { id: 'p18', type: 'exercise', title: 'Financing', content: 'Why do real estate flippers use "Hard Money" lenders despite the incredibly high {{INTERNATIONAL:interest rates|KENYA:interest rates (CBR)}}?', options: ['Because they have bad credit.', 'Because Hard Money lenders prioritize the value of the asset and provide capital incredibly fast, allowing investors to secure competitive deals.', 'Because it is tax-free.'], correctAnswer: 'Because Hard Money lenders prioritize the value of the asset and provide capital incredibly fast, allowing investors to secure competitive deals.'
     },
     { id: 'p19', type: 'concept', title: 'Distressed Debt (Note Investing)', content: 'You don\'t have to buy the house. You can buy the Mortgage. If a homeowner stops paying their mortgage, the bank will sell that "Non-Performing Note" to an investor for pennies on the dollar.'
     },

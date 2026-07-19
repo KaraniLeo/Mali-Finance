@@ -49,7 +49,7 @@ export const proLesson: Lesson = {
     },
     { id: 'p22', type: 'concept', title: 'Sharpe Ratio', content: 'The Sharpe Ratio measures the performance of an investment compared to a risk-free asset, after adjusting for its risk. It is the ultimate measure of "Risk-Adjusted Returns".'
     },
-    { id: 'p23', type: 'insight', title: 'High Sharpe', content: 'A high Sharpe ratio (above 1.0) means your returns are excellent relative to the amount of volatility and risk you are taking. A negative Sharpe means you would have been better off in a savings account.'
+    { id: 'p23', type: 'insight', title: 'High Sharpe', content: 'A high Sharpe ratio (above 1.0) means your returns are excellent relative to the amount of volatility and risk you are taking. A negative Sharpe means you would have been better off in a {{INTERNATIONAL:savings account|KENYA:savings account or SACCO deposit}}.'
     },
     { id: 'p24', type: 'concept', title: 'Sortino Ratio', content: 'Similar to Sharpe, but the Sortino ratio ONLY penalizes downside volatility. If a stock violently rockets up, Sharpe penalizes it (because it\'s volatile). Sortino recognizes that upside volatility is a good thing.'
     },

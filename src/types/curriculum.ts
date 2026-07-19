@@ -1,6 +1,6 @@
 export type CardType = "concept" | "example" | "exercise" | "insight" | "warning";
 
-export type CardLevel = "beginner" | "intermediate" | "pro";
+export type CardLevel = "beginner" | "intermediate" | "pro" | "wallet";
 
 export type LearningCard = {
   id: string;
@@ -17,9 +17,10 @@ export type LearningCard = {
   toolProps?: any; 
   options?: string[]; // For exercises
   correctAnswer?: string | number; // For exercises
+  orderIndex?: number;
 };
 
-export type LessonLevel = "beginner" | "intermediate" | "advanced" | "pro";
+export type LessonLevel = "beginner" | "intermediate" | "advanced" | "pro" | "wallet";
 
 export interface Lesson {
   id: string;

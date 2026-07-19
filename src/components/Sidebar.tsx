@@ -8,6 +8,7 @@ import {
   Trophy, 
   ShieldCheck, 
   Settings,
+  MessageSquare,
   Gamepad2
 } from 'lucide-react';
 import { User, View } from '../types';
@@ -44,14 +45,14 @@ export function Sidebar({ user, activeView, onViewChange, mobileMenuOpen, onLogo
       >
       <div className="flex items-center justify-between mb-10 overflow-hidden">
         <div className="flex items-center gap-2 cursor-pointer" onClick={toggleSidebar}>
-          <div className="w-12 h-12 flex-shrink-0 bg-[#6B8E23] rounded-xl flex items-center justify-center text-white font-bold text-2xl shadow-lg ring-4 ring-[#6B8E23]/20">M</div>
+          <div className="w-12 h-12 flex-shrink-0 bg-brand-accent rounded-xl flex items-center justify-center text-white font-bold text-2xl shadow-lg ring-4 ring-[#6B8E23]/20">M</div>
           <AnimatePresence>
             {isExpanded && (
               <motion.span 
                 initial={{ opacity: 0, width: 0 }}
                 animate={{ opacity: 1, width: 'auto' }}
                 exit={{ opacity: 0, width: 0 }}
-                className="text-3xl font-bold tracking-tight brand text-[#2D3911] dark:text-[#A7C957] whitespace-nowrap"
+                className="text-3xl font-bold tracking-tight brand text-brand-secondary dark:text-brand-primary whitespace-nowrap"
               >
                 MALI
               </motion.span>
@@ -75,6 +76,13 @@ export function Sidebar({ user, activeView, onViewChange, mobileMenuOpen, onLogo
             onClick={() => onViewChange('dashboard')} 
           />
           <NavItem 
+            icon={<MessageSquare size={24} />} 
+            label="Mali Chat" 
+            active={activeView === 'chat'} 
+            isExpanded={isExpanded}
+            onClick={() => onViewChange('chat')} 
+          />
+          <NavItem 
             icon={<BookOpen size={24} />} 
             label="Learn Modules" 
             active={activeView === 'learn'} 
@@ -88,13 +96,13 @@ export function Sidebar({ user, activeView, onViewChange, mobileMenuOpen, onLogo
             isExpanded={isExpanded}
             onClick={() => onViewChange('tasks')} 
           />
-          <NavItem 
+          {/* <NavItem 
             icon={<Gamepad2 size={24} />} 
             label="Simulators & Games" 
             active={activeView === 'games'} 
             isExpanded={isExpanded}
             onClick={() => onViewChange('games')} 
-          />
+          /> */}
           <NavItem 
             icon={<Wallet size={24} />} 
             label="My Wallet" 
@@ -119,7 +127,7 @@ export function Sidebar({ user, activeView, onViewChange, mobileMenuOpen, onLogo
         <div className="flex flex-col gap-2">
           <NavItem 
             icon={<ShieldCheck size={24} />} 
-            label="Parental Guard" 
+            label="Accountability Partner" 
             active={activeView === 'parental'} 
             isExpanded={isExpanded}
             onClick={() => onViewChange('parental')} 
@@ -132,6 +140,25 @@ export function Sidebar({ user, activeView, onViewChange, mobileMenuOpen, onLogo
             onClick={() => onViewChange('settings')} 
           />
         </div>
+
+        {user.isAdmin && (
+          <>
+            {isExpanded ? (
+              <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-rose-500 mt-6 whitespace-nowrap">Admin</div>
+            ) : (
+              <div className="h-4 mt-6"></div>
+            )}
+            <div className="flex flex-col gap-2">
+              <NavItem 
+                icon={<ShieldCheck size={24} />} 
+                label="Admin CMS" 
+                active={activeView === 'admin'} 
+                isExpanded={isExpanded}
+                onClick={() => onViewChange('admin')} 
+              />
+            </div>
+          </>
+        )}
       </div>
 
       <div className="mt-auto pt-6 flex flex-col gap-4 overflow-hidden">
@@ -167,7 +194,7 @@ function NavItem({ icon, label, active = false, isExpanded = true, onClick }: { 
       title={label}
       className={`w-full flex items-center ${isExpanded ? 'gap-4 px-4' : 'justify-center px-0'} py-3 rounded-xl text-sm font-bold transition-all overflow-hidden ${
       active 
-        ? 'bg-[#6B8E23] text-white shadow-xl shadow-[#6B8E23]/20' 
+        ? 'bg-brand-accent text-white shadow-xl shadow-[#6B8E23]/20' 
         : 'text-stone-500 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 hover:text-stone-800 dark:hover:text-stone-200'
     }`}>
       <span className={`flex-shrink-0 ${active ? 'text-white' : 'text-stone-400 dark:text-stone-500'}`}>{icon}</span>

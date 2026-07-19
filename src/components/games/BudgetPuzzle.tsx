@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { formatCurrency } from '../../lib/currency';
 import { motion } from 'motion/react';
 
 export function BudgetPuzzle({ onComplete }: { onComplete?: () => void }) {
@@ -23,11 +24,11 @@ export function BudgetPuzzle({ onComplete }: { onComplete?: () => void }) {
   return (
     <div className="w-full bg-[#E3F2FD] p-6 md:p-8 rounded-3xl border-4 border-blue-200">
       <h3 className="text-xl font-black text-blue-900 mb-2">The 50/30/20 Budget Challenge</h3>
-      <p className="text-blue-700 font-bold mb-6">Allocate your 1000 KES salary correctly using the 50/30/20 rule.</p>
+      <p className="text-blue-700 font-bold mb-6">Allocate your {formatCurrency(1000)} salary correctly using the 50/30/20 rule.</p>
       
       <div className="bg-white rounded-2xl p-4 mb-6 shadow-sm border border-blue-100 flex justify-between items-center">
         <span className="font-bold text-stone-500 uppercase tracking-widest text-xs">Unallocated Cash</span>
-        <span className={`text-2xl font-black ${remaining === 0 ? 'text-green-500' : 'text-stone-800'}`}>{remaining} KES</span>
+        <span className={`text-2xl font-black ${remaining === 0 ? 'text-green-500' : 'text-stone-800'}`}>{formatCurrency(remaining)}</span>
       </div>
 
       <div className="space-y-4 mb-8">

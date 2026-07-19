@@ -16,7 +16,7 @@ export const beginnerLesson: Lesson = {
     },
     { id: 'b5', type: 'exercise', title: 'Inflation Math', content: 'If inflation is 5% per year, and you keep $1,000 under your mattress, what happens to your purchasing power?', options: ['It increases by 5%.', 'It stays the same.', 'It decreases by 5% every year.'], correctAnswer: 'It decreases by 5% every year.'
     },
-    { id: 'b6', type: 'warning', title: 'The Silent Tax', content: 'Inflation is a silent tax on savers. If you leave your money in a standard bank account earning 0% interest, while inflation is 3%, you are mathematically getting poorer every single day.'
+    { id: 'b6', type: 'warning', title: 'The Silent Tax', content: 'Inflation is a silent tax on savers. If you leave your money in a standard {{INTERNATIONAL:bank account|KENYA:bank account or M-PESA wallet}} earning 0% interest, while inflation is 3%, you are mathematically getting poorer every single day.'
     },
     { id: 'b7', type: 'concept', title: 'Demand-Pull Inflation', content: 'This type of inflation happens when demand for goods outpaces supply. "Too much money chasing too few goods."'
     },
@@ -38,11 +38,11 @@ export const beginnerLesson: Lesson = {
     },
     { id: 'b16', type: 'insight', title: 'GDP Growth', content: 'If GDP goes up, the economy is growing, businesses are making more money, and stocks generally rise. If GDP drops for two consecutive quarters, the country is officially in a Recession.'
     },
-    { id: 'b17', type: 'exercise', title: 'The Recession Rule', content: 'What is the technical definition of a recession?', options: ['When the stock market drops 20%.', 'Two consecutive quarters of negative GDP growth.', 'When unemployment hits 10%.'], correctAnswer: 'Two consecutive quarters of negative GDP growth.'
+    { id: 'b17', type: 'exercise', title: 'The Recession Rule', content: 'What is the technical definition of a recession?', options: ['When the {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}} drops 20%.', 'Two consecutive quarters of negative GDP growth.', 'When unemployment hits 10%.'], correctAnswer: 'Two consecutive quarters of negative GDP growth.'
     },
     { id: 'b18', type: 'concept', title: 'Unemployment Rate', content: 'The percentage of the labor force that is jobless and actively looking for work. High unemployment means a weak economy.'
     },
-    { id: 'b19', type: 'warning', title: 'The Stock Market is NOT the Economy', content: 'The stock market is forward-looking. During a massive recession with high unemployment, the stock market might actually hit all-time highs because investors believe the worst is over and are buying the dip.'
+    { id: 'b19', type: 'warning', title: 'The {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}} is NOT the Economy', content: 'The {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}} is forward-looking. During a massive recession with high unemployment, the {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}} might actually hit all-time highs because investors believe the worst is over and are buying the dip.'
     },
     { id: 'b20', type: 'concept', title: 'Fiscal Policy', content: 'Fiscal policy refers to the Government (politicians) changing tax rates and government spending to influence the economy.'
     },
@@ -50,19 +50,19 @@ export const beginnerLesson: Lesson = {
     },
     { id: 'b22', type: 'exercise', title: 'Who Controls Fiscal Policy?', content: 'Who is in charge of Fiscal Policy?', options: ['The Central Bank', 'The Government (Congress/President)', 'Wall Street Banks'], correctAnswer: 'The Government (Congress/President)'
     },
-    { id: 'b23', type: 'concept', title: 'The Central Bank', content: 'While the Government controls Fiscal Policy, the Central Bank (like the US Federal Reserve) controls Monetary Policy. They control the money supply and interest rates.'
+    { id: 'b23', type: 'concept', title: 'The Central Bank', content: 'While the Government controls Fiscal Policy, the Central Bank (like the US {{INTERNATIONAL:Federal Reserve|KENYA:Central Bank of Kenya (CBK)}}) controls Monetary Policy. They control the money supply and {{INTERNATIONAL:interest rates|KENYA:interest rates (CBR)}}.'
     },
     { id: 'b24', type: 'insight', title: 'The Independent Engine', content: 'The Central Bank is designed to be independent of politicians. Politicians always want the economy to boom so they get re-elected. The Central Bank\'s job is to take away the punch bowl when the party gets out of hand.'
     },
-    { id: 'b25', type: 'concept', title: 'Interest Rates (The Cost of Money)', content: 'When you borrow money to buy a house, you pay interest. Who decides that base interest rate? The Central Bank.'
+    { id: 'b25', type: 'concept', title: '{{INTERNATIONAL:interest rates|KENYA:interest rates (CBR)}} (The Cost of Money)', content: 'When you borrow money to buy a house, you pay interest. Who decides that base interest rate? The Central Bank.'
     },
-    { id: 'b26', type: 'insight', title: 'The Gravity of Finance', content: 'Interest rates are the gravity of the financial world. When interest rates are at 0%, money is essentially free. Businesses borrow billions to expand, and the stock market moons.'
+    { id: 'b26', type: 'insight', title: 'The Gravity of Finance', content: '{{INTERNATIONAL:interest rates|KENYA:interest rates (CBR)}} are the gravity of the financial world. When {{INTERNATIONAL:interest rates|KENYA:interest rates (CBR)}} are at 0%, money is essentially free. Businesses borrow billions to expand, and the {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}} moons.'
     },
-    { id: 'b27', type: 'example', title: 'The Squeeze', content: 'When inflation gets too high, the Central Bank raises interest rates to 5%. Suddenly, mortgages are expensive, credit cards are expensive, and businesses stop expanding. The economy slows down.'
+    { id: 'b27', type: 'example', title: 'The Squeeze', content: 'When inflation gets too high, the Central Bank raises {{INTERNATIONAL:interest rates|KENYA:interest rates (CBR)}} to 5%. Suddenly, mortgages are expensive, credit cards are expensive, and businesses stop expanding. The economy slows down.'
     },
-    { id: 'b28', type: 'exercise', title: 'Interest Rate Logic', content: 'If inflation is hitting a dangerous 10%, what will the Central Bank likely do?', options: ['Lower interest rates to 0% to stimulate the economy.', 'Raise interest rates to slow down spending and destroy demand.', 'Print more money.'], correctAnswer: 'Raise interest rates to slow down spending and destroy demand.'
+    { id: 'b28', type: 'exercise', title: 'Interest Rate Logic', content: 'If inflation is hitting a dangerous 10%, what will the Central Bank likely do?', options: ['Lower {{INTERNATIONAL:interest rates|KENYA:interest rates (CBR)}} to 0% to stimulate the economy.', 'Raise {{INTERNATIONAL:interest rates|KENYA:interest rates (CBR)}} to slow down spending and destroy demand.', 'Print more money.'], correctAnswer: 'Raise {{INTERNATIONAL:interest rates|KENYA:interest rates (CBR)}} to slow down spending and destroy demand.'
     },
-    { id: 'b29', type: 'concept', title: 'The See-Saw', content: 'Interest rates and the Stock Market usually operate on a see-saw. When rates go down, stocks go up. When rates go up, stocks go down.'
+    { id: 'b29', type: 'concept', title: 'The See-Saw', content: '{{INTERNATIONAL:interest rates|KENYA:interest rates (CBR)}} and the {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}} usually operate on a see-saw. When rates go down, stocks go up. When rates go up, stocks go down.'
     },
     { id: 'b30', type: 'concept', title: 'Live Scenario', content: 'Test your understanding of inflation and purchasing power in a live simulation.', tool: 'dynamic',
       toolProps: {

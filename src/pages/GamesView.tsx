@@ -1,12 +1,13 @@
 import React from 'react';
 import { Gamepad2, BrainCircuit, PiggyBank } from 'lucide-react';
 import { MarketSim } from '../components/games/MarketSim';
+import { toast } from '../state/toastStore';
 
 export function GamesView() {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <div className="mb-8">
-        <h2 className="text-3xl font-bold text-[#2D3911] dark:text-[#A7C957] brand flex items-center gap-3">
+        <h2 className="text-3xl font-bold text-brand-secondary dark:text-brand-primary brand flex items-center gap-3">
           <Gamepad2 size={32} />
           Simulators & Games
         </h2>
@@ -26,7 +27,7 @@ export function GamesView() {
               <p className="text-stone-500 dark:text-stone-400 text-sm">Experience the psychology of price action.</p>
             </div>
           </div>
-          <MarketSim onComplete={() => alert('Simulator Complete! Check your new insight.')} />
+          <MarketSim onComplete={() => toast.success('Simulator Complete! Check your new insight.')} />
         </div>
 
         {/* PiggyBank Challenge */}
@@ -37,7 +38,7 @@ export function GamesView() {
             </div>
             <div>
               <h3 className="text-xl font-black text-stone-800 dark:text-stone-200">The Ultimate PiggyBank</h3>
-              <p className="text-stone-500 dark:text-stone-400 text-sm">Save your digital KES and watch it grow.</p>
+              <p className="text-stone-500 dark:text-stone-400 text-sm">Save your digital currency and watch it grow.</p>
             </div>
           </div>
           <div className="w-full bg-stone-50 dark:bg-stone-900 rounded-2xl p-8 border border-stone-100 dark:border-stone-800 flex flex-col items-center justify-center text-center">

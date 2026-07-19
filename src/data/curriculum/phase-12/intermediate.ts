@@ -31,7 +31,7 @@ export const intermediateLesson: Lesson = {
     },
     { id: 'i13', type: 'insight', title: 'The Golden Pocket', content: 'The area between the 61.8% and 65% retracement levels is called the Golden Pocket. It is statistically the highest probability bounce zone in all of financial charting.'
     },
-    { id: 'i14', type: 'exercise', title: 'Fibonacci Mechanics', content: 'Why do Fibonacci retracements work in the stock market?', options: ['Because the SEC enforces them.', 'Because humans (and the algorithms they program) subconsciously recognize these mathematical ratios, turning them into self-fulfilling prophecies.', 'Because they predict the future.'], correctAnswer: 'Because humans (and the algorithms they program) subconsciously recognize these mathematical ratios, turning them into self-fulfilling prophecies.'
+    { id: 'i14', type: 'exercise', title: 'Fibonacci Mechanics', content: 'Why do Fibonacci retracements work in the {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}}?', options: ['Because the SEC enforces them.', 'Because humans (and the algorithms they program) subconsciously recognize these mathematical ratios, turning them into self-fulfilling prophecies.', 'Because they predict the future.'], correctAnswer: 'Because humans (and the algorithms they program) subconsciously recognize these mathematical ratios, turning them into self-fulfilling prophecies.'
     },
     { id: 'i15', type: 'concept', title: 'Gaps', content: 'When a stock closes at $100 on Friday, and opens at $110 on Monday, there is an empty space on the chart between $100 and $110. This is a Gap.'
     },

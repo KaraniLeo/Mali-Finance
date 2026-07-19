@@ -17,7 +17,7 @@ export const beginnerLesson: Lesson = {
     },
     { id: 'b6', type: 'insight', title: 'The Order of Operations', content: 'Amateurs try to jump straight to Pillar 3 (Investing) with $500, hoping to get rich in crypto. Pros focus 100% of their energy on Pillar 1 and 2 to generate $10k/month, and THEN use Pillar 3 to multiply it.'
     },
-    { id: 'b7', type: 'warning', title: 'You Cannot Invest Your Way Out of Poverty', content: 'If you only have $1,000, a massive 20% return in the stock market makes you $200. It takes a year. You could make $200 in a weekend mowing lawns. Focus on income first.'
+    { id: 'b7', type: 'warning', title: 'You Cannot Invest Your Way Out of Poverty', content: 'If you only have $1,000, a massive 20% return in the {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}} makes you $200. It takes a year. You could make $200 in a weekend mowing lawns. Focus on income first.'
     },
     { id: 'b8', type: 'exercise', title: 'Wealth Sequencing', content: 'If you currently have a very low income and zero savings, what should your primary financial focus be?', options: ['Day trading crypto with maximum leverage.', 'Developing a High-Income Skill to drastically increase your cash flow (Pillar 1).', 'Buying fractional shares of Apple.'], correctAnswer: 'Developing a High-Income Skill to drastically increase your cash flow (Pillar 1).'
     },
@@ -65,11 +65,11 @@ export const beginnerLesson: Lesson = {
     },
     { id: 'b30', type: 'concept', title: 'Live Scenario', content: 'Test your understanding of the Wealth Pillars in a live scenario.', tool: 'dynamic',
       toolProps: {
-        scenario: "You are working a 9-5 job making $60,000 a year. You have $5,000 in your bank account. You want to be wealthy. A crypto influencer promises a new coin will 100x.",
+        scenario: "You are working a 9-5 job making $60,000 a year. You have $5,000 in your {{INTERNATIONAL:bank account|KENYA:bank account or M-PESA wallet}}. You want to be wealthy. A crypto influencer promises a new coin will 100x.",
         startingBalance: 5000,
         choices: [
           { text: "Put the entire $5,000 into the crypto coin. You can't get rich without taking massive risks!", result: -5000, feedback: "You failed the Order of Operations. You tried to use Pillar 3 (Investing) to escape poverty without building Pillar 1 (Income). The coin was a scam. You are back to zero." },
-          { text: "Keep the $5,000 in a savings account and focus on asking your boss for a $5k raise next year.", result: 0, feedback: "You avoided the scam, but you stayed in the 'Employee' quadrant. A 3% raise barely covers inflation. You will work until you are 70." },
+          { text: "Keep the $5,000 in a {{INTERNATIONAL:savings account|KENYA:savings account or SACCO deposit}} and focus on asking your boss for a $5k raise next year.", result: 0, feedback: "You avoided the scam, but you stayed in the 'Employee' quadrant. A 3% raise barely covers inflation. You will work until you are 70." },
           { text: "Use $1,000 to buy a camera and microphone. Spend every night learning video editing (High-Income Skill). Start an agency utilizing Permissionless Media Leverage.", result: 50000, feedback: "Pro execution. You ignored the get-rich-quick scheme. You invested in Pillar 1 & 2. You built a scalable, permissionless business. Once the agency generates $10k/month, you use that massive cash flow to invest safely." }
         ]
       }

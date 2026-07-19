@@ -1,0 +1,35 @@
+import { create } from 'zustand';
+
+export type ToastType = 'success' | 'error' | 'info';
+
+export interface ToastMessage {
+  id: string;
+  message: string;
+  type: ToastType;
+}
+
+interface ToastState {
+  toasts: ToastMessage[];
+  addToast: (message: string, type?: ToastType) => void;
+  removeToast: (id: string) => void;
+}
+
+export const useToastStore = create<ToastState>((set) => ({
+  toasts: [],
+  addToast: (message, type = 'info') => {
+    const id = Date.now().toString() + Math.random();
+    set((state) => ({ toasts: [...state.toasts, { id, message, type }] }));
+    // Auto remove after 3 seconds
+    setTimeout(() => {
+      set((state) => ({ toasts: state.toasts.filter((t) => t.id !== id) }));
+    }, 3000);
+  },
+  removeToast: (id) => set((state) => ({ toasts: state.toasts.filter((t) => t.id !== id) })),
+}));
+
+// Helper functions for easy usage
+export const toast = {
+  success: (msg: string) => useToastStore.getState().addToast(msg, 'success'),
+  error: (msg: string) => useToastStore.getState().addToast(msg, 'error'),
+  info: (msg: string) => useToastStore.getState().addToast(msg, 'info'),
+};

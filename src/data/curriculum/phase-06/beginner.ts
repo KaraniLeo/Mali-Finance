@@ -39,7 +39,7 @@ export const beginnerLesson: Lesson = {
     },
     { id: 'b17', type: 'exercise', title: 'Crash Protection', content: 'If you own 100 shares of Apple and are terrified it might crash, what should you buy to protect yourself?', options: ['A Call Option', 'A Put Option', 'A Futures Contract'], correctAnswer: 'A Put Option'
     },
-    { id: 'b18', type: 'concept', title: 'The Multiplier Effect (100x)', content: 'In the stock market, 1 standard Options contract always controls exactly 100 shares of the underlying stock.\n\nThis is why they are so powerful and so dangerous. You are controlling 100 shares for a fraction of the cost.'
+    { id: 'b18', type: 'concept', title: 'The Multiplier Effect (100x)', content: 'In the {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}}, 1 standard Options contract always controls exactly 100 shares of the underlying stock.\n\nThis is why they are so powerful and so dangerous. You are controlling 100 shares for a fraction of the cost.'
     },
     { id: 'b19', type: 'example', title: 'Leverage without Margin', content: 'Buying 100 shares of a $100 stock costs $10,000.\n\nBuying 1 Call Option (controlling 100 shares) might only cost $200. You get the price action of 100 shares, but your maximum risk is capped at the $200 premium.'
     },

@@ -1,4 +1,5 @@
-import { LearningCard } from '../types/curriculum';
+import { LearningCard } from '../types';
+import { getImageUrl } from './storage';
 
 // Import images directly so Vite bundles them properly
 import candlestickImg from '../assets/education/phase-05/candlestick.png';
@@ -39,10 +40,17 @@ export const educationalImages: Record<string, string> = {
 };
 
 export function resolveImage(card: LearningCard): string {
+  // 1. If it's a persistent storage path or HTTP URL, use the new Storage Engine
+  if (card.imageKey && (card.imageKey.includes('/') || card.imageKey.startsWith('http'))) {
+    const url = getImageUrl(card.imageKey);
+    if (url) return url;
+  }
+
+  // 2. Legacy local asset fallback
   if (card.imageKey && educationalImages[card.imageKey]) {
     return educationalImages[card.imageKey];
   }
 
-  // Generic fallback if an imageKey is missing or not yet generated
+  // 3. Generic fallback
   return 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=80';
 }

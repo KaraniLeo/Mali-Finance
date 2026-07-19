@@ -5,20 +5,44 @@
 import React from 'react';
 
 export type Tier = 'junior' | 'teen' | 'pro' | 'parent';
-export type View = 'dashboard' | 'learn' | 'tasks' | 'wallet' | 'achievements' | 'parental' | 'settings' | 'syllabus' | 'quiz' | 'games';
+export type View = 'dashboard' | 'learn' | 'tasks' | 'wallet' | 'achievements' | 'chat' | 'parental' | 'settings' | 'syllabus' | 'quiz' | 'games' | 'admin';
+
+export interface ChatConversation {
+  id: string;
+  user_id: string;
+  title: string;
+  archived: boolean;
+  created_at: string;
+  updated_at: string;
+  message_count?: number;
+}
+
+export interface ChatMessage {
+  id?: string;
+  conversation_id?: string;
+  role: 'user' | 'bot';
+  text: string;
+  created_at?: string;
+}
 
 export interface User {
   id: string;
   name: string;
   dob: string;
   tier: Tier;
+  country?: 'kenya' | 'international';
   balance: number;
   streak: number;
   parentId?: string;
   linkingCode?: string;
   linkedChildId?: string;
+  spentAlerts?: boolean;
+  autoAllowance?: number;
+  spendingLimit?: number;
   achievements?: string[];
   totalLessonsCompleted?: number;
+  isAdmin?: boolean;
+  created_at?: string;
 }
 
 export interface QuizQuestion {
@@ -52,6 +76,7 @@ export interface Module {
   lockedReason?: string;
   syllabus?: Syllabus;
   phaseId?: string; // Links to the modular curriculum system
+  orderIndex?: number;
 }
 
 export interface Task {
@@ -61,11 +86,7 @@ export interface Task {
   reward: number;
   category: 'chore' | 'learning' | 'financial' | 'hustle';
   completed: boolean;
-}
-
-export interface ChatMessage {
-  role: 'user' | 'bot';
-  text: string;
+  created_at?: string;
 }
 
 export interface GameScore {
@@ -88,9 +109,12 @@ export interface WealthJar {
   id: string;
   wallet_id: string;
   name: string;
+  icon?: string;
+  color?: string;
   target: number;
   balance: number;
-  category: 'spend' | 'save' | 'invest' | 'give' | 'custom';
+  category: string;
+  order?: number;
   created_at: string;
 }
 
@@ -118,4 +142,47 @@ export interface Debt {
   remaining_amount: number;
   due_date?: string;
   created_at: string;
+}
+
+export interface Phase {
+  id: string;
+  title: string;
+  description: string;
+  lessons?: Lesson[];
+}
+
+export interface Lesson {
+  id: string;
+  phaseId: string;
+  title: string;
+  level: Tier;
+  cards?: LearningCard[];
+}
+
+export interface LearningCard {
+  id: string;
+  lessonId: string;
+  type: 'concept' | 'insight' | 'example' | 'exercise' | 'warning';
+  title: string;
+  content: string;
+  imageKey?: string;
+  options?: string[];
+  correctAnswer?: string;
+  tool?: 'risk' | 'budget' | 'savings' | 'market' | 'dynamic';
+  toolProps?: any;
+  orderIndex: number;
+}
+
+export interface ChallengeDB {
+  id: string;
+  parent_id: string;
+  child_id: string;
+  title: string;
+  duration_days: number;
+  reward_amount: number;
+  progress: number;
+  target: number;
+  status: 'active' | 'pending_approval' | 'completed' | 'failed';
+  created_at: string;
+  assigned_at: string;
 }

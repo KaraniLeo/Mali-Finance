@@ -3,15 +3,15 @@ import { Phase } from '../../types/curriculum';
 export const phase02: Phase = {
   id: 'phase-02',
   title: 'Phase 2: Macroeconomics & The Global Machine',
-  description: 'Learn how central banks, interest rates, and inflation drive the massive currents that dictate the flow of all capital.',
+  description: 'Learn how central banks, {{INTERNATIONAL:interest rates|KENYA:interest rates (CBR)}}, and inflation drive the massive currents that dictate the flow of all capital.',
   lessons: [
     {
       id: 'p2-l1',
-      title: 'The Federal Reserve & Interest Rates',
+      title: 'The {{INTERNATIONAL:Federal Reserve|KENYA:Central Bank of Kenya (CBK)}} & {{INTERNATIONAL:interest rates|KENYA:interest rates (CBR)}}',
       level: 'beginner',
-      explanation: 'The Central Bank (like the Federal Reserve in the US) controls the cost of money. Interest rates act as gravity on asset prices. When interest rates are low, money is cheap to borrow, companies expand aggressively, and investors flood into the stock market looking for returns. When interest rates rise, borrowing becomes expensive, economic growth slows, and investors move their money into safe bonds.',
+      explanation: 'The Central Bank (like the {{INTERNATIONAL:Federal Reserve|KENYA:Central Bank of Kenya (CBK)}} in the US) controls the cost of money. {{INTERNATIONAL:interest rates|KENYA:interest rates (CBR)}} act as gravity on asset prices. When {{INTERNATIONAL:interest rates|KENYA:interest rates (CBR)}} are low, money is cheap to borrow, companies expand aggressively, and investors flood into the {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}} looking for returns. When {{INTERNATIONAL:interest rates|KENYA:interest rates (CBR)}} rise, borrowing becomes expensive, economic growth slows, and investors move their money into safe bonds.',
       insights: [
-        'Interest rates and asset prices are like a seesaw. If rates go up, asset valuations generally go down.',
+        '{{INTERNATIONAL:interest rates|KENYA:interest rates (CBR)}} and asset prices are like a seesaw. If rates go up, asset valuations generally go down.',
         'The Fed has a dual mandate: maximum employment and stable prices (controlling inflation).'
       ],
       pitfalls: [
@@ -22,7 +22,7 @@ export const phase02: Phase = {
           id: 'p2-l1-sub1',
           title: 'The Yield Curve',
           level: 'advanced',
-          explanation: 'The yield curve plots interest rates of bonds with different maturity dates. A normal curve slopes upward. An "inverted" yield curve (where short-term rates are higher than long-term rates) is historically one of the most reliable predictors of an impending recession.',
+          explanation: 'The yield curve plots {{INTERNATIONAL:interest rates|KENYA:interest rates (CBR)}} of bonds with different maturity dates. A normal curve slopes upward. An "inverted" yield curve (where short-term rates are higher than long-term rates) is historically one of the most reliable predictors of an impending recession.',
           subtopics: [],
           examples: ['The 2-year Treasury yield rises above the 10-year Treasury yield, causing massive institutional shifts to cash.'],
           exercises: [],
@@ -34,7 +34,7 @@ export const phase02: Phase = {
         {
           id: 'ex-2-1',
           title: 'The 2022 Rate Shock',
-          scenario: 'Inflation hit 9%. To stop it, the Fed raised interest rates at the fastest pace in history.',
+          scenario: 'Inflation hit 9%. To stop it, the Fed raised {{INTERNATIONAL:interest rates|KENYA:interest rates (CBR)}} at the fastest pace in history.',
           breakdown: 'Tech stocks, which rely on cheap borrowing for future growth, saw their valuations crushed. Bonds plummeted as well, creating one of the worst years for a 60/40 portfolio on record.'
         }
       ],

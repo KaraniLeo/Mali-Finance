@@ -17,7 +17,7 @@ export const proLesson: Lesson = {
     },
     { id: 'p6', type: 'insight', title: 'The Wrecking Ball', content: 'The DXY is the ultimate macro indicator. Because almost all assets (Stocks, Gold, Bitcoin) are priced in Dollars, when the DXY goes UP (Strong Dollar), asset prices usually go DOWN. The Dollar is a wrecking ball to global liquidity.'
     },
-    { id: 'p7', type: 'exercise', title: 'Dollar Dominance', content: 'If the DXY (U.S. Dollar Index) is rapidly skyrocketing, what is the most likely reaction in the stock market and crypto market?', options: ['They will also skyrocket.', 'They will likely crash, because a stronger dollar acts as a wrecking ball to global liquidity and asset prices.', 'Nothing.'], correctAnswer: 'They will likely crash, because a stronger dollar acts as a wrecking ball to global liquidity and asset prices.'
+    { id: 'p7', type: 'exercise', title: 'Dollar Dominance', content: 'If the DXY (U.S. Dollar Index) is rapidly skyrocketing, what is the most likely reaction in the {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}} and crypto market?', options: ['They will also skyrocket.', 'They will likely crash, because a stronger dollar acts as a wrecking ball to global liquidity and asset prices.', 'Nothing.'], correctAnswer: 'They will likely crash, because a stronger dollar acts as a wrecking ball to global liquidity and asset prices.'
     },
     { id: 'p8', type: 'concept', title: 'The Repurchase (Repo) Market', content: 'The plumbing of the financial system. Banks lend each other trillions of dollars overnight, using Treasury bonds as collateral, just to meet their daily cash requirements.'
     },
@@ -65,11 +65,11 @@ export const proLesson: Lesson = {
     },
     { id: 'p30', type: 'concept', title: 'Live Scenario', content: 'Test your understanding of the Dollar Wrecking Ball in a live scenario.', tool: 'dynamic',
       toolProps: {
-        scenario: "The Federal Reserve unexpectedly hikes rates by 0.75%. The DXY (U.S. Dollar Index) rockets upward, breaking a 20-year resistance line. A massive liquidity crisis begins in the offshore Eurodollar market.",
+        scenario: "The {{INTERNATIONAL:Federal Reserve|KENYA:Central Bank of Kenya (CBK)}} unexpectedly hikes rates by 0.75%. The DXY (U.S. Dollar Index) rockets upward, breaking a 20-year resistance line. A massive liquidity crisis begins in the offshore Eurodollar market.",
         startingBalance: 1000000,
         choices: [
           { text: "Buy Bitcoin and Gold immediately to protect against the Fed.", result: -300000, feedback: "You failed to understand the DXY correlation. A skyrocketing Dollar crushes everything priced in Dollars. Gold, Bitcoin, and Stocks all violently crashed as the global market scrambled for U.S. Dollars to pay off offshore debts." },
-          { text: "Short the S&P 500 and hold massive U.S. Dollar cash positions.", result: 500000, feedback: "Pro execution. You understood that a breaking DXY acts as a wrecking ball to all risk assets. You rode the Dollar strength to massive profits while the rest of the world burned." },
+          { text: "Short the {{INTERNATIONAL:S&P 500 index|KENYA:NSE 20 Share Index}} and hold massive U.S. Dollar cash positions.", result: 500000, feedback: "Pro execution. You understood that a breaking DXY acts as a wrecking ball to all risk assets. You rode the Dollar strength to massive profits while the rest of the world burned." },
           { text: "Buy emerging market foreign stocks because they are 'cheap'.", result: -600000, feedback: "A fatal error. A strong U.S. Dollar bankrupts emerging markets (like Argentina or Turkey) because their national debt is denominated in U.S. Dollars. Their debt just became exponentially more expensive. Their economies collapsed." }
         ]
       }

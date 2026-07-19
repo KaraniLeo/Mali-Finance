@@ -1,10 +1,10 @@
 import { useAppStore } from '../state/store';
-import { getPhaseById } from '../data/curriculum';
-import { modulesData } from '../data/modules';
+import { useCurriculumStore } from '../state/curriculumStore';
 import { Tier, Module } from '../types';
 
 export function useProgress() {
   const completedLessons = useAppStore(state => state.completedLessons);
+  const { modules: storeModules, getPhaseById, lessons } = useCurriculumStore();
 
   /**
    * Returns the progress percentage (0-100) of a module based on its lessons.
@@ -13,12 +13,16 @@ export function useProgress() {
     if (!phaseId) return 0;
     
     const phase = getPhaseById(phaseId);
-    if (!phase || !phase.lessons || phase.lessons.length === 0) return 0;
+    if (!phase) return 0;
+    
+    // We check the lessons in the store
+    const phaseLessons = lessons[phaseId] || [];
+    if (phaseLessons.length === 0) return 0;
 
-    const totalLessons = phase.lessons.length;
+    const totalLessons = phaseLessons.length;
     let completedCount = 0;
 
-    for (const lesson of phase.lessons) {
+    for (const lesson of phaseLessons) {
       if (completedLessons.includes(lesson.id)) {
         completedCount++;
       }
@@ -35,7 +39,7 @@ export function useProgress() {
   const isModuleUnlocked = (moduleIndex: number, tier: Tier): boolean => {
     if (moduleIndex === 0) return true; // First module is always unlocked
 
-    const allTierModules = modulesData[tier] || [];
+    const allTierModules = storeModules[tier] || [];
     const previousModule = allTierModules[moduleIndex - 1];
 
     if (!previousModule || !previousModule.phaseId) {
@@ -50,7 +54,13 @@ export function useProgress() {
    * Processes the tier's modules, injecting the computed progress and locked state.
    */
   const getComputedModules = (tier: Tier): Module[] => {
-    const tierModules = modulesData[tier] || [];
+    let tierModules = storeModules[tier] || [];
+    
+    const regionMode = useAppStore.getState().regionMode;
+    tierModules = tierModules.filter(m => {
+      if (m.phaseId === 'phase-mpesa' && regionMode !== 'kenya') return false;
+      return true;
+    });
     
     return tierModules.map((mod, index) => {
       const progress = getModuleProgress(mod.phaseId);

@@ -27,7 +27,7 @@ export const beginnerLesson: Lesson = {
     },
     { id: 'b11', type: 'example', title: 'The Tech Bubble', content: 'In the year 2000, people who were 100% invested in internet stocks lost everything. People who were diversified into boring dividend stocks survived.'
     },
-    { id: 'b12', type: 'exercise', title: 'True Diversification', content: 'Which portfolio is truly diversified?', options: ['Apple, Microsoft, Google, and Amazon.', 'An S&P 500 Index Fund, Real Estate, and Government Bonds.', 'Bitcoin, Ethereum, and Dogecoin.'], correctAnswer: 'An S&P 500 Index Fund, Real Estate, and Government Bonds.'
+    { id: 'b12', type: 'exercise', title: 'True Diversification', content: 'Which portfolio is truly diversified?', options: ['Apple, Microsoft, Google, and Amazon.', 'An {{INTERNATIONAL:S&P 500 index|KENYA:NSE 20 Share Index}} Index Fund, Real Estate, and {{INTERNATIONAL:government bonds|KENYA:Treasury Bonds (T-Bonds) or Infrastructure Bonds}}.', 'Bitcoin, Ethereum, and Dogecoin.'], correctAnswer: 'An {{INTERNATIONAL:S&P 500 index|KENYA:NSE 20 Share Index}} Index Fund, Real Estate, and {{INTERNATIONAL:government bonds|KENYA:Treasury Bonds (T-Bonds) or Infrastructure Bonds}}.'
     },
     { id: 'b13', type: 'warning', title: 'Diworsification', content: 'While diversification is good, buying 50 random stocks you know nothing about just to be "diversified" is terrible. You will mathematically guarantee mediocre returns.'
     },
@@ -49,7 +49,7 @@ export const beginnerLesson: Lesson = {
     },
     { id: 'b22', type: 'example', title: 'Forced Liquidation', content: 'If you invest all your cash, and your car breaks down, you will be forced to sell your stocks to pay the mechanic. If the market happens to be down that day, you lock in a massive loss.'
     },
-    { id: 'b23', type: 'exercise', title: 'Investment Rule #1', content: 'What money should you use to invest in the stock market?', options: ['Your rent money.', 'Money you borrowed from a friend.', 'Only money you will not need to touch for at least 5 years.'], correctAnswer: 'Only money you will not need to touch for at least 5 years.'
+    { id: 'b23', type: 'exercise', title: 'Investment Rule #1', content: 'What money should you use to invest in the {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}}?', options: ['Your rent money.', 'Money you borrowed from a friend.', 'Only money you will not need to touch for at least 5 years.'], correctAnswer: 'Only money you will not need to touch for at least 5 years.'
     },
     { id: 'b24', type: 'concept', title: 'Dollar Cost Averaging (DCA)', content: 'Instead of trying to guess the exact perfect day to buy a stock, DCA means you buy a set dollar amount every single month, regardless of the price.'
     },
@@ -57,7 +57,7 @@ export const beginnerLesson: Lesson = {
     },
     { id: 'b26', type: 'concept', title: 'The Cash Position', content: 'Cash is not trash. Cash is a position. Having 20% of your portfolio in cash allows you to instantly deploy capital when the market crashes and presents a golden opportunity.'
     },
-    { id: 'b27', type: 'warning', title: 'Leverage (Debt)', content: 'As a beginner, never use Margin or Leverage. Leverage amplifies your gains, but it also amplifies your losses. It is the only way a stock market investor can lose more than 100% of their money.'
+    { id: 'b27', type: 'warning', title: 'Leverage (Debt)', content: 'As a beginner, never use Margin or Leverage. Leverage amplifies your gains, but it also amplifies your losses. It is the only way a {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}} investor can lose more than 100% of their money.'
     },
     { id: 'b28', type: 'concept', title: 'The Sleep Test', content: 'If you are lying awake at night worrying about your portfolio, your position size is too big. Sell half of it until you can sleep peacefully.'
     },

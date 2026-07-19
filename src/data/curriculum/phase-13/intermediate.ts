@@ -5,23 +5,23 @@ export const intermediateLesson: Lesson = {
   title: 'Bonds, Yield Curves & The Debt Cycle',
   level: 'intermediate',
   cards: [
-    { id: 'i1', type: 'concept', title: 'The Bond Market', content: 'The stock market gets the news, but the Bond Market is where the real money is. It is vastly larger than the stock market. A Bond is simply an I.O.U. You lend money to the government, and they promise to pay you back with interest.'
+    { id: 'i1', type: 'concept', title: 'The Bond Market', content: 'The {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}} gets the news, but the Bond Market is where the real money is. It is vastly larger than the {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}}. A Bond is simply an I.O.U. You lend money to the government, and they promise to pay you back with interest.'
     },
-    { id: 'i2', type: 'insight', title: 'Bond Prices vs Yields', content: 'The most important rule in finance: Bond Prices and Bond Yields (Interest Rates) move inversely. If Interest Rates go UP, the price of existing Bonds goes DOWN.'
+    { id: 'i2', type: 'insight', title: 'Bond Prices vs Yields', content: 'The most important rule in finance: Bond Prices and Bond Yields ({{INTERNATIONAL:interest rates|KENYA:interest rates (CBR)}}) move inversely. If {{INTERNATIONAL:interest rates|KENYA:interest rates (CBR)}} go UP, the price of existing Bonds goes DOWN.'
     },
     { id: 'i3', type: 'example', title: 'The Seesaw', content: 'You hold a bond paying 2%. The Fed suddenly raises rates to 5%. Nobody wants to buy your 2% bond when they can buy a brand new one paying 5%. The only way you can sell yours is by slashing the price. Rates up = Prices down.'
     },
-    { id: 'i4', type: 'exercise', title: 'Bond Mechanics', content: 'If the Federal Reserve announces a massive increase in Interest Rates, what immediately happens to the price of existing bonds?', options: ['They go up.', 'They go down, because their lower fixed interest rate is now less attractive to investors.', 'Nothing happens.'], correctAnswer: 'They go down, because their lower fixed interest rate is now less attractive to investors.'
+    { id: 'i4', type: 'exercise', title: 'Bond Mechanics', content: 'If the {{INTERNATIONAL:Federal Reserve|KENYA:Central Bank of Kenya (CBK)}} announces a massive increase in {{INTERNATIONAL:interest rates|KENYA:interest rates (CBR)}}, what immediately happens to the price of existing bonds?', options: ['They go up.', 'They go down, because their lower fixed interest rate is now less attractive to investors.', 'Nothing happens.'], correctAnswer: 'They go down, because their lower fixed interest rate is now less attractive to investors.'
     },
-    { id: 'i5', type: 'concept', title: 'The Yield Curve', content: 'A chart plotting the interest rates of bonds with different maturity dates (e.g., 2-year vs 10-year). Normally, the curve slopes upward: you demand a higher interest rate for locking up your money for 10 years than for 2 years.'
+    { id: 'i5', type: 'concept', title: 'The Yield Curve', content: 'A chart plotting the {{INTERNATIONAL:interest rates|KENYA:interest rates (CBR)}} of bonds with different maturity dates (e.g., 2-year vs 10-year). Normally, the curve slopes upward: you demand a higher interest rate for locking up your money for 10 years than for 2 years.'
     },
     { id: 'i6', type: 'warning', title: 'The Inverted Yield Curve', content: 'When the 2-year bond pays a HIGHER interest rate than the 10-year bond, the curve "Inverts". This means investors are terrified of the near-term future. It is the most historically accurate predictor of a massive Recession.'
     },
     { id: 'i7', type: 'exercise', title: 'Yield Curve Inversion', content: 'What does an "Inverted Yield Curve" historically signal?', options: ['A massive economic boom is coming.', 'Investors are terrified of the short-term future, historically signaling an impending Recession.', 'The government is printing money.'], correctAnswer: 'Investors are terrified of the short-term future, historically signaling an impending Recession.'
     },
-    { id: 'i8', type: 'concept', title: 'Quantitative Easing (QE)', content: 'When interest rates hit 0%, the Fed can\'t lower them anymore. So they use QE. They literally print digital money out of thin air and use it to buy trillions of dollars of Bonds and Mortgages from banks.'
+    { id: 'i8', type: 'concept', title: 'Quantitative Easing (QE)', content: 'When {{INTERNATIONAL:interest rates|KENYA:interest rates (CBR)}} hit 0%, the Fed can\'t lower them anymore. So they use QE. They literally print digital money out of thin air and use it to buy trillions of dollars of Bonds and Mortgages from banks.'
     },
-    { id: 'i9', type: 'insight', title: 'The Wealth Effect', content: 'QE floods the banks with cash. The banks then lend that cash to hedge funds, who use it to buy stocks. Stock prices skyrocket, making rich people richer. This is why the stock market can hit All-Time Highs even during a global pandemic.'
+    { id: 'i9', type: 'insight', title: 'The Wealth Effect', content: 'QE floods the banks with cash. The banks then lend that cash to hedge funds, who use it to buy stocks. Stock prices skyrocket, making rich people richer. This is why the {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}} can hit All-Time Highs even during a global pandemic.'
     },
     { id: 'i10', type: 'concept', title: 'Quantitative Tightening (QT)', content: 'The reverse of QE. The Fed stops buying bonds and starts destroying the digital money they created. This drains liquidity out of the financial system, causing stock markets and crypto to crash.'
     },
@@ -51,11 +51,11 @@ export const intermediateLesson: Lesson = {
     },
     { id: 'i23', type: 'concept', title: 'Stagflation', content: 'The worst possible economic scenario. Stagnation (high unemployment, no growth) combined with Inflation (skyrocketing prices). The Fed is trapped: if they lower rates, inflation gets worse. If they raise rates, unemployment gets worse.'
     },
-    { id: 'i24', type: 'warning', title: 'The 1970s', content: 'The 1970s was a decade of Stagflation. The stock market went nowhere for 10 years, while the cost of living exploded. The only assets that survived were hard commodities like Gold.'
+    { id: 'i24', type: 'warning', title: 'The 1970s', content: 'The 1970s was a decade of Stagflation. The {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}} went nowhere for 10 years, while the cost of living exploded. The only assets that survived were hard commodities like Gold.'
     },
-    { id: 'i25', type: 'exercise', title: 'Economic Nightmares', content: 'What is "Stagflation"?', options: ['A period of rapid economic growth and falling prices.', 'A devastating scenario where economic growth stops (high unemployment) but prices continue to skyrocket (inflation).', 'When the stock market closes for a week.'], correctAnswer: 'A devastating scenario where economic growth stops (high unemployment) but prices continue to skyrocket (inflation).'
+    { id: 'i25', type: 'exercise', title: 'Economic Nightmares', content: 'What is "Stagflation"?', options: ['A period of rapid economic growth and falling prices.', 'A devastating scenario where economic growth stops (high unemployment) but prices continue to skyrocket (inflation).', 'When the {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}} closes for a week.'], correctAnswer: 'A devastating scenario where economic growth stops (high unemployment) but prices continue to skyrocket (inflation).'
     },
-    { id: 'i26', type: 'concept', title: 'Financial Repression', content: 'A stealthy government tactic to reduce national debt. They keep interest rates artificially lower than inflation. If inflation is 5% and your bank pays 1%, the government is secretly taxing you 4% a year to melt away their own debt.'
+    { id: 'i26', type: 'concept', title: 'Financial Repression', content: 'A stealthy government tactic to reduce national debt. They keep {{INTERNATIONAL:interest rates|KENYA:interest rates (CBR)}} artificially lower than inflation. If inflation is 5% and your bank pays 1%, the government is secretly taxing you 4% a year to melt away their own debt.'
     },
     { id: 'i27', type: 'insight', title: 'M2 Money Supply', content: 'The total amount of cash and checking deposits in the economy. Pro investors watch the M2 chart closer than the stock chart. If M2 is expanding violently, buy assets. If M2 is shrinking, buy dollars.'
     },

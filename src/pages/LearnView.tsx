@@ -22,7 +22,7 @@ export function LearnView({ tier, modules, onSelectModule }: LearnViewProps) {
     <div className="flex flex-col gap-8 h-full overflow-hidden">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h2 className="text-3xl font-bold text-[#2D3911] brand">Knowledge Hub</h2>
+          <h2 className="text-3xl font-bold text-brand-secondary brand">Knowledge Hub</h2>
           <p className="text-stone-500 font-medium">Master your financial future, one module at a time.</p>
         </div>
         <div className="relative w-full md:w-64">
@@ -32,7 +32,7 @@ export function LearnView({ tier, modules, onSelectModule }: LearnViewProps) {
             placeholder="Search modules..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-white border border-stone-200 rounded-xl py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#6B8E23]/20"
+            className="w-full bg-white border border-stone-200 rounded-xl py-2 pl-10 pr-4 text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-[#6B8E23]/20"
           />
         </div>
       </div>

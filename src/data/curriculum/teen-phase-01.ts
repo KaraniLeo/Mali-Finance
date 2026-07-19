@@ -3,7 +3,7 @@ import { Phase } from '../../types/curriculum';
 export const teenPhase01: Phase = {
   id: 'teen-1',
   title: 'Budgeting & Financial Survival',
-  description: 'Master the 50/30/20 framework, understand the Latte Factor, and avoid debt traps using local Kenyan tools like M-Pesa.',
+  description: 'Master the 50/30/20 framework, understand the Latte Factor, and avoid debt traps using {{INTERNATIONAL:digital wallets|KENYA:local Kenyan tools like M-Pesa}}.',
   lessons: [
     {
       id: 't1-l1',
@@ -22,7 +22,7 @@ export const teenPhase01: Phase = {
           type: 'example',
           level: 'intermediate',
           title: '50% Needs',
-          content: 'Half of your income goes to non-negotiable survival costs. \n\nThis includes rent, groceries, electricity tokens, and matatu fare to school or work. If it is required to survive, it goes here.'
+          content: 'Half of your income goes to non-negotiable survival costs. \n\nThis includes rent, groceries, electricity, and {{INTERNATIONAL:bus fare|KENYA:matatu fare}} to school or work. If it is required to survive, it goes here.'
         },
         {
           id: 't1-c3',
@@ -36,7 +36,7 @@ export const teenPhase01: Phase = {
           type: 'example',
           level: 'intermediate',
           title: '20% Savings & Investing',
-          content: 'This is paying your future self. \n\nThis money goes into an emergency fund, a SACCO for high-interest savings, or the stock market. Never skip this step.'
+          content: 'This is paying your future self. \n\nThis money goes into an emergency fund, a {{INTERNATIONAL:high-yield savings account|KENYA:SACCO for high-interest savings}}, or the stock market. Never skip this step.'
         },
         {
           id: 't1-c5',
@@ -58,22 +58,22 @@ export const teenPhase01: Phase = {
           id: 't1-c6',
           type: 'concept',
           level: 'intermediate',
-          title: 'M-Pesa Management',
-          content: 'M-Pesa makes spending incredibly easy, which makes budgeting incredibly hard.\n\nEvery time you "Send Money" or "Lipa na M-Pesa", the money disappears instantly. Tracking digital spending requires extreme discipline.'
+          title: '{{INTERNATIONAL:Digital Wallet|KENYA:M-Pesa}} Management',
+          content: '{{INTERNATIONAL:Digital payment apps|KENYA:M-Pesa}} makes spending incredibly easy, which makes budgeting incredibly hard.\n\nEvery time you {{INTERNATIONAL:"Send Money" or "Pay"|KENYA:"Send Money" or "Lipa na M-Pesa"}}, the money disappears instantly. Tracking digital spending requires extreme discipline.'
         },
         {
           id: 't1-c7',
           type: 'warning',
           level: 'intermediate',
-          title: 'The Fuliza & M-Shwari Trap',
-          content: 'Mobile loan apps like Fuliza and M-Shwari offer quick cash, but they come with massive daily or monthly interest rates.\n\nBorrowing to buy "Wants" (like clothes or going out) is the fastest way to get trapped in a cycle of debt.'
+          title: 'The {{INTERNATIONAL:Payday Loan|KENYA:Fuliza & M-Shwari}} Trap',
+          content: '{{INTERNATIONAL:Quick loan apps and payday loans|KENYA:Mobile loan apps like Fuliza and M-Shwari}} offer quick cash, but they come with massive daily or monthly interest rates.\n\nBorrowing to buy "Wants" (like clothes or going out) is the fastest way to get trapped in a cycle of debt.'
         },
         {
           id: 't1-c8',
           type: 'insight',
           level: 'intermediate',
-          title: 'The Power of SACCOs',
-          content: 'Instead of borrowing from mobile apps, smart Kenyans use Savings and Credit Cooperative Organizations (SACCOs).\n\nYou save a little every month, earn high dividends, and can eventually borrow against your savings at very low, fair interest rates.'
+          title: 'The Power of {{INTERNATIONAL:Credit Unions|KENYA:SACCOs}}',
+          content: 'Instead of borrowing from mobile apps, smart {{INTERNATIONAL:savers use Credit Unions|KENYA:Kenyans use Savings and Credit Cooperative Organizations (SACCOs)}}.\n\nYou save a little every month, earn high dividends, and can eventually borrow against your savings at very low, fair interest rates.'
         },
         {
           id: 't1-c9',

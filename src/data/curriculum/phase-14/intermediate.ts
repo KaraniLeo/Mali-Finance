@@ -27,7 +27,7 @@ export const intermediateLesson: Lesson = {
     },
     { id: 'i11', type: 'exercise', title: 'Commercial Valuation', content: 'How do you legally force massive appreciation in a Commercial Real Estate building?', options: ['By painting it blue.', 'By increasing the Net Operating Income (NOI), because Commercial buildings are valued strictly on the cash flow they produce.', 'By asking the bank.'], correctAnswer: 'By increasing the Net Operating Income (NOI), because Commercial buildings are valued strictly on the cash flow they produce.'
     },
-    { id: 'i12', type: 'concept', title: 'Cash on Cash Return (CoC)', content: 'CoC = Annual Pre-Tax Cash Flow / Total Cash Invested. This is the true metric of your leverage. It tells you exactly what percentage return you are making on the actual cash that left your bank account.'
+    { id: 'i12', type: 'concept', title: 'Cash on Cash Return (CoC)', content: 'CoC = Annual Pre-Tax Cash Flow / Total Cash Invested. This is the true metric of your leverage. It tells you exactly what percentage return you are making on the actual cash that left your {{INTERNATIONAL:bank account|KENYA:bank account or M-PESA wallet}}.'
     },
     { id: 'i13', type: 'insight', title: 'The Infinite Return', content: 'If you buy a house, renovate it, and the bank appraises it higher, you can refinance and pull 100% of your original cash back out. Your money is back in your pocket, but you still own the cash-flowing house. Your CoC return is mathematically infinite.'
     },
@@ -51,7 +51,7 @@ export const intermediateLesson: Lesson = {
     },
     { id: 'i23', type: 'warning', title: 'The Sponsor Risk', content: 'In a syndication, you have zero control. If the main operator (The Sponsor) is incompetent, they will bankrupt the building, and you will lose your entire $100k.'
     },
-    { id: 'i24', type: 'concept', title: 'REITs (Real Estate Investment Trusts)', content: 'A company that owns or finances income-producing real estate across a range of property sectors. You buy shares of the REIT on the stock market just like a normal stock.'
+    { id: 'i24', type: 'concept', title: 'REITs (Real Estate Investment Trusts)', content: 'A company that owns or finances income-producing real estate across a range of property sectors. You buy shares of the REIT on the {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}} just like a normal stock.'
     },
     { id: 'i25', type: 'insight', title: 'Liquid Real Estate', content: 'REITs are perfect if you want real estate exposure but don\'t want to fix toilets. By law, REITs must pay out 90% of their taxable income to shareholders as dividends. It is highly liquid, passive cash flow.'
     },

@@ -5,7 +5,7 @@ export const intermediateLesson: Lesson = {
   title: 'Auction Theory & Execution',
   level: 'intermediate',
   cards: [
-    { id: 'i1', type: 'concept', title: 'Auction Theory', content: 'The stock market is a continuous double auction.\n\nIn a normal auction, one seller takes bids from many buyers. In the stock market, thousands of sellers are simultaneously taking bids from thousands of buyers. The matching engine organizes this chaos.'
+    { id: 'i1', type: 'concept', title: 'Auction Theory', content: 'The {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}} is a continuous double auction.\n\nIn a normal auction, one seller takes bids from many buyers. In the {{INTERNATIONAL:stock market|KENYA:Nairobi Securities Exchange (NSE) or global markets}}, thousands of sellers are simultaneously taking bids from thousands of buyers. The matching engine organizes this chaos.'
     },
     { id: 'i2', type: 'insight', title: 'The Search for Liquidity', content: 'Price moves for one reason: to find liquidity.\n\nIf there are no sellers at $100, the price MUST move up to $101 to find someone willing to sell. Price is simply an advertising mechanism searching for counterparties.'
     },
