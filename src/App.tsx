@@ -48,6 +48,8 @@ export default function App() {
     pendingTaskReward, setPendingTaskReward
   } = useAppStore();
 
+  const [isBotThinking, setIsBotThinking] = useState(false);
+
   const { balance, setBalance, addTransaction, fetchWalletData } = useWalletStore();
   const { updateJarBalance, jars, fetchJars } = useWealthJarStore();
   const { isOpenMobile, setMobileOpen } = useSidebarStore();
@@ -225,6 +227,7 @@ export default function App() {
 
     const newHistory = [...chatHistory, { role: 'user' as const, text }];
     setChatHistory(newHistory);
+    setIsBotThinking(true);
 
     try {
       const balance = useWalletStore.getState().balance;
@@ -244,12 +247,17 @@ export default function App() {
       } else {
         setChatHistory([...newHistory, { role: 'bot' as const, text: botResponse.text }]);
         // Update local chatCount state so the UI blocks further inputs immediately
-        setUser(prev => prev ? { ...prev, chatCount: (prev.chatCount || 0) + 1 } : null);
+        const currentUser = useAppStore.getState().user;
+        if (currentUser) {
+          setUser({ ...currentUser, chatCount: (currentUser.chatCount || 0) + 1 });
+        }
         track('WEALTH_GUIDE_CHAT');
       }
     } catch (e) {
       console.error(e);
       setChatHistory([...newHistory, { role: 'bot' as const, text: "I'm having a little trouble connecting right now. Try again!" }]);
+    } finally {
+      setIsBotThinking(false);
     }
   };
 
@@ -418,6 +426,7 @@ export default function App() {
               onSendMessage={handleSendMessage}
               onNavigate={setActiveView}
               onUpgradeClick={() => setIsPaymentModalOpen(true)}
+              isThinking={isBotThinking}
               onSelectModule={(m) => {
                 setSelectedModule(m);
                 setActiveView('syllabus');

@@ -23,9 +23,10 @@ export interface DashboardViewProps {
   onNavigate?: (view: View) => void;
   onSelectModule?: (module: Module) => void;
   onUpgradeClick?: () => void;
+  isThinking?: boolean;
 }
 
-export function DashboardView({ user, modules, chatHistory, onSendMessage, onNavigate, onSelectModule, onUpgradeClick }: DashboardViewProps) {
+export function DashboardView({ user, modules, chatHistory, onSendMessage, onNavigate, onSelectModule, onUpgradeClick, isThinking }: DashboardViewProps) {
   const { tier } = user;
   const activeModule = modules.find(m => m.progress < 100 && !m.locked) || modules[0];
   
@@ -157,7 +158,7 @@ export function DashboardView({ user, modules, chatHistory, onSendMessage, onNav
       </div>
 
       <div className="lg:col-span-4 flex flex-col gap-6 md:gap-8 pb-10 lg:pb-0 h-full">
-        <MaliBot user={user} chatHistory={chatHistory} onSendMessage={onSendMessage} onUpgradeClick={onUpgradeClick} />
+        <MaliBot user={user} chatHistory={chatHistory} onSendMessage={onSendMessage} onUpgradeClick={onUpgradeClick} isThinking={isThinking} />
         
         {/* Active Challenges */}
         {childChallenges.length > 0 && (

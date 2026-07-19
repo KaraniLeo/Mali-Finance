@@ -8,11 +8,17 @@ interface MaliBotProps {
   chatHistory: ChatMessage[];
   onSendMessage: (text: string) => void;
   onUpgradeClick?: () => void;
+  isThinking?: boolean;
 }
 
-export function MaliBot({ user, chatHistory, onSendMessage, onUpgradeClick }: MaliBotProps) {
+export function MaliBot({ user, chatHistory, onSendMessage, onUpgradeClick, isThinking }: MaliBotProps) {
   const [chatInput, setChatInput] = useState('');
   const [messagesCount, setMessagesCount] = useState(0);
+  const messagesEndRef = React.useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [chatHistory.length, isThinking]);
 
   useEffect(() => {
     if (!user || user.chatbotPaid) return;
@@ -80,6 +86,16 @@ export function MaliBot({ user, chatHistory, onSendMessage, onUpgradeClick }: Ma
             </div>
           </div>
         ))}
+        {isThinking && (
+          <div className="flex justify-start">
+            <div className="bg-white dark:bg-stone-800 px-5 py-3.5 rounded-2xl rounded-tl-none border border-stone-100 dark:border-stone-700 shadow-sm flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 rounded-full bg-brand-accent animate-bounce" style={{ animationDelay: '0ms' }}></div>
+              <div className="w-2.5 h-2.5 rounded-full bg-brand-accent animate-bounce" style={{ animationDelay: '150ms' }}></div>
+              <div className="w-2.5 h-2.5 rounded-full bg-brand-accent animate-bounce" style={{ animationDelay: '300ms' }}></div>
+            </div>
+          </div>
+        )}
+        <div ref={messagesEndRef} />
       </div>
 
       <div className="relative">
