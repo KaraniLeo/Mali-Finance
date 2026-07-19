@@ -4,13 +4,14 @@ import { Module, View } from '../../types';
 
 interface ActiveModuleProgressProps {
   activeModule: Module;
+  learnProgress: number;
   earnProgress: number;
   saveProgress: number;
   onNavigate?: (view: View) => void;
   onSelectModule?: (module: Module) => void;
 }
 
-export function ActiveModuleProgress({ activeModule, earnProgress, saveProgress, onNavigate, onSelectModule }: ActiveModuleProgressProps) {
+export function ActiveModuleProgress({ activeModule, learnProgress, earnProgress, saveProgress, onNavigate, onSelectModule }: ActiveModuleProgressProps) {
   return (
     <motion.div 
       layout
@@ -18,7 +19,7 @@ export function ActiveModuleProgress({ activeModule, earnProgress, saveProgress,
       onClick={() => onSelectModule?.(activeModule)}
     >
       <div className="absolute -top-12 -right-12 w-48 md:w-64 h-48 md:h-64 bg-white/10 rounded-full blur-3xl"></div>
-
+ 
       <AnimatePresence mode="wait">
         <motion.div
           key={activeModule.id}
@@ -45,7 +46,7 @@ export function ActiveModuleProgress({ activeModule, earnProgress, saveProgress,
               className="flex-1 bg-black/20 hover:bg-black/30 transition-colors rounded-xl p-3 flex flex-col justify-between text-left cursor-pointer group"
             >
               <div className="text-[10px] font-black tracking-widest uppercase mb-2 group-hover:text-white transition-colors">Learn</div>
-              <div className="w-full bg-black/20 rounded-full h-1.5"><div className="bg-[#D4A373] h-1.5 rounded-full transition-all" style={{ width: `${activeModule.progress}%` }} /></div>
+              <div className="w-full bg-black/20 rounded-full h-1.5"><div className="bg-[#D4A373] h-1.5 rounded-full transition-all" style={{ width: `${learnProgress}%` }} /></div>
             </button>
             <button 
               onClick={(e) => { e.stopPropagation(); onNavigate?.('tasks'); }}

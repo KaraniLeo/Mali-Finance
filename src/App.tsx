@@ -22,6 +22,7 @@ import { useSidebarStore } from './state/sidebarStore';
 import { TaskAllocationModal } from './components/TaskAllocationModal';
 import { ToastContainer } from './components/Toast';
 import { PaymentModal } from './components/PaymentModal';
+import { useChatStore } from './state/chatStore';
 
 // Pages
 import { DashboardView } from './pages/DashboardView';
@@ -49,6 +50,7 @@ export default function App() {
   } = useAppStore();
 
   const [isBotThinking, setIsBotThinking] = useState(false);
+  const activeMessages = useChatStore((state) => state.activeMessages);
 
   const { balance, setBalance, addTransaction, fetchWalletData } = useWalletStore();
   const { updateJarBalance, jars, fetchJars } = useWealthJarStore();
@@ -184,6 +186,18 @@ export default function App() {
       if (walletId) {
         await fetchJars(walletId);
       }
+
+      // Sync active conversation
+      const chatStore = useChatStore.getState();
+      await chatStore.loadConversations(userId);
+      if (chatStore.conversations.length > 0) {
+        await chatStore.setActiveConversation(chatStore.conversations[0].id);
+      } else {
+        const newConv = await chatStore.createConversation(userId, "Dashboard Chat");
+        if (newConv) {
+          await chatStore.setActiveConversation(newConv.id);
+        }
+      }
     } catch (e) {
       console.error('Error fetching profile:', e);
     } finally {
@@ -199,7 +213,18 @@ export default function App() {
     if (userProfile.country) {
       useAppStore.getState().setRegionMode(userProfile.country);
     }
-    setChatHistory([{ role: 'bot', text: `Jambo ${userProfile.name}! I'm MaliBot. Let's start your journey to wealth.` }]);
+    
+    // Sync active conversation on login
+    const chatStore = useChatStore.getState();
+    await chatStore.loadConversations(userProfile.id);
+    if (chatStore.conversations.length > 0) {
+      await chatStore.setActiveConversation(chatStore.conversations[0].id);
+    } else {
+      const newConv = await chatStore.createConversation(userProfile.id, "Dashboard Chat");
+      if (newConv) {
+        await chatStore.setActiveConversation(newConv.id);
+      }
+    }
     
     const walletId = await fetchWalletData(userProfile.id);
     if (walletId) {
@@ -218,15 +243,20 @@ export default function App() {
     // Client-side quick check: use persistent chat count from profile
     if (user.chatCount !== undefined && user.chatCount >= 5 && !user.chatbotPaid) {
       setIsPaymentModalOpen(true);
-      setChatHistory([...chatHistory, 
-        { role: 'user' as const, text },
-        { role: 'bot' as const, text: "🔒 You have exhausted your 5 free chatbot requests. Please pay KES 300 to continue chatting with MaliBot." }
-      ]);
       return;
     }
 
-    const newHistory = [...chatHistory, { role: 'user' as const, text }];
-    setChatHistory(newHistory);
+    const chatStore = useChatStore.getState();
+    let conversationId = chatStore.activeConversationId;
+
+    if (!conversationId) {
+      const newConv = await chatStore.createConversation(user.id, "Dashboard Chat");
+      if (!newConv) return;
+      conversationId = newConv.id;
+    }
+
+    // 1. Add user message to DB
+    await chatStore.addMessage(conversationId, { role: 'user', text });
     setIsBotThinking(true);
 
     try {
@@ -239,14 +269,16 @@ export default function App() {
         balance: balance,
       };
 
-      const botResponse = await generateMaliResponse(text, context, chatHistory);
+      const botResponse = await generateMaliResponse(text, context, chatStore.activeMessages);
       
       if (botResponse.error === 'payment_required') {
         setIsPaymentModalOpen(true);
-        setChatHistory([...newHistory, { role: 'bot' as const, text: "🔒 You have exhausted your 5 free chatbot requests. Please pay KES 300 to continue chatting with MaliBot." }]);
+        await chatStore.addMessage(conversationId, { role: 'bot', text: "🔒 You have exhausted your 5 free chatbot requests. Please pay KES 300 to continue chatting with MaliBot." });
       } else {
-        setChatHistory([...newHistory, { role: 'bot' as const, text: botResponse.text }]);
-        // Update local chatCount state so the UI blocks further inputs immediately
+        // 2. Add bot response to DB
+        await chatStore.addMessage(conversationId, { role: 'bot', text: botResponse.text });
+        
+        // 3. Update local chatCount state
         const currentUser = useAppStore.getState().user;
         if (currentUser) {
           setUser({ ...currentUser, chatCount: (currentUser.chatCount || 0) + 1 });
@@ -255,7 +287,7 @@ export default function App() {
       }
     } catch (e) {
       console.error(e);
-      setChatHistory([...newHistory, { role: 'bot' as const, text: "I'm having a little trouble connecting right now. Try again!" }]);
+      await chatStore.addMessage(conversationId, { role: 'bot', text: "I'm having a little trouble connecting right now. Try again!" });
     } finally {
       setIsBotThinking(false);
     }
@@ -276,8 +308,8 @@ export default function App() {
       const newBalance = balance + rewardAmount;
       walletStore.updateWalletBalance(newBalance);
       addTransaction({
-        id: Date.now().toString(),
-        wallet_id: 'local',
+        id: crypto.randomUUID(),
+        wallet_id: walletStore.walletId || 'local',
         jar_id: undefined,
         amount: rewardAmount,
         type: 'credit',
@@ -326,8 +358,8 @@ export default function App() {
         await setBudgetRules(newRules);
 
         addTransaction({
-          id: Date.now().toString(),
-          wallet_id: 'local',
+          id: crypto.randomUUID(),
+          wallet_id: walletStore.walletId || 'local',
           jar_id: jar.id,
           amount: rewardAmount,
           type: 'credit',
@@ -422,7 +454,7 @@ export default function App() {
             <DashboardView
               user={user}
               modules={computedModules}
-              chatHistory={chatHistory}
+              chatHistory={activeMessages}
               onSendMessage={handleSendMessage}
               onNavigate={setActiveView}
               onUpgradeClick={() => setIsPaymentModalOpen(true)}

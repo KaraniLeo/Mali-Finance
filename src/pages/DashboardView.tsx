@@ -30,6 +30,10 @@ export function DashboardView({ user, modules, chatHistory, onSendMessage, onNav
   const { tier } = user;
   const activeModule = modules.find(m => m.progress < 100 && !m.locked) || modules[0];
   
+  const totalModules = modules.length;
+  const totalProgressSum = modules.reduce((acc, m) => acc + m.progress, 0);
+  const overallLearnProgress = totalModules > 0 ? Math.round(totalProgressSum / totalModules) : 0;
+  
   const { jars } = useWealthJarStore();
   const { balance } = useWalletStore();
   const { tasks, addTask, toggleTaskComplete } = useTaskStore();
@@ -103,6 +107,7 @@ export function DashboardView({ user, modules, chatHistory, onSendMessage, onNav
         {activeModule && (
           <ActiveModuleProgress 
             activeModule={activeModule}
+            learnProgress={overallLearnProgress}
             earnProgress={earnProgress}
             saveProgress={saveProgress}
             onNavigate={onNavigate}

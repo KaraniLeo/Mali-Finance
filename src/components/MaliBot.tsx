@@ -75,17 +75,24 @@ export function MaliBot({ user, chatHistory, onSendMessage, onUpgradeClick, isTh
       </div>
 
       <div className="flex-1 bg-white/30 dark:bg-stone-900/30 rounded-2xl p-4 mb-4 overflow-y-auto custom-scrollbar text-sm space-y-4">
-        {chatHistory.map((chat, i) => (
-          <div key={i} className={`flex ${chat.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[90%] px-4 py-3 rounded-2xl ${
-              chat.role === 'user' 
-                ? 'bg-brand-accent text-brand-accent-text font-bold rounded-tr-none shadow-sm' 
-                : 'bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 rounded-tl-none border border-stone-100 dark:border-stone-700 shadow-sm italic'
-            }`}>
-              {chat.text}
+        {(() => {
+          const fallbackWelcome = {
+            role: 'bot' as const,
+            text: `Jambo ${user.name}! I'm MaliBot. Let's start your journey to wealth.`
+          };
+          const displayedMessages = chatHistory.length > 0 ? chatHistory : [fallbackWelcome];
+          return displayedMessages.map((chat, i) => (
+            <div key={i} className={`flex ${chat.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div className={`max-w-[90%] px-4 py-3 rounded-2xl ${
+                chat.role === 'user' 
+                  ? 'bg-brand-accent text-brand-accent-text font-bold rounded-tr-none shadow-sm' 
+                  : 'bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 rounded-tl-none border border-stone-100 dark:border-stone-700 shadow-sm italic'
+              }`}>
+                {chat.text}
+              </div>
             </div>
-          </div>
-        ))}
+          ));
+        })()}
         {isThinking && (
           <div className="flex justify-start">
             <div className="bg-white dark:bg-stone-800 px-5 py-3.5 rounded-2xl rounded-tl-none border border-stone-100 dark:border-stone-700 shadow-sm flex items-center gap-1.5">
