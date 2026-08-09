@@ -35,6 +35,22 @@ export const useChatStore = create<ChatState>()((set, get) => ({
   loadConversations: async (userId) => {
     set({ isLoading: true, error: null });
     try {
+      // First, purge phantom empty conversations (0 messages)
+      const { data: userConvs } = await supabase
+        .from('conversations')
+        .select('id, messages(id)')
+        .eq('user_id', userId);
+
+      if (userConvs && userConvs.length > 0) {
+        const emptyIds = userConvs
+          .filter((c: any) => !c.messages || c.messages.length === 0)
+          .map((c: any) => c.id);
+
+        if (emptyIds.length > 0) {
+          await supabase.from('conversations').delete().in('id', emptyIds);
+        }
+      }
+
       const { data, error } = await supabase
         .from('conversations')
         .select('id,user_id,title,archived,created_at,updated_at')

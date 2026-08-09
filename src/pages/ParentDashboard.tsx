@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ShieldCheck,
@@ -810,7 +810,7 @@ export function AccountabilityPartnerDashboard({ user, onLogout }: Accountabilit
   };
 
   // Compile visual activity items derived from Supabase
-  const unifiedActivityItems = React.useMemo(() => {
+  const unifiedActivityItems = useMemo(() => {
     const items: any[] = [];
 
     childTransactions.forEach(tx => {
@@ -850,7 +850,7 @@ export function AccountabilityPartnerDashboard({ user, onLogout }: Accountabilit
   }, [childTransactions, childTasks, childChallenges]);
 
   // Insights derived dynamically
-  const dynamicRecommendations = React.useMemo(() => {
+  const dynamicRecommendations = useMemo(() => {
     const recommendations = [];
     if (!activeChild) return [];
 

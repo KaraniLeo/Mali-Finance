@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Home, 
@@ -187,7 +187,7 @@ export function Sidebar({ user, activeView, onViewChange, mobileMenuOpen, onLogo
   );
 }
 
-function NavItem({ icon, label, active = false, isExpanded = true, onClick }: { icon: React.ReactNode; label: string; active?: boolean; isExpanded?: boolean; onClick?: () => void }) {
+function NavItem({ icon, label, active = false, isExpanded = true, onClick }: { icon: ReactNode; label: string; active?: boolean; isExpanded?: boolean; onClick?: () => void }) {
   return (
     <button 
       onClick={onClick}

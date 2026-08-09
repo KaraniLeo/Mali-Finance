@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Send, Lock } from 'lucide-react';
 import { ChatMessage, User } from '../types';
 import { supabase } from '../lib/supabase';
@@ -14,10 +14,12 @@ interface MaliBotProps {
 export function MaliBot({ user, chatHistory, onSendMessage, onUpgradeClick, isThinking }: MaliBotProps) {
   const [chatInput, setChatInput] = useState('');
   const [messagesCount, setMessagesCount] = useState(0);
-  const messagesEndRef = React.useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
   }, [chatHistory.length, isThinking]);
 
   useEffect(() => {
@@ -74,7 +76,7 @@ export function MaliBot({ user, chatHistory, onSendMessage, onUpgradeClick, isTh
         </div>
       </div>
 
-      <div className="flex-1 bg-white/30 dark:bg-stone-900/30 rounded-2xl p-4 mb-4 overflow-y-auto custom-scrollbar text-sm space-y-4">
+      <div ref={messagesContainerRef} className="flex-1 bg-white/30 dark:bg-stone-900/30 rounded-2xl p-4 mb-4 overflow-y-auto custom-scrollbar text-sm space-y-4">
         {(() => {
           const fallbackWelcome = {
             role: 'bot' as const,
@@ -102,7 +104,6 @@ export function MaliBot({ user, chatHistory, onSendMessage, onUpgradeClick, isTh
             </div>
           </div>
         )}
-        <div ref={messagesEndRef} />
       </div>
 
       <div className="relative">

@@ -1,4 +1,4 @@
-import React, { StrictMode } from 'react';
+import React, { StrictMode, Component, ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
@@ -17,7 +17,7 @@ if (typeof window !== 'undefined') {
   });
 }
 
-class ErrorBoundary extends React.Component<{children: React.ReactNode}, any> {
+class ErrorBoundary extends Component<{children: ReactNode}, any> {
   constructor(props: any) {
     super(props);
     (this as any).state = { hasError: false, error: null };

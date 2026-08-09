@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Plus, MessageSquare } from 'lucide-react';
 
@@ -193,10 +193,7 @@ export default function App() {
       if (chatStore.conversations.length > 0) {
         await chatStore.setActiveConversation(chatStore.conversations[0].id);
       } else {
-        const newConv = await chatStore.createConversation(userId, "Dashboard Chat");
-        if (newConv) {
-          await chatStore.setActiveConversation(newConv.id);
-        }
+        chatStore.setActiveConversation(null);
       }
     } catch (e) {
       console.error('Error fetching profile:', e);
@@ -220,10 +217,7 @@ export default function App() {
     if (chatStore.conversations.length > 0) {
       await chatStore.setActiveConversation(chatStore.conversations[0].id);
     } else {
-      const newConv = await chatStore.createConversation(userProfile.id, "Dashboard Chat");
-      if (newConv) {
-        await chatStore.setActiveConversation(newConv.id);
-      }
+      chatStore.setActiveConversation(null);
     }
     
     const walletId = await fetchWalletData(userProfile.id);
@@ -250,7 +244,8 @@ export default function App() {
     let conversationId = chatStore.activeConversationId;
 
     if (!conversationId) {
-      const newConv = await chatStore.createConversation(user.id, "Dashboard Chat");
+      const autoTitle = text.length > 25 ? text.slice(0, 25) + '...' : text;
+      const newConv = await chatStore.createConversation(user.id, autoTitle);
       if (!newConv) return;
       conversationId = newConv.id;
     }
@@ -373,8 +368,32 @@ export default function App() {
     setPendingTaskReward(null);
   };
 
+  const mainContentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!loading && !isCurriculumLoading) {
+      window.scrollTo(0, 0);
+      if (mainContentRef.current) {
+        mainContentRef.current.scrollTop = 0;
+      }
+    }
+  }, [activeView, loading, isCurriculumLoading]);
+
   if (loading || isCurriculumLoading) {
-    return <div className="h-screen flex items-center justify-center bg-stone-50 dark:bg-stone-900 text-stone-800 dark:text-stone-100 font-bold">Loading MALI Curriculum...</div>;
+    return (
+      <div className="h-screen w-screen flex flex-col items-center justify-center bg-[#081C15] text-white select-none p-4 overflow-hidden">
+        <div className="relative flex flex-col items-center">
+          <img 
+            src="/mali_icon_sunburst_crest.svg" 
+            alt="MALI Loading" 
+            className="w-36 h-36 md:w-44 md:h-44 relative z-10 animate-pulse drop-shadow-[0_15px_30px_rgba(132,204,22,0.35)]"
+          />
+        </div>
+        <div className="mt-8 w-32 h-1 bg-white/10 rounded-full overflow-hidden relative">
+          <div className="h-full bg-gradient-to-r from-lime-400 to-amber-300 rounded-full animate-pulse w-full"></div>
+        </div>
+      </div>
+    );
   }
 
   if (!user) {
@@ -449,7 +468,7 @@ export default function App() {
           </div>
         </header>
 
-        <div className="flex-1 min-h-0 overflow-y-auto w-full">
+        <div ref={mainContentRef} className="flex-1 min-h-0 overflow-y-auto w-full">
           {activeView === 'dashboard' && (
             <DashboardView
               user={user}

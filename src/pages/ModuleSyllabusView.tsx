@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'motion/react';
 import { ArrowLeft } from 'lucide-react';
 import { Module, Tier } from '../types';
@@ -22,7 +22,7 @@ export function ModuleSyllabusView({ module, onBack, onStartQuiz }: ModuleSyllab
   const phase = module.phaseId ? getPhaseById(module.phaseId) : null;
   const phaseLessons = module.phaseId ? (lessons[module.phaseId] || []) : [];
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (module.phaseId) {
       fetchPhaseDetails(module.phaseId);
     }

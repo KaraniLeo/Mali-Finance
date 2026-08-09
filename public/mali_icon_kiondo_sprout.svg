@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Dark Emerald Background -->
+    <linearGradient id="bgGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1B4332"/>
+      <stop offset="100%" stop-color="#081C15"/>
+    </linearGradient>
+
+    <!-- Warm Gold Gradient -->
+    <linearGradient id="goldGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCD34D"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+
+    <!-- Leaf Green Gradient -->
+    <linearGradient id="leafGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#52B788"/>
+      <stop offset="100%" stop-color="#2D6A4F"/>
+    </linearGradient>
+  </defs>
+
+  <!-- App Icon Rounded Card -->
+  <rect width="512" height="512" rx="115" ry="115" fill="url(#bgGrad2)"/>
+
+  <!-- African Kiondo Weave Geometric Outer Diamond Motif -->
+  <polygon points="256,60 440,256 256,452 72,256" fill="none" stroke="url(#goldGrad2)" stroke-width="8" stroke-dasharray="24 16" opacity="0.4"/>
+
+  <!-- Kiondo Basket Silhouette Base -->
+  <path d="M 130 220 L 160 380 C 160 410 210 430 256 430 C 302 430 352 410 352 380 L 382 220 Z" 
+        fill="url(#goldGrad2)" opacity="0.15"/>
+  <path d="M 130 220 C 130 200 382 200 382 220 C 382 240 130 240 130 220 Z" fill="url(#goldGrad2)"/>
+
+  <!-- Geometric Kiondo Weave Line Patterns -->
+  <path d="M 170 240 L 342 240 M 180 280 L 332 280 M 190 320 L 322 320 M 205 360 L 307 360" 
+        stroke="url(#goldGrad2)" stroke-width="6" stroke-linecap="round" opacity="0.8"/>
+
+  <!-- Sprout of Wealth forming Stylized 'M' -->
+  <path d="M 256 360 L 256 220" stroke="url(#leafGrad)" stroke-width="24" stroke-linecap="round"/>
+  
+  <!-- Left Leaf of M -->
+  <path d="M 256 260 C 200 230 150 160 150 120 C 200 120 240 180 256 230 Z" fill="url(#leafGrad)"/>
+  
+  <!-- Right Leaf of M -->
+  <path d="M 256 260 C 312 230 362 160 362 120 C 312 120 272 180 256 230 Z" fill="url(#leafGrad)"/>
+
+  <!-- Gold Shilling Coin at Top of Sprout -->
+  <circle cx="256" cy="115" r="32" fill="url(#goldGrad2)" stroke="#FFF" stroke-width="4"/>
+  <text x="256" y="127" font-family="Arial, sans-serif" font-weight="900" font-size="34" fill="#081C15" text-anchor="middle">M</text>
+</svg>

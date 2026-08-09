@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Search,
@@ -140,9 +140,12 @@ export function ChatView({ user, onPaymentSuccess }: ChatViewProps) {
     }
   }, [activeConversationId]);
 
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    if (!messagesEndRef.current) return;
-    messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
   }, [activeMessages.length, displayedResponse, isThinking, activeConversationId]);
 
   const getLatestAssistantResponse = () => {
@@ -363,19 +366,13 @@ export function ChatView({ user, onPaymentSuccess }: ChatViewProps) {
   };
 
   const handleClearConversation = async (scope: 'current' | 'all') => {
-    if (!activeConversationId) {
-      setClearModalOpen(false);
-      return;
-    }
-
     try {
-      if (scope === 'current') {
-        await supabase.from('messages').delete().eq('conversation_id', activeConversationId);
-        await setActiveConversation(activeConversationId);
+      if (scope === 'current' && activeConversationId) {
+        await deleteConversation(activeConversationId);
       } else if (scope === 'all') {
-        await supabase.from('messages').delete().in('conversation_id', conversations.map((c) => c.id));
-        if (activeConversationId) {
-          await setActiveConversation(activeConversationId);
+        const convsToDelete = [...conversations];
+        for (const c of convsToDelete) {
+          await deleteConversation(c.id);
         }
       }
     } catch (error) {
@@ -497,7 +494,7 @@ export function ChatView({ user, onPaymentSuccess }: ChatViewProps) {
         </header>
 
         <div className="flex-1 overflow-hidden flex flex-col">
-          <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-4">
+          <div ref={chatContainerRef} className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-4">
             {!activeConversation && (
               <div className="p-6 rounded-3xl border border-dashed border-stone-200 dark:border-stone-800 text-center text-stone-600 dark:text-stone-400">
                 No conversation is selected. Start a new chat to keep your learning history safe across devices.

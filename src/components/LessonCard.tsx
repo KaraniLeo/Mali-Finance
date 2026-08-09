@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { BookOpen, CheckCircle2 } from 'lucide-react';
 import { Lesson } from '../types';
@@ -25,7 +25,7 @@ export function LessonCard({ lesson, index, isLastLessonOfModule, onNextModule }
   const lessonCards = cards[lesson.id] || [];
   const isCompleted = completedLessons.includes(lesson.id); 
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchLessonCards(lesson.id);
   }, [lesson.id, fetchLessonCards]);
 

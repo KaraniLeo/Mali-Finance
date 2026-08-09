@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { BarChart3, Clock, Sparkles } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 

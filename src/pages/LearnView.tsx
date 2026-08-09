@@ -18,6 +18,13 @@ export function LearnView({ tier, modules, onSelectModule }: LearnViewProps) {
     m.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const sortedModules = [...filteredModules].sort((a, b) => {
+    const orderA = a.orderIndex ?? 0;
+    const orderB = b.orderIndex ?? 0;
+    if (orderA !== orderB) return orderA - orderB;
+    return a.title.localeCompare(b.title);
+  });
+
   return (
     <div className="flex flex-col gap-8 h-full overflow-hidden">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -38,9 +45,9 @@ export function LearnView({ tier, modules, onSelectModule }: LearnViewProps) {
       </div>
 
       <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
-        {filteredModules.length > 0 ? (
+        {sortedModules.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredModules.map((m) => (
+            {sortedModules.map((m) => (
               <ModuleCard key={m.id} module={m} onClick={() => onSelectModule?.(m)} />
             ))}
           </div>

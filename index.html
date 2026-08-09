@@ -2,12 +2,124 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Mali app</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>Mali utajiri - Youth Financial Education & Wealth</title>
+    <link rel="icon" type="image/svg+xml" href="mali_icon_kiondo_sprout.svg" />
+    <style>
+      /* Force immediate background color to eliminate white flash */
+      html, body {
+        background-color: #081C15 !important;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      }
+
+      /* Web Loading Screen Styles */
+      #mali-loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: #081C15;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 99999;
+        transition: opacity 0.5s ease-out, visibility 0.5s;
+      }
+
+      .logo {
+        width: 140px;
+        height: 140px;
+        margin-bottom: 30px;
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      .spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid rgba(132, 204, 22, 0.1);
+        border-top: 4px solid #84CC16;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      .loading-text {
+        margin-top: 24px;
+        color: #FCD34D;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-size: 14px;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 0.9; }
+        50% { transform: scale(1.05); opacity: 1; }
+      }
+
+      /* Hide scrollbar during loading */
+      .loading-active {
+        overflow: hidden !important;
+      }
+    </style>
+    <script>
+      // Force scroll to top on every load
+      window.scrollTo(0, 0);
+
+      // Cleanup function to remove loader when React takes over
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          const loader = document.getElementById('mali-loader');
+          if (loader) {
+            loader.style.opacity = '0';
+            loader.style.visibility = 'hidden';
+            document.body.classList.remove('loading-active');
+            window.scrollTo(0, 0);
+          }
+        }, 500);
+      });
+
+      // Secondary observer to ensure we hide the loader if #root is populated
+      const observer = new MutationObserver((mutations) => {
+        const root = document.getElementById('root');
+        if (root && root.children.length > 0) {
+          const loader = document.getElementById('mali-loader');
+          if (loader) {
+             loader.style.opacity = '0';
+             loader.style.visibility = 'hidden';
+             document.body.classList.remove('loading-active');
+             window.scrollTo(0, 0);
+          }
+          observer.disconnect();
+        }
+      });
+
+      window.addEventListener('DOMContentLoaded', () => {
+        const root = document.getElementById('root');
+        if (root) {
+          observer.observe(root, { childList: true });
+        }
+        document.body.classList.add('loading-active');
+      });
+    </script>
   </head>
-  <body>
+  <body class="loading-active">
+    <div id="mali-loader">
+        <img src="mali_icon_sunburst_crest.svg" class="logo" alt="Mali Logo">
+        <div class="spinner"></div>
+        <div class="loading-text">Loading MALI Curriculum...</div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-
