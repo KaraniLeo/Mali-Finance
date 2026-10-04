@@ -91,17 +91,12 @@ export function PublicLandingView({ onGoToAuth, initialSection }: PublicLandingV
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             className="flex items-center gap-3 cursor-pointer group"
           >
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-accent to-amber-500 flex items-center justify-center shadow-lg shadow-brand-accent/25 group-hover:scale-105 transition-transform">
+            <div className="w-11 h-11 rounded-2xl overflow-hidden shadow-lg shadow-brand-accent/20 group-hover:scale-105 transition-transform bg-[#081C15] border border-brand-accent/30 flex items-center justify-center shrink-0">
               <img 
                 src="/mali_icon_sunburst_crest.svg" 
                 alt="Mali Crest" 
-                className="w-7 h-7 object-contain drop-shadow"
-                onError={(e) => {
-                  // Fallback icon if svg not loaded
-                  (e.target as HTMLElement).style.display = 'none';
-                }}
+                className="w-full h-full object-cover"
               />
-              <span className="text-white font-black text-xl">M</span>
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -946,8 +941,12 @@ export function PublicLandingView({ onGoToAuth, initialSection }: PublicLandingV
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-8 border-b border-stone-800">
             
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-brand-accent flex items-center justify-center text-white font-black text-xl shadow-md">
-                M
+              <div className="w-10 h-10 rounded-xl overflow-hidden shadow-md bg-[#081C15] border border-brand-accent/30 flex items-center justify-center shrink-0">
+                <img 
+                  src="/mali_icon_sunburst_crest.svg" 
+                  alt="Mali Crest" 
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div>
                 <span className="font-black text-lg tracking-tight text-white brand">
