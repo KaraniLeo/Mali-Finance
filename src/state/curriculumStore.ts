@@ -223,6 +223,7 @@ export const useCurriculumStore = create<CurriculumState>((set, get) => ({
           imageKey: c.image_key,
           options: c.options && typeof c.options === 'string' ? JSON.parse(c.options) : c.options,
           correctAnswer: c.correct_answer,
+          explanation: c.explanation,
           tool: c.tool,
           toolProps: c.tool_props && typeof c.tool_props === 'string' ? JSON.parse(c.tool_props) : c.tool_props,
           orderIndex: c.order_index
@@ -307,6 +308,7 @@ export const useCurriculumStore = create<CurriculumState>((set, get) => ({
               imageKey: card.imageKey,
               options: card.options,
               correctAnswer: card.correctAnswer as any,
+              explanation: card.explanation,
               tool: card.tool,
               toolProps: card.toolProps,
               orderIndex: card.orderIndex ?? cardIndex
@@ -361,6 +363,7 @@ export const useCurriculumStore = create<CurriculumState>((set, get) => ({
         imageKey: card.imageKey,
         options: card.options,
         correctAnswer: card.correctAnswer as any,
+        explanation: card.explanation,
         tool: card.tool,
         toolProps: card.toolProps,
         orderIndex: card.orderIndex ?? cardIndex
@@ -390,6 +393,7 @@ export const useCurriculumStore = create<CurriculumState>((set, get) => ({
           imageKey: c.image_key,
           options: c.options && typeof c.options === 'string' ? JSON.parse(c.options) : c.options,
           correctAnswer: c.correct_answer,
+          explanation: c.explanation,
           tool: c.tool,
           toolProps: c.tool_props && typeof c.tool_props === 'string' ? JSON.parse(c.tool_props) : c.tool_props,
           orderIndex: c.order_index
@@ -427,6 +431,7 @@ export const useCurriculumStore = create<CurriculumState>((set, get) => ({
             imageKey: card.imageKey,
             options: card.options,
             correctAnswer: card.correctAnswer as any,
+            explanation: card.explanation,
             tool: card.tool,
             toolProps: card.toolProps,
             orderIndex: card.orderIndex ?? cardIndex
@@ -514,6 +519,7 @@ export const useCurriculumStore = create<CurriculumState>((set, get) => ({
       image_key: card.imageKey,
       options: card.options ? JSON.stringify(card.options) : null,
       correct_answer: card.correctAnswer,
+      explanation: card.explanation,
       tool: card.tool,
       tool_props: card.toolProps ? JSON.stringify(card.toolProps) : null,
       order_index: Date.now()
@@ -529,6 +535,7 @@ export const useCurriculumStore = create<CurriculumState>((set, get) => ({
       correct_answer: updates.correctAnswer,
       tool: updates.tool
     };
+    if (updates.explanation !== undefined) mappedUpdates.explanation = updates.explanation;
     if (updates.options !== undefined) mappedUpdates.options = updates.options ? JSON.stringify(updates.options) : null;
     if (updates.toolProps !== undefined) mappedUpdates.tool_props = updates.toolProps ? JSON.stringify(updates.toolProps) : null;
 

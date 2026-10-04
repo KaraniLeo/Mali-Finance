@@ -152,3 +152,87 @@ h1, h2, h3, .brand {
   border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
+/* High-contrast, visible scrollbar for Concept Breakdown Windows */
+.concept-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(217, 119, 6, 0.4) transparent;
+}
+
+.concept-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.concept-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 9999px;
+  margin: 4px 0;
+}
+
+.concept-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(217, 119, 6, 0.45);
+  border-radius: 9999px;
+  transition: background-color 0.2s;
+}
+
+.concept-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(217, 119, 6, 0.75);
+}
+
+.dark .concept-scrollbar {
+  scrollbar-color: rgba(245, 158, 11, 0.45) transparent;
+}
+
+.dark .concept-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.dark .concept-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(245, 158, 11, 0.45);
+}
+
+.dark .concept-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(245, 158, 11, 0.75);
+}
+
+.concept-scrollbar-emerald {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(5, 150, 105, 0.4) transparent;
+}
+
+.concept-scrollbar-emerald::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.concept-scrollbar-emerald::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 9999px;
+  margin: 4px 0;
+}
+
+.concept-scrollbar-emerald::-webkit-scrollbar-thumb {
+  background: rgba(5, 150, 105, 0.45);
+  border-radius: 9999px;
+}
+
+.concept-scrollbar-emerald::-webkit-scrollbar-thumb:hover {
+  background: rgba(5, 150, 105, 0.75);
+}
+
+.dark .concept-scrollbar-emerald {
+  scrollbar-color: rgba(16, 185, 129, 0.45) transparent;
+}
+
+.dark .concept-scrollbar-emerald::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.dark .concept-scrollbar-emerald::-webkit-scrollbar-thumb {
+  background: rgba(16, 185, 129, 0.45);
+}
+
+.dark .concept-scrollbar-emerald::-webkit-scrollbar-thumb:hover {
+  background: rgba(16, 185, 129, 0.75);
+}
+

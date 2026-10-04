@@ -28,6 +28,7 @@ export interface ChatMessage {
 export interface User {
   id: string;
   name: string;
+  email?: string;
   dob: string;
   tier: Tier;
   country?: 'kenya' | 'international';
@@ -44,7 +45,32 @@ export interface User {
   isAdmin?: boolean;
   chatbotPaid?: boolean;
   chatCount?: number;
+  subscriptionStatus?: 'active_trial' | 'active' | 'expired' | 'canceled';
+  subscriptionRenewalDate?: string;
+  phone?: string;
+  phoneCarrier?: CarrierType;
+  phoneVerified?: boolean;
+  safaricomPhone?: string;
+  relationship?: string;
   created_at?: string;
+}
+
+export type CarrierType = 'safaricom' | 'airtel' | 'telkom' | 'equitel' | 'international' | 'unknown';
+export type PaymentRail = 'mpesa' | 'airtel' | 'card' | 'bank' | 'google_play';
+
+export interface PaymentTransaction {
+  id: string;
+  user_id: string;
+  order_reference: string;
+  provider: 'paystack' | 'google_play' | 'daraja';
+  payment_method: PaymentRail;
+  amount: number;
+  currency: string;
+  status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled';
+  paystack_reference?: string;
+  mpesa_receipt_number?: string;
+  settlement_destination?: string;
+  created_at: string;
 }
 
 export interface QuizQuestion {
@@ -170,6 +196,7 @@ export interface LearningCard {
   imageKey?: string;
   options?: string[];
   correctAnswer?: string;
+  explanation?: string;
   tool?: 'risk' | 'budget' | 'savings' | 'market' | 'dynamic';
   toolProps?: any;
   orderIndex: number;

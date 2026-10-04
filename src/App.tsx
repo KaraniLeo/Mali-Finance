@@ -21,7 +21,6 @@ import { useAppStore } from './state/store';
 import { useSidebarStore } from './state/sidebarStore';
 import { TaskAllocationModal } from './components/TaskAllocationModal';
 import { ToastContainer } from './components/Toast';
-import { PaymentModal } from './components/PaymentModal';
 import { useChatStore } from './state/chatStore';
 
 // Pages
@@ -38,6 +37,7 @@ import { ChatView } from './pages/ChatView';
 import { AccountabilityPartnerDashboard } from './pages/ParentDashboard';
 // import { GamesView } from './pages/GamesView';
 import { AdminView } from './pages/AdminView';
+import { PublicLandingView } from './pages/PublicLandingView';
 
 export default function App() {
   const { 
@@ -57,7 +57,51 @@ export default function App() {
   const { isOpenMobile, setMobileOpen } = useSidebarStore();
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [isResetPasswordMode, setIsResetPasswordMode] = useState(false);
+
+  // Public Landing / Compliance Routing State
+  const [showLandingView, setShowLandingView] = useState<boolean>(() => {
+    const path = window.location.pathname.toLowerCase();
+    if (['/login', '/signin', '/auth', '/signup', '/register'].some(p => path.startsWith(p))) {
+      return false;
+    }
+    return true;
+  });
+
+  const [landingSection, setLandingSection] = useState<string>(() => {
+    const path = window.location.pathname.toLowerCase();
+    const hash = window.location.hash.toLowerCase().replace('#', '');
+    if (['about', 'pricing', 'compliance', 'terms', 'refund', 'privacy', 'policies', 'curriculum', 'contact'].some(s => path.includes(s))) {
+      return path.replace(/^\//, '');
+    }
+    return hash;
+  });
+
+  const [authInitialView, setAuthInitialView] = useState<'welcome' | 'role_select' | 'login' | 'parent_wizard'>(() => {
+    const path = window.location.pathname.toLowerCase();
+    if (['/signup', '/register'].some(p => path.startsWith(p))) return 'role_select';
+    return 'login';
+  });
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const path = window.location.pathname.toLowerCase();
+      const hash = window.location.hash.toLowerCase().replace('#', '');
+      if (['/login', '/signin', '/auth'].some(p => path.startsWith(p))) {
+        setShowLandingView(false);
+        setAuthInitialView('login');
+      } else if (['/signup', '/register'].some(p => path.startsWith(p))) {
+        setShowLandingView(false);
+        setAuthInitialView('role_select');
+      } else if (['/about', '/pricing', '/compliance', '/terms', '/refund', '/privacy', '/policies'].some(p => path.startsWith(p))) {
+        setShowLandingView(true);
+        setLandingSection(path.replace(/^\//, '') || hash);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   const { track, setInitialAchievements } = useAchievement();
   const { getComputedModules } = useProgress();
@@ -100,7 +144,13 @@ export default function App() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        setIsResetPasswordMode(true);
+        setUser(null);
+        setLoading(false);
+        return;
+      }
       if (session?.user) {
         fetchProfile(session.user.id, session.user.email);
       } else {
@@ -229,16 +279,12 @@ export default function App() {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setUser(null);
+    setShowLandingView(true);
+    window.history.pushState({}, '', '/');
   };
 
   const handleSendMessage = async (text: string) => {
     if (!user) return;
-
-    // Client-side quick check: use persistent chat count from profile
-    if (user.chatCount !== undefined && user.chatCount >= 5 && !user.chatbotPaid) {
-      setIsPaymentModalOpen(true);
-      return;
-    }
 
     const chatStore = useChatStore.getState();
     let conversationId = chatStore.activeConversationId;
@@ -266,20 +312,15 @@ export default function App() {
 
       const botResponse = await generateMaliResponse(text, context, chatStore.activeMessages);
       
-      if (botResponse.error === 'payment_required') {
-        setIsPaymentModalOpen(true);
-        await chatStore.addMessage(conversationId, { role: 'bot', text: "🔒 You have exhausted your 5 free chatbot requests. Please pay KES 300 to continue chatting with MaliBot." });
-      } else {
-        // 2. Add bot response to DB
-        await chatStore.addMessage(conversationId, { role: 'bot', text: botResponse.text });
-        
-        // 3. Update local chatCount state
-        const currentUser = useAppStore.getState().user;
-        if (currentUser) {
-          setUser({ ...currentUser, chatCount: (currentUser.chatCount || 0) + 1 });
-        }
-        track('WEALTH_GUIDE_CHAT');
+      // 2. Add bot response to DB
+      await chatStore.addMessage(conversationId, { role: 'bot', text: botResponse.text || "I'm having trouble thinking right now. Please try again!" });
+      
+      // 3. Update local chatCount state
+      const currentUser = useAppStore.getState().user;
+      if (currentUser) {
+        setUser({ ...currentUser, chatCount: (currentUser.chatCount || 0) + 1 });
       }
+      track('WEALTH_GUIDE_CHAT');
     } catch (e) {
       console.error(e);
       await chatStore.addMessage(conversationId, { role: 'bot', text: "I'm having a little trouble connecting right now. Try again!" });
@@ -397,11 +438,56 @@ export default function App() {
   }
 
   if (!user) {
-    return <Auth onLogin={handleLogin} />;
+    if (showLandingView) {
+      return (
+        <PublicLandingView
+          initialSection={landingSection}
+          onGoToAuth={(mode) => {
+            setShowLandingView(false);
+            const viewMode = mode === 'signup' ? 'role_select' : 'login';
+            setAuthInitialView(viewMode);
+            window.history.pushState({}, '', mode === 'signup' ? '/signup' : '/login');
+          }}
+        />
+      );
+    }
+
+    return (
+      <Auth 
+        onLogin={handleLogin} 
+        initialMode={isResetPasswordMode ? 'reset_password' : 'auth'}
+        initialViewMode={authInitialView}
+        onBackToLanding={() => {
+          setShowLandingView(true);
+          window.history.pushState({}, '', '/');
+        }}
+      />
+    );
   }
 
   if (user.tier === 'parent') {
     return <AccountabilityPartnerDashboard user={user} onLogout={handleLogout} />;
+  }
+
+  // If child's family subscription is expired, display gentle child-safe paused screen with zero payment triggers
+  if (user.subscriptionStatus === 'expired') {
+    return (
+      <div className="h-screen w-screen flex flex-col items-center justify-center bg-[#F7F7F2] dark:bg-stone-950 text-stone-900 dark:text-stone-100 p-6 text-center select-none">
+        <div className="w-20 h-20 bg-amber-100 dark:bg-amber-950/40 text-amber-600 rounded-full flex items-center justify-center text-4xl mb-4 shadow-sm">
+          ⏳
+        </div>
+        <h2 className="text-2xl font-black mb-2">Family Plan Temporarily Paused</h2>
+        <p className="text-stone-600 dark:text-stone-400 max-w-md mb-6 font-medium text-sm leading-relaxed">
+          Your learning progress is safe! Please ask your parent or guardian to check their Safaricom subscription in the Parent Dashboard to resume lessons and MaliBot.
+        </p>
+        <button
+          onClick={handleLogout}
+          className="px-6 py-3 bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-bold rounded-2xl hover:bg-stone-300 transition-colors cursor-pointer"
+        >
+          Sign Out
+        </button>
+      </div>
+    );
   }
 
   const tier = user.tier as Tier;
@@ -476,7 +562,6 @@ export default function App() {
               chatHistory={activeMessages}
               onSendMessage={handleSendMessage}
               onNavigate={setActiveView}
-              onUpgradeClick={() => setIsPaymentModalOpen(true)}
               isThinking={isBotThinking}
               onSelectModule={(m) => {
                 setSelectedModule(m);
@@ -521,7 +606,7 @@ export default function App() {
           {activeView === 'tasks' && <TasksView />}
           {activeView === 'wallet' && <WalletView />}
           {activeView === 'achievements' && <AchievementsView />}
-          {activeView === 'chat' && <ChatView user={user} onPaymentSuccess={() => fetchProfile(user.id, user.email)} />}
+          {activeView === 'chat' && <ChatView user={user} />}
           {activeView === 'admin' && <AdminView />}
           {activeView === 'parental' && <AccountabilityPartnerView user={user} onUpdateUser={(u) => setUser({...user, ...u})} />}
           {activeView === 'settings' && <SettingsView user={user} onLogout={handleLogout} />}
@@ -537,14 +622,7 @@ export default function App() {
         onConfirm={handleTaskAllocationConfirm}
       />
 
-      <PaymentModal
-        isOpen={isPaymentModalOpen}
-        onClose={() => setIsPaymentModalOpen(false)}
-        userId={user.id}
-        onPaymentSuccess={() => {
-          fetchProfile(user.id, user.email);
-        }}
-      />
+
 
       <AnimatePresence>
         {isModalOpen && (

@@ -17,6 +17,7 @@ export type LearningCard = {
   toolProps?: any; 
   options?: string[]; // For exercises
   correctAnswer?: string | number; // For exercises
+  explanation?: string; // Detailed breakdown of the concept and correct answer
   orderIndex?: number;
 };
 

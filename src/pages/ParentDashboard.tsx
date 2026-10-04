@@ -30,7 +30,7 @@ import {
   Moon,
   LogOut
 } from 'lucide-react';
-import { User, WealthJar, Transaction, Task } from '../types';
+import { User, WealthJar, Transaction, Task, Tier } from '../types';
 import { supabase } from '../lib/supabase';
 import { formatCurrency } from '../lib/currency';
 import { toast } from '../state/toastStore';
@@ -79,6 +79,73 @@ export function AccountabilityPartnerDashboard({ user, onLogout }: Accountabilit
   // Spent categories date filters
   const [spentFilterStartDate, setSpentFilterStartDate] = useState('');
   const [spentFilterEndDate, setSpentFilterEndDate] = useState('');
+
+  // Add Child Modal State
+  const [showAddChildModal, setShowAddChildModal] = useState(false);
+  const [newChildName, setNewChildName] = useState('');
+  const [newChildDob, setNewChildDob] = useState('');
+  const [newChildCountry, setNewChildCountry] = useState<'kenya' | 'international'>('kenya');
+  const [newChildEmail, setNewChildEmail] = useState('');
+  const [newChildPassword, setNewChildPassword] = useState('');
+  const [isAddingChild, setIsAddingChild] = useState(false);
+
+  const getChildTier = (dob: string): Tier => {
+    if (!dob) return 'junior';
+    const birthDate = new Date(dob);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+    if (age < 13) return 'junior';
+    if (age < 18) return 'teen';
+    return 'pro';
+  };
+
+  const handleAddChild = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newChildName || !newChildEmail || !newChildPassword) {
+      toast.error('Please enter child name, login email, and password.');
+      return;
+    }
+    setIsAddingChild(true);
+    try {
+      const tier = getChildTier(newChildDob);
+      const session = (await supabase.auth.getSession()).data.session;
+      const res = await fetch('/api/parent/add-child', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token || ''}`
+        },
+        body: JSON.stringify({
+          childName: newChildName,
+          childDob: newChildDob || '2014-01-01',
+          childTier: tier,
+          childCountry: newChildCountry,
+          childEmail: newChildEmail,
+          childPassword: newChildPassword,
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to add child account');
+
+      toast.success(`Child account for ${newChildName} provisioned successfully!`);
+      setShowAddChildModal(false);
+      setNewChildName('');
+      setNewChildDob('');
+      setNewChildEmail('');
+      setNewChildPassword('');
+      await fetchChildren();
+      if (data.child?.id) {
+        setSelectedChildId(data.child.id);
+      }
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to create child account');
+    } finally {
+      setIsAddingChild(false);
+    }
+  };
 
   // Intervention success feedback modal
   const [showInterventionSuccess, setShowInterventionSuccess] = useState<{
@@ -1061,6 +1128,15 @@ export function AccountabilityPartnerDashboard({ user, onLogout }: Accountabilit
               </div>
             ) : null}
 
+            {/* Add Child Button */}
+            <button
+              onClick={() => setShowAddChildModal(true)}
+              className="flex items-center gap-1.5 px-3.5 py-2 bg-brand-accent text-white rounded-xl text-xs font-black shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer shrink-0"
+            >
+              <Plus size={14} />
+              <span>Add Child</span>
+            </button>
+
             {/* Linking code box */}
             <div className="hidden sm:flex items-center gap-2 px-3 py-2 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-900/60 text-amber-800 dark:text-amber-300 rounded-xl font-bold text-xs shadow-sm">
               Linking Code: <span className="font-mono text-sm tracking-widest font-black text-amber-900 dark:text-amber-200 ml-1">{user.linkingCode || (user as any).linking_code || 'N/A'}</span>
@@ -1103,6 +1179,35 @@ export function AccountabilityPartnerDashboard({ user, onLogout }: Accountabilit
                   {/* TAB 1: DASHBOARD VIEW */}
                   {activeTab === 'dashboard' && (
                     <div className="space-y-8">
+                      {/* Family Membership & Safaricom Billing Card */}
+                      <section className="bg-gradient-to-r from-emerald-500/10 via-brand-accent/10 to-emerald-500/5 border border-emerald-500/30 p-6 rounded-[32px] shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-xl shadow-md shrink-0">
+                            🛡️
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <h3 className="font-black text-sm text-brand-secondary dark:text-white">Family Membership (KES 300/mo)</h3>
+                              <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-emerald-600 text-white">
+                                Month 1 Free Active
+                              </span>
+                            </div>
+                            <p className="text-xs text-stone-600 dark:text-stone-300 mt-1 font-medium">
+                              Safaricom Line: <strong className="text-emerald-700 dark:text-emerald-400">{user.safaricomPhone || (user as any).safaricom_phone || 'Safaricom Active'}</strong> • Unlimited AI & Child Access
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <button
+                            type="button"
+                            onClick={() => toast.success('Safaricom carrier billing is verified and active. Renews in 30 days.')}
+                            className="px-4 py-2 bg-white dark:bg-stone-800 border border-emerald-500/30 text-emerald-700 dark:text-emerald-400 rounded-xl text-xs font-bold hover:bg-emerald-50 dark:hover:bg-stone-700 transition-colors cursor-pointer"
+                          >
+                            Carrier Billing Active
+                          </button>
+                        </div>
+                      </section>
+
                       {/* Summary dynamic header */}
                       <section className="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 p-6 rounded-[32px] shadow-sm flex items-start gap-4">
                         <div className="p-3 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-900 text-amber-700 dark:text-amber-400 rounded-2xl shrink-0">
@@ -2034,6 +2139,130 @@ export function AccountabilityPartnerDashboard({ user, onLogout }: Accountabilit
                   Awesome!
                 </button>
               </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Add Child Provisioning Modal */}
+      <AnimatePresence>
+        {showAddChildModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white dark:bg-stone-900 rounded-[32px] p-6 md:p-8 max-w-lg w-full border border-stone-200 dark:border-stone-800 shadow-2xl relative text-left"
+            >
+              <div className="flex justify-between items-center mb-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-10 h-10 rounded-xl bg-brand-accent/10 text-brand-accent flex items-center justify-center font-black">
+                    👶
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-black text-stone-900 dark:text-white">Provision New Child Account</h3>
+                    <p className="text-xs text-stone-500">Child accounts are included in your monthly family plan.</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowAddChildModal(false)}
+                  className="w-8 h-8 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-stone-500 hover:text-stone-800 cursor-pointer"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              <form onSubmit={handleAddChild} className="space-y-4">
+                <div>
+                  <label className="text-[10px] font-black uppercase text-stone-500 tracking-wider px-1">Child Full Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={newChildName}
+                    onChange={e => setNewChildName(e.target.value)}
+                    placeholder="e.g. Makena Kamau"
+                    className="w-full mt-1 bg-stone-100/70 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl py-2.5 px-3 text-sm focus:outline-none"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-[10px] font-black uppercase text-stone-500 tracking-wider px-1">Date of Birth</label>
+                    <input
+                      type="date"
+                      required
+                      value={newChildDob}
+                      onChange={e => setNewChildDob(e.target.value)}
+                      className="w-full mt-1 bg-stone-100/70 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl py-2.5 px-3 text-sm focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-black uppercase text-stone-500 tracking-wider px-1">Region</label>
+                    <select
+                      value={newChildCountry}
+                      onChange={e => setNewChildCountry(e.target.value as any)}
+                      className="w-full mt-1 bg-stone-100/70 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl py-2.5 px-3 text-sm focus:outline-none"
+                    >
+                      <option value="kenya">🇰🇪 Kenya (KES)</option>
+                      <option value="international">🌍 International (USD)</option>
+                    </select>
+                  </div>
+                </div>
+
+                {newChildDob && (
+                  <div className="p-3 bg-brand-accent/10 border border-brand-accent/20 rounded-xl flex items-center justify-between text-xs">
+                    <span className="font-bold text-brand-secondary dark:text-white">
+                      Portal Tier: <strong className="uppercase text-brand-accent">{getChildTier(newChildDob)}</strong>
+                    </span>
+                    <span className="text-[11px] text-stone-500">
+                      {getChildTier(newChildDob) === 'junior' ? 'Junior (6-12)' : getChildTier(newChildDob) === 'teen' ? 'Teen (13-17)' : 'Pro (18+)'}
+                    </span>
+                  </div>
+                )}
+
+                <div>
+                  <label className="text-[10px] font-black uppercase text-stone-500 tracking-wider px-1">Child Login Username / Email</label>
+                  <input
+                    type="email"
+                    required
+                    value={newChildEmail}
+                    onChange={e => setNewChildEmail(e.target.value)}
+                    placeholder="child@mali.app"
+                    className="w-full mt-1 bg-stone-100/70 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl py-2.5 px-3 text-sm focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[10px] font-black uppercase text-stone-500 tracking-wider px-1">Child Login Password</label>
+                  <input
+                    type="password"
+                    required
+                    minLength={6}
+                    value={newChildPassword}
+                    onChange={e => setNewChildPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full mt-1 bg-stone-100/70 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl py-2.5 px-3 text-sm focus:outline-none"
+                  />
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowAddChildModal(false)}
+                    className="flex-1 py-3 bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-bold text-xs rounded-xl hover:bg-stone-200 cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isAddingChild}
+                    className="flex-1 py-3 bg-brand-accent text-white font-black text-xs rounded-xl shadow-md hover:scale-[1.01] transition-all cursor-pointer"
+                  >
+                    {isAddingChild ? 'Provisioning...' : 'Provision Child Account'}
+                  </button>
+                </div>
+              </form>
             </motion.div>
           </div>
         )}

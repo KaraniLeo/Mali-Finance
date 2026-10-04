@@ -1,9 +1,21 @@
-import React, { useState } from 'react';
-import { motion } from 'motion/react';
-import { Lightbulb, AlertTriangle, PenTool, CheckCircle, BrainCircuit } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { 
+  Lightbulb, 
+  AlertTriangle, 
+  PenTool, 
+  CheckCircle2, 
+  XCircle, 
+  BrainCircuit, 
+  Sparkles, 
+  AlertCircle,
+  Check
+} from 'lucide-react';
 import { LearningCard } from '../types';
 import { resolveImage } from '../lib/imageResolver';
 import { parseLocalizedContent } from '../lib/contentParser';
+import { isOptionCorrect, getCardExplanation } from '../lib/explanationHelper';
+import { ConceptBreakdownWindow } from './ConceptBreakdownWindow';
 
 interface CardProps {
   card: LearningCard;
@@ -14,14 +26,25 @@ interface CardProps {
 export function Card({ card, onComplete, onScrollStateChange }: CardProps) {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  
+  const explanationRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll smoothly to explanation when an answer is chosen
+  useEffect(() => {
+    if (selectedOption !== null && explanationRef.current) {
+      const timer = setTimeout(() => {
+        explanationRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [selectedOption]);
+
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     if (onScrollStateChange) {
       const isScrolled = e.currentTarget.scrollTop > 20;
       onScrollStateChange(isScrolled);
     }
   };
-  
+
   const dynamicImage = resolveImage(card);
 
   const getIcon = () => {
@@ -46,13 +69,14 @@ export function Card({ card, onComplete, onScrollStateChange }: CardProps) {
     }
   };
 
-  const handleExerciseOption = (opt: string) => {
+  const handleExerciseOption = (opt: string, index: number) => {
+    if (selectedOption !== null) return;
     setSelectedOption(opt);
-    if (card.correctAnswer !== undefined) {
-      const correct = opt === card.correctAnswer;
-      setIsCorrect(correct);
-    }
+    const correct = isOptionCorrect(opt, index, card);
+    setIsCorrect(correct);
   };
+
+  const explanationData = card.type === 'exercise' ? getCardExplanation(card, selectedOption) : null;
 
   return (
     <div 
@@ -98,29 +122,69 @@ export function Card({ card, onComplete, onScrollStateChange }: CardProps) {
 
       {card.type === 'exercise' && card.options && (
         <div className="mt-8 space-y-3">
+          <div className="text-xs font-black uppercase tracking-widest text-stone-400 dark:text-stone-500 mb-1">
+            Select the best answer:
+          </div>
           {card.options.map((opt, i) => {
             const isSelected = selectedOption === opt;
-            const statusClass = isSelected 
-              ? (isCorrect 
-                  ? 'bg-emerald-100 border-emerald-500 text-emerald-900 dark:bg-emerald-900/30 dark:border-emerald-500 dark:text-emerald-100' 
-                  : 'bg-red-100 border-red-500 text-red-900 dark:bg-red-900/30 dark:border-red-500 dark:text-red-100')
-              : 'bg-white dark:bg-stone-800 border-stone-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 hover:border-brand-accent dark:hover:border-brand-accent hover:bg-stone-50 dark:hover:bg-stone-700';
+            const isRight = isOptionCorrect(opt, i, card);
+            
+            let btnClasses = "w-full p-4 md:p-5 rounded-2xl border-2 text-left font-bold transition-all shadow-sm flex items-center justify-between gap-3 text-base md:text-lg leading-snug ";
+            
+            if (selectedOption === null) {
+              btnClasses += "bg-white dark:bg-stone-800 border-stone-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 hover:border-brand-accent dark:hover:border-brand-accent hover:bg-stone-50 dark:hover:bg-stone-700/60 active:scale-[0.99]";
+            } else {
+              if (isRight) {
+                // The right answer is ALWAYS highlighted in vivid emerald/green!
+                btnClasses += "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-500 text-emerald-950 dark:text-emerald-100 ring-2 ring-emerald-500/30 shadow-md shadow-emerald-500/10";
+              } else if (isSelected && !isRight) {
+                // The user's wrong clicked answer is highlighted in red!
+                btnClasses += "bg-red-50 dark:bg-red-950/40 border-red-500 text-red-950 dark:text-red-100 ring-2 ring-red-500/30 shadow-md shadow-red-500/10";
+              } else {
+                // Other options are dimmed
+                btnClasses += "bg-stone-50/50 dark:bg-stone-900/40 border-stone-200 dark:border-stone-800 text-stone-400 dark:text-stone-600 opacity-40 pointer-events-none";
+              }
+            }
               
             return (
               <button
                 key={i}
-                onClick={() => handleExerciseOption(opt)}
+                onClick={() => handleExerciseOption(opt, i)}
                 disabled={selectedOption !== null}
-                className={`w-full p-4 rounded-xl border-2 text-left font-bold transition-all shadow-sm ${statusClass}`}
+                className={btnClasses}
               >
-                {parseLocalizedContent(opt)}
+                <span className="flex-1">{parseLocalizedContent(opt)}</span>
+                {selectedOption !== null && isRight && (
+                  <span className="flex-shrink-0 flex items-center gap-1.5 text-xs font-black uppercase tracking-wider bg-emerald-600 text-white px-3 py-1 rounded-full shadow-sm">
+                    <CheckCircle2 size={15} />
+                    Correct Answer
+                  </span>
+                )}
+                {selectedOption !== null && isSelected && !isRight && (
+                  <span className="flex-shrink-0 flex items-center gap-1.5 text-xs font-black uppercase tracking-wider bg-red-500 text-white px-3 py-1 rounded-full shadow-sm">
+                    <XCircle size={15} />
+                    Your Choice
+                  </span>
+                )}
               </button>
-            )
+            );
           })}
         </div>
       )}
 
-      {/* Simulators removed */}
+      {/* In-depth explanation revealed on the bottom simultaneously */}
+      <AnimatePresence>
+        {card.type === 'exercise' && selectedOption !== null && explanationData && (
+          <ConceptBreakdownWindow
+            ref={explanationRef}
+            isCorrect={Boolean(isCorrect)}
+            correctAnswerText={explanationData.correctAnswerText}
+            explanationText={explanationData.explanationText}
+            headline={explanationData.headline}
+            keyTakeaway={explanationData.keyTakeaway}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

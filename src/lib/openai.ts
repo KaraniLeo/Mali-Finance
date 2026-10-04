@@ -26,12 +26,6 @@ export async function generateMaliResponse(prompt: string, context: any, history
 
     if (error) {
       console.error('Error invoking chat function:', error);
-      if (error.message?.includes('402') || (error as any).status === 402 || (error as any).statusCode === 402) {
-        return {
-          text: "You have exhausted your 5 free chatbot requests. Please pay KES 300 to get unlimited access.",
-          error: 'payment_required'
-        };
-      }
       throw error;
     }
 
@@ -42,14 +36,8 @@ export async function generateMaliResponse(prompt: string, context: any, history
     };
   } catch (error: any) {
     console.error('Failed to generate response:', error);
-    if (error.message?.includes('402') || error.status === 402 || error.statusCode === 402 || (error?.context?.status === 402)) {
-      return {
-        text: "You have exhausted your 5 free chatbot requests. Please pay KES 300 to get unlimited access.",
-        error: 'payment_required'
-      };
-    }
     return {
-      text: "Oops! My connection to the knowledge base just glitched. 🏦\n\n**Admin Notice:** If you haven't deployed the Edge Function yet, I can't connect to the AI! Please check the Walkthrough Document for instructions on how to set up my brain using `npx supabase secrets set OPENAI_API_KEY=...` and deploy my Edge Function.",
+      text: "Oops! My connection to the knowledge base just glitched. 🏦 Please try asking your question again in a moment!",
     };
   }
 }
